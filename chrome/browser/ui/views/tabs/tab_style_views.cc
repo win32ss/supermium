@@ -322,87 +322,106 @@ SkPath GM2TabStyleViews::GetPath(TabStyle::PathType path_type,
     // stroke width.
 
     // Start with the left side of the shape.
-    path.moveTo(left, extended_bottom);
+    
+    if (!base::FeatureList::IsEnabled(features::kSupermiumCustomTabs)) {
+		path.moveTo(left, extended_bottom);
+		if (tab_left != left) {
+		  // Draw the left edge of the extension.
+		  //   ╭─────────╮
+		  //   │ Content │
+		  // ┏─╯         ╰─┐
+		  if (tab_bottom != extended_bottom)
+			path.lineTo(left, tab_bottom);
 
-    if (tab_left != left) {
-      // Draw the left edge of the extension.
-      //   ╭─────────╮
-      //   │ Content │
-      // ┏─╯         ╰─┐
-      if (tab_bottom != extended_bottom)
-        path.lineTo(left, tab_bottom);
+		  // Draw the bottom-left corner.
+		  //   ╭─────────╮
+		  //   │ Content │
+		  // ┌━╝         ╰─┐
+		  if (extend_left_to_bottom) {
+			path.lineTo(tab_left, tab_bottom);
+		  } else {
+			path.lineTo(tab_left - extension_corner_radius, tab_bottom);
+			path.arcTo(extension_corner_radius, extension_corner_radius, 0,
+					   SkPath::kSmall_ArcSize, SkPathDirection::kCCW, tab_left,
+					   tab_bottom - extension_corner_radius);
+		  }
+		}
 
-      // Draw the bottom-left corner.
-      //   ╭─────────╮
-      //   │ Content │
-      // ┌━╝         ╰─┐
-      if (extend_left_to_bottom) {
-        path.lineTo(tab_left, tab_bottom);
-      } else {
-        path.lineTo(tab_left - extension_corner_radius, tab_bottom);
-        path.arcTo(extension_corner_radius, extension_corner_radius, 0,
-                   SkPath::kSmall_ArcSize, SkPathDirection::kCCW, tab_left,
-                   tab_bottom - extension_corner_radius);
-      }
+		// Draw the ascender and top-left curve, if present.
+		if (extend_to_top) {
+		  //   ┎─────────╮
+		  //   ┃ Content │
+		  // ┌─╯         ╰─┐
+		  path.lineTo(tab_left, tab_top);
+		} else {
+		  //   ╔─────────╮
+		  //   ┃ Content │
+		  // ┌─╯         ╰─┐
+		  path.lineTo(tab_left, tab_top + content_corner_radius);
+		  path.arcTo(content_corner_radius, content_corner_radius, 0,
+					 SkPath::kSmall_ArcSize, SkPathDirection::kCW,
+					 tab_left + content_corner_radius, tab_top);
+		}
+
+		// Draw the top crossbar and top-right curve, if present.
+		if (extend_to_top) {
+		  //   ┌━━━━━━━━━┑
+		  //   │ Content │
+		  // ┌─╯         ╰─┐
+		  path.lineTo(tab_right, tab_top);
+		} else {
+		  //   ╭━━━━━━━━━╗
+		  //   │ Content │
+		  // ┌─╯         ╰─┐
+		  path.lineTo(tab_right - content_corner_radius, tab_top);
+		  path.arcTo(content_corner_radius, content_corner_radius, 0,
+					 SkPath::kSmall_ArcSize, SkPathDirection::kCW, tab_right,
+					 tab_top + content_corner_radius);
+		}
+
+		if (tab_right != right) {
+		  // Draw the descender and bottom-right corner.
+		  //   ╭─────────╮
+		  //   │ Content ┃
+		  // ┌─╯         ╚━┐
+		  if (extend_right_to_bottom) {
+			path.lineTo(tab_right, tab_bottom);
+		  } else {
+			path.lineTo(tab_right, tab_bottom - extension_corner_radius);
+			path.arcTo(extension_corner_radius, extension_corner_radius, 0,
+					   SkPath::kSmall_ArcSize, SkPathDirection::kCCW,
+					   tab_right + extension_corner_radius, tab_bottom);
+		  }
+		  if (tab_bottom != extended_bottom)
+			path.lineTo(right, tab_bottom);
+		}
+
+		// Draw anything remaining: the descender, the bottom right horizontal
+		// stroke, or the right edge of the extension, depending on which
+		// conditions fired above.
+		//   ╭─────────╮
+		//   │ Content │
+		// ┌─╯         ╰─┓
+		path.lineTo(right, extended_bottom);
     }
-
-    // Draw the ascender and top-left curve, if present.
-    if (extend_to_top) {
-      //   ┎─────────╮
-      //   ┃ Content │
-      // ┌─╯         ╰─┐
-      path.lineTo(tab_left, tab_top);
-    } else {
-      //   ╔─────────╮
-      //   ┃ Content │
-      // ┌─╯         ╰─┐
-      path.lineTo(tab_left, tab_top + content_corner_radius);
-      path.arcTo(content_corner_radius, content_corner_radius, 0,
-                 SkPath::kSmall_ArcSize, SkPathDirection::kCW,
-                 tab_left + content_corner_radius, tab_top);
-    }
-
-    // Draw the top crossbar and top-right curve, if present.
-    if (extend_to_top) {
-      //   ┌━━━━━━━━━┑
-      //   │ Content │
-      // ┌─╯         ╰─┐
-      path.lineTo(tab_right, tab_top);
-    } else {
-      //   ╭━━━━━━━━━╗
-      //   │ Content │
-      // ┌─╯         ╰─┐
-      path.lineTo(tab_right - content_corner_radius, tab_top);
-      path.arcTo(content_corner_radius, content_corner_radius, 0,
-                 SkPath::kSmall_ArcSize, SkPathDirection::kCW, tab_right,
-                 tab_top + content_corner_radius);
-    }
-
-    if (tab_right != right) {
-      // Draw the descender and bottom-right corner.
-      //   ╭─────────╮
-      //   │ Content ┃
-      // ┌─╯         ╚━┐
-      if (extend_right_to_bottom) {
-        path.lineTo(tab_right, tab_bottom);
-      } else {
-        path.lineTo(tab_right, tab_bottom - extension_corner_radius);
-        path.arcTo(extension_corner_radius, extension_corner_radius, 0,
-                   SkPath::kSmall_ArcSize, SkPathDirection::kCCW,
-                   tab_right + extension_corner_radius, tab_bottom);
-      }
-      if (tab_bottom != extended_bottom)
-        path.lineTo(right, tab_bottom);
-    }
-
-    // Draw anything remaining: the descender, the bottom right horizontal
-    // stroke, or the right edge of the extension, depending on which
-    // conditions fired above.
-    //   ╭─────────╮
-    //   │ Content │
-    // ┌─╯         ╰─┓
-    path.lineTo(right, extended_bottom);
-
+	else {
+		path.moveTo(left, extended_bottom);
+		if (extend_to_top) {
+		  // Create the vertical extension by extending the side diagonals until
+		  // they reach the top of the bounds.
+			path.cubicTo(left, extended_bottom, (((tab_left + 10) + left) / 2), ((tab_top + extended_bottom) / 2), tab_left + 10,
+						  tab_top);
+			path.lineTo(tab_right - 10, tab_top);
+			path.cubicTo(tab_right - 10, tab_top, (((tab_right - 10) + right) / 2), ((tab_top + extended_bottom) / 2), right,
+					  extended_bottom);
+		} else {
+			path.cubicTo(left, extended_bottom, (((tab_left + 10) + left) / 2), (((tab_top * 0.5) + extended_bottom) / 2), tab_left + 10,
+						(tab_top * 0.5));
+			path.cubicTo(tab_left + 10, (tab_top * 0.5), ((tab_left + 10) + (tab_right - 10) /2), tab_top * 0.5, tab_right - 10, tab_top * 0.5);
+			path.cubicTo(tab_right - 10, (tab_top * 0.5), (((tab_right - 10) + right) / 2), (((tab_top * 0.5) + extended_bottom) / 2), right,
+					  extended_bottom);
+		}
+	}
     if (path_type != TabStyle::PathType::kBorder) {
       path.close();
     }

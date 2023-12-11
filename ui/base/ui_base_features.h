@@ -287,6 +287,9 @@ ChromeRefresh2023Level GetChromeRefresh2023Level();
 COMPONENT_EXPORT(UI_BASE_FEATURES)
 BASE_DECLARE_FEATURE(kBubbleMetricsApi);
 
+// Enables customization of the shape of the browser tabs.
+COMPONENT_EXPORT(UI_BASE_FEATURES) BASE_DECLARE_FEATURE(kSupermiumCustomTabs);
+
 #if !BUILDFLAG(IS_LINUX)
 COMPONENT_EXPORT(UI_BASE_FEATURES) BASE_DECLARE_FEATURE(kWebUiSystemFont);
 #endif

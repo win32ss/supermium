@@ -7775,6 +7775,10 @@ const char kEnableBoundSessionCredentialsDescription[] =
     "prevent the usage of bound credentials outside of the user device.";
 #endif  // BUILDFLAG(ENABLE_BOUND_SESSION_CREDENTIALS)
 
+const char kSupermiumCustomTabsName[] = "Supermium Custom Tab UI";
+const char kSupermiumCustomTabsDescription[] = 
+	"Changes the look of browser tabs to appear with a trapezoidal shape.";
+
 // ============================================================================
 // Don't just add flags to the end, put them in the right section in
 // alphabetical order just like the header file.

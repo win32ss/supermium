@@ -4065,6 +4065,7 @@ const FeatureEntry::FeatureVariation kWebAuthnAndroidCredManVariations[] = {
      nullptr}};
 #endif  // BUILDFLAG(IS_ANDROID)
 
+
 // RECORDING USER METRICS FOR FLAGS:
 // -----------------------------------------------------------------------------
 // The first line of the entry is the internal name.
@@ -11382,6 +11383,13 @@ const FeatureEntry kFeatureEntries[] = {
     {"observable-api", flag_descriptions::kObservableAPIName,
      flag_descriptions::kObservableAPIDescription, kOsAll,
      FEATURE_VALUE_TYPE(blink::features::kObservableAPI)},
+	 
+    {"custom-tab-shapes",
+     flag_descriptions::kSupermiumCustomTabsName,
+     flag_descriptions::kSupermiumCustomTabsDescription,
+     kOsAll,
+     FEATURE_VALUE_TYPE(features::kSupermiumCustomTabs)},
+
 
     // NOTE: Adding a new flag requires adding a corresponding entry to enum
     // "LoginCustomFlags" in tools/metrics/histograms/enums.xml. See "Flag

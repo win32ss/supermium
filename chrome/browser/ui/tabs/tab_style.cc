@@ -118,7 +118,7 @@ int GM2TabStyle::GetMinimumInactiveWidth() const {
 }
 
 int GM2TabStyle::GetTabOverlap() const {
-  return GetBottomCornerRadius() * 2 + GetSeparatorSize().width();
+	return GetBottomCornerRadius() * 2 + GetSeparatorSize().width();
 }
 
 int GM2TabStyle::GetDragHandleExtension(int height) const {
@@ -126,8 +126,12 @@ int GM2TabStyle::GetDragHandleExtension(int height) const {
 }
 
 gfx::Size GM2TabStyle::GetSeparatorSize() const {
-  return gfx::Size(kGM2SeparatorThickness,
+  if (!base::FeatureList::IsEnabled(features::kSupermiumCustomTabs)) {
+	return gfx::Size(kGM2SeparatorThickness,
                    GetLayoutConstant(TAB_SEPARATOR_HEIGHT));
+  }
+  else
+	  return gfx::Size(0, 0);
 }
 
 gfx::Insets GM2TabStyle::GetSeparatorMargins() const {
@@ -147,12 +151,12 @@ gfx::Size GM2TabStyle::GetPreviewImageSize() const {
 }
 
 int GM2TabStyle::GetTopCornerRadius() const {
-  return views::LayoutProvider::Get()->GetCornerRadiusMetric(
+	return views::LayoutProvider::Get()->GetCornerRadiusMetric(
       views::Emphasis::kHigh);
 }
 
 int GM2TabStyle::GetBottomCornerRadius() const {
-  return views::LayoutProvider::Get()->GetCornerRadiusMetric(
+	return views::LayoutProvider::Get()->GetCornerRadiusMetric(
       views::Emphasis::kHigh);
 }
 
@@ -206,10 +210,10 @@ int ChromeRefresh2023TabStyle::GetBottomCornerRadius() const {
 
 int ChromeRefresh2023TabStyle::GetTabOverlap() const {
   // The overlap removes the width and the margins of the separator.
-  const float total_separator_width = GetSeparatorMargins().left() +
-                                      GetSeparatorSize().width() +
-                                      GetSeparatorMargins().right();
-  return 2 * GetBottomCornerRadius() - total_separator_width;
+	const float total_separator_width = GetSeparatorMargins().left() +
+										GetSeparatorSize().width() +
+										GetSeparatorMargins().right();
+	return 2 * GetBottomCornerRadius() - total_separator_width;
 }
 
 gfx::Size ChromeRefresh2023TabStyle::GetSeparatorSize() const {
