@@ -4508,6 +4508,12 @@ extern const char kEnableBoundSessionCredentialsDescription[];
 extern const char kSupermiumCustomTabsName[];
 extern const char kSupermiumCustomTabsDescription[];
 
+extern const char kIncognitoBrandConsistencyForDesktopName[];
+extern const char kIncognitoBrandConsistencyForDesktopDescription[];
+
+extern const char kInheritNativeThemeFromParentWidgetName[];
+extern const char kInheritNativeThemeFromParentWidgetDescription[];
+
 // ============================================================================
 // Don't just add flags to the end, put them in the right section in
 // alphabetical order. See top instructions for more.

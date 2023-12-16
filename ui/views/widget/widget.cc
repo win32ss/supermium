@@ -11,6 +11,7 @@
 #include "base/auto_reset.h"
 #include "base/check_op.h"
 #include "base/containers/adapters.h"
+#include "base/feature_list.h"
 #include "base/functional/bind.h"
 #include "base/i18n/rtl.h"
 #include "base/notreached.h"
@@ -2058,7 +2059,9 @@ const ui::NativeTheme* Widget::GetNativeTheme() const {
   if (native_theme_)
     return native_theme_;
 
-  if (parent_)
+if (base::FeatureList::IsEnabled(
+          features::kInheritNativeThemeFromParentWidget) &&
+      parent_)
     return parent_->GetNativeTheme();
 
 #if BUILDFLAG(IS_LINUX)

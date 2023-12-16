@@ -15,6 +15,7 @@ namespace views::features {
 VIEWS_EXPORT BASE_DECLARE_FEATURE(kEnablePlatformHighContrastInkDrop);
 VIEWS_EXPORT BASE_DECLARE_FEATURE(kEnableViewPaintOptimization);
 VIEWS_EXPORT BASE_DECLARE_FEATURE(kWidgetLayering);
+VIEWS_EXPORT BASE_DECLARE_FEATURE(kInheritNativeThemeFromParentWidget);
 
 }  // namespace views::features
 

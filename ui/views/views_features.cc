@@ -28,5 +28,9 @@ BASE_FEATURE(kEnableViewPaintOptimization,
 BASE_FEATURE(kWidgetLayering,
              "WidgetLayering",
              base::FEATURE_ENABLED_BY_DEFAULT);
+			 
+// When enabled, widgets inherit the theme from their parent widget.
+const base::Feature kInheritNativeThemeFromParentWidget{
+    "InheritNativeThemeFromParentWidget", base::FEATURE_ENABLED_BY_DEFAULT};
 
 }  // namespace views::features

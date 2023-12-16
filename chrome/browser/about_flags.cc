@@ -6457,6 +6457,18 @@ const FeatureEntry kFeatureEntries[] = {
     {"memlog-stack-mode", flag_descriptions::kMemlogStackModeName,
      flag_descriptions::kMemlogStackModeDescription, kOsAll,
      MULTI_VALUE_TYPE(kMemlogStackModeChoices)},
+	 
+    {"incognito-brand-consistency-for-desktop",
+     flag_descriptions::kIncognitoBrandConsistencyForDesktopName,
+     flag_descriptions::kIncognitoBrandConsistencyForDesktopDescription,
+     kOsDesktop,
+     FEATURE_VALUE_TYPE(base::features::kIncognitoBrandConsistencyForDesktop)},
+
+    {"inherit-native-theme-from-parent-widget",
+     flag_descriptions::kInheritNativeThemeFromParentWidgetName,
+     flag_descriptions::kInheritNativeThemeFromParentWidgetDescription,
+     kOsDesktop,
+     FEATURE_VALUE_TYPE(views::features::kInheritNativeThemeFromParentWidget)},
 
     {"omnibox-max-zero-suggest-matches",
      flag_descriptions::kOmniboxMaxZeroSuggestMatchesName,
