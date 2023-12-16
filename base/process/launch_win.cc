@@ -260,7 +260,10 @@ Process LaunchProcess(const CommandLine::StringType& cmdline,
   win::StartupInformation startup_info_wrapper;
   STARTUPINFO* startup_info = startup_info_wrapper.startup_info();
   DWORD flags = 0;
-
+  if (!options.handles_to_inherit.empty() && 
+	  base::win::GetVersion() < base::win::Version::VISTA) {
+	  return Process();
+  }
   // Count extended attributes before reserving space.
   DWORD attribute_count = 0;
   // Count PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY.
