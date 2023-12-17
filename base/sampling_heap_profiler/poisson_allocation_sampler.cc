@@ -19,6 +19,14 @@
 #include "build/build_config.h"
 #include "third_party/abseil-cpp/absl/base/attributes.h"
 
+#if BUILDFLAG(IS_WIN)
+#include <windows.h>
+extern "C" {
+VOID __stdcall TLSInit_DllMain_ThreadAttach(HMODULE DllBase);
+}
+
+#endif
+
 namespace base {
 
 namespace {
@@ -240,6 +248,10 @@ void PoissonAllocationSampler::DoRecordAllocation(
     size_t size,
     base::allocator::dispatcher::AllocationSubsystem type,
     const char* context) {
+		
+  #if BUILDFLAG(IS_WIN)
+	TLSInit_DllMain_ThreadAttach(::GetModuleHandleA("chrome.dll"));
+  #endif
   ThreadLocalData* const thread_local_data = GetThreadLocalData();
 
   thread_local_data->accumulated_bytes += size;
