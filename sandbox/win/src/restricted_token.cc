@@ -192,7 +192,7 @@ absl::optional<base::win::AccessToken> RestrictedToken::CreateRestricted(
                                 base::win::SecurityAccessMode::kRevoke, 0, 0);
     } else {
       DWORD last_error = ::GetLastError();
-      if (last_error != ERROR_NOT_FOUND) {
+      if (last_error != ERROR_NOT_FOUND && last_error != ERROR_INVALID_PARAMETER) {
         return absl::nullopt;
       }
     }
