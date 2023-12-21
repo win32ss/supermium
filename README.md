@@ -1,5 +1,5 @@
 # Supermium
-An up-to-date Chromium-based web browser compatible with Windows Vista, 7 and 8.x.
+An up-to-date Chromium-based web browser compatible with Windows XP, Windows Vista, 7 and 8.x.
 
 The Supermium web browser also provides the following features:
 
