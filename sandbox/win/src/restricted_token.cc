@@ -16,6 +16,7 @@
 #include "base/ranges/algorithm.h"
 #include "base/win/access_token.h"
 #include "base/win/security_util.h"
+#include "base/win/windows_version.h"
 #include "sandbox/win/src/acl.h"
 
 namespace sandbox {
@@ -217,7 +218,7 @@ absl::optional<base::win::AccessToken> RestrictedToken::CreateRestricted(
     return absl::nullopt;
   }
 
-  if (integrity_rid_.has_value()) {
+  if (integrity_rid_.has_value() && base::win::GetVersion() >= base::win::Version::VISTA) {
     if (!new_token->SetIntegrityLevel(*integrity_rid_)) {
       return absl::nullopt;
     }
