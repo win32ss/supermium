@@ -616,13 +616,13 @@ void Textfield::FitToLocalBounds() {
   } else {
     // The text will draw with the correct vertical alignment if we don't apply
     // the vertical insets.
+	
 	#if BUILDFLAG(IS_WIN)
     if (!gfx::win::IsDirectWriteEnabled()) {
-	  bounds.Inset(gfx::Insets::TLBR(8, insets.left(), 0, insets.right()));
-    }
-	#else
-    bounds.Inset(gfx::Insets::TLBR(0, insets.left(), 0, insets.right()));
+	  GetRenderText()->SetVerticalAlignment(gfx::ALIGN_SPECIAL);    
+	}
 	#endif
+    bounds.Inset(gfx::Insets::TLBR(0, insets.left(), 0, insets.right()));
   }
 
   bounds.set_x(GetMirroredXForRect(bounds));
@@ -1792,6 +1792,7 @@ bool Textfield::ChangeTextDirectionAndLayoutAlignment(
       modes_match && GetHorizontalAlignment() == gfx::ALIGN_TO_HEAD;
   if (!dir_from_text && GetHorizontalAlignment() != gfx::ALIGN_CENTER)
     SetHorizontalAlignment(default_rtl ? gfx::ALIGN_RIGHT : gfx::ALIGN_LEFT);
+
   SchedulePaint();
   return true;
 }

@@ -11,6 +11,7 @@
 
 #include "base/check_op.h"
 #include "base/command_line.h"
+#include "base/feature_list.h"
 #include "base/i18n/break_iterator.h"
 #include "base/i18n/char_iterator.h"
 #include "base/i18n/rtl.h"
@@ -31,6 +32,7 @@
 #include "third_party/skia/include/core/SkTextBlob.h"
 #include "third_party/skia/include/core/SkTypeface.h"
 #include "third_party/skia/include/effects/SkGradientShader.h"
+#include "ui/base/ui_base_features.h"
 #include "ui/gfx/canvas.h"
 #include "ui/gfx/geometry/insets.h"
 #include "ui/gfx/geometry/size_conversions.h"
@@ -1008,8 +1010,13 @@ int RenderText::GetBaseline() {
     baseline_ = DetermineBaselineCenteringText(centering_height, font_list());
     if (vertical_alignment_ == ALIGN_BOTTOM)
       baseline_ += display_rect().height() - centering_height;
-	if (vertical_alignment_ == ALIGN_SPECIAL)
-	  baseline_ *= 1.33; // This will push down the offending labels in GDI to the point that they will appear centred
+	if (vertical_alignment_ == ALIGN_SPECIAL) {
+		if (base::FeatureList::IsEnabled(features::kChromeRefresh2023)) {
+			baseline_ *= 1.40; // This will push down the offending labels in GDI to the point that they will appear centred
+		}
+		else
+			baseline_ *= 1.30;
+	}
   }
   DCHECK_NE(kInvalidBaseline, baseline_);
   return baseline_;
