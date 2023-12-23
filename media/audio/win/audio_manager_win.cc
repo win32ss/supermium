@@ -28,6 +28,7 @@
 #include "media/audio/win/audio_low_latency_output_win.h"
 #include "media/audio/win/core_audio_util_win.h"
 #include "media/audio/win/device_enumeration_win.h"
+#include "media/audio/win/wavein_input_win.h"
 #include "media/audio/win/waveout_output_win.h"
 #include "media/base/audio_parameters.h"
 #include "media/base/channel_layout.h"
@@ -60,6 +61,13 @@ constexpr int kMaxOutputStreams = 50;
 // Up to 8 channels can be passed to the driver.  This should work, given the
 // right drivers, but graceful error handling is needed.
 constexpr int kWinMaxChannels = 8;
+
+// We use 3 buffers for recording audio so that if a recording callback takes
+// some time to return we won't lose audio. More buffers while recording are
+// ok because they don't introduce any delay in recording, unlike in playback
+// where you first need to fill in that number of buffers before starting to
+// play.
+static const int kNumInputBuffers = 3;
 
 // Buffer size to use for input and output stream when a proper size can't be
 // determined from the system
@@ -157,24 +165,35 @@ void AudioManagerWin::InitializeOnAudioThread() {
   // callback to a WeakPtr: NotifyAllOutputDeviceChangeListeners() will be
   // posted to the audio thread instead of being run synchronously, since we use
   // BindPostTaskToCurrentDefault().
+  if (CoreAudioUtil::IsSupported()) {
   output_device_listener_ = std::make_unique<AudioDeviceListenerWin>(
       base::BindPostTaskToCurrentDefault(base::BindRepeating(
           &AudioManagerWin::NotifyAllOutputDeviceChangeListeners,
           weak_this_on_audio_thread_)));
+  }
 }
 
 void AudioManagerWin::GetAudioDeviceNamesImpl(bool input,
                                               AudioDeviceNames* device_names) {
   DCHECK(device_names->empty());
   // Enumerate all active audio-endpoint capture devices.
-  if (input)
-    GetInputDeviceNamesWin(device_names);
-  else
-    GetOutputDeviceNamesWin(device_names);
-
+  if (!CoreAudioUtil::IsSupported()) {
+    // Utilize the Wave API for Windows 2000/XP.
+    if (input)
+      GetInputDeviceNamesWinXP(device_names);
+    else
+      GetOutputDeviceNamesWinXP(device_names);
+  } else {
+    // Utilize the MMDevice API (part of Core Audio) for Vista and higher.
+    if (input)
+      GetInputDeviceNamesWin(device_names);
+    else
+      GetOutputDeviceNamesWin(device_names);
+  }
   if (!device_names->empty()) {
-    device_names->push_front(AudioDeviceName::CreateCommunications());
-
+	  if (CoreAudioUtil::IsSupported()) {
+		device_names->push_front(AudioDeviceName::CreateCommunications());
+	  }
     // Always add default device parameters as first element.
     device_names->push_front(AudioDeviceName::CreateDefault());
   }
@@ -192,18 +211,22 @@ void AudioManagerWin::GetAudioOutputDeviceNames(
 AudioParameters AudioManagerWin::GetInputStreamParameters(
     const std::string& device_id) {
   AudioParameters parameters;
-  HRESULT hr =
-      CoreAudioUtil::GetPreferredAudioParameters(device_id, false, &parameters);
+  HRESULT hr = E_FAIL;
+  if (CoreAudioUtil::IsSupported()) {
+	hr = CoreAudioUtil::GetPreferredAudioParameters(device_id, false, &parameters);
+  }
 
   if (FAILED(hr) || !parameters.IsValid()) {
+	if (CoreAudioUtil::IsSupported()) {
     LOG(WARNING) << "Unable to get preferred audio params for " << device_id
                  << " 0x" << std::hex << hr;
+	}
     // TODO(tommi): We appear to have callers to GetInputStreamParameters that
     // rely on getting valid audio parameters returned for an invalid or
     // unavailable device. We should track down those code paths (it is likely
     // that they actually don't need a real device but depend on the audio
     // code path somehow for a configuration - e.g. tab capture).
-    parameters = AudioParameters(AudioParameters::AUDIO_PCM_LINEAR,
+    parameters = AudioParameters(AudioParameters::AUDIO_PCM_LOW_LATENCY,
                                  ChannelLayoutConfig::Stereo(), 48000,
                                  kFallbackBufferSize);
   }
@@ -217,6 +240,11 @@ AudioParameters AudioManagerWin::GetInputStreamParameters(
 
 std::string AudioManagerWin::GetAssociatedOutputDeviceID(
     const std::string& input_device_id) {
+  if (!CoreAudioUtil::IsSupported()) {
+		    NOTIMPLEMENTED()
+        << "GetAssociatedOutputDeviceID is not supported on this OS";
+    return std::string();
+  }
   return CoreAudioUtil::GetMatchingOutputDeviceID(input_device_id);
 }
 
@@ -270,9 +298,14 @@ AudioOutputStream* AudioManagerWin::MakeLowLatencyOutputStream(
     return nullptr;
 
   if (base::CommandLine::ForCurrentProcess()->HasSwitch(
-          switches::kForceWaveAudio)) {
-    DLOG(WARNING) << "Forcing usage of Windows WaveXxx APIs";
-    return nullptr;
+          switches::kForceWaveAudio) || !CoreAudioUtil::IsSupported()) {
+		// Fall back to Windows Wave implementation on Windows XP or lower.
+		DLOG_IF(ERROR, !device_id.empty() &&
+						   device_id != AudioDeviceDescription::kDefaultDeviceId)
+			<< "Opening by device id not supported by PCMWaveOutAudioOutputStream";
+		DVLOG(1) << "Using WaveOut since WASAPI requires at least Vista.";
+		return new PCMWaveOutAudioOutputStream(
+			this, params, NumberOfWaveOutBuffers(), WAVE_MAPPER);
   }
 
   // Pass an empty string to indicate that we want the default device
@@ -305,7 +338,16 @@ AudioInputStream* AudioManagerWin::MakeLowLatencyInputStream(
     const std::string& device_id,
     const LogCallback& log_callback) {
   // Used for both AUDIO_PCM_LOW_LATENCY and AUDIO_PCM_LINEAR.
-  return new WASAPIAudioInputStream(this, params, device_id, log_callback);
+    AudioInputStream* stream = NULL;
+    if (!CoreAudioUtil::IsSupported()) {
+      // Fall back to Windows Wave implementation on Windows XP or lower.
+      DVLOG(1) << "Using WaveIn since WASAPI requires at least Vista.";
+      stream = CreatePCMWaveInAudioInputStream(params, device_id);
+    } else {
+      stream = new WASAPIAudioInputStream(this, params, device_id, log_callback);
+    }
+
+  return stream;
 }
 
 std::string AudioManagerWin::GetDefaultInputDeviceID() {
@@ -313,6 +355,8 @@ std::string AudioManagerWin::GetDefaultInputDeviceID() {
 }
 
 std::string AudioManagerWin::GetDefaultOutputDeviceID() {
+  if (!CoreAudioUtil::IsSupported())
+    return std::string();
   return CoreAudioUtil::GetDefaultOutputDeviceID();
 }
 
@@ -335,78 +379,90 @@ AudioParameters AudioManagerWin::GetPreferredOutputStreamParameters(
   int min_buffer_size = 0;
   int max_buffer_size = 0;
 
-  if (cmd_line->HasSwitch(switches::kEnableExclusiveAudio)) {
-    // TODO(rtoy): tune these values for best possible WebAudio
-    // performance. WebRTC works well at 48kHz and a buffer size of 480
-    // samples will be used for this case. Note that exclusive mode is
-    // experimental. This sample rate will be combined with a buffer size of
-    // 256 samples, which corresponds to an output delay of ~5.33ms.
-    sample_rate = 48000;
-    buffer_size = 256;
-    if (input_params.IsValid())
-      channel_layout_config = input_params.channel_layout_config();
-  } else {
-    AudioParameters params;
-    HRESULT hr = CoreAudioUtil::GetPreferredAudioParameters(
-        output_device_id.empty() ? GetDefaultOutputDeviceID()
-                                 : output_device_id,
-        true, &params);
-    if (FAILED(hr)) {
-      // This can happen when CoreAudio isn't supported or available
-      // (e.g. certain installations of Windows Server 2008 R2).
-      // Instead of returning the input_params, we'll return invalid
-      // AudioParameters to make sure that an attempt to create this output
-      // stream, won't succeed. This behavior is also consistent with
-      // GetInputStreamParameters.
-      DLOG(ERROR) << "GetPreferredAudioParameters failed: " << std::hex << hr;
-      return AudioParameters();
+  if (CoreAudioUtil::IsSupported()) {
+	  if (cmd_line->HasSwitch(switches::kEnableExclusiveAudio)) {
+		// TODO(rtoy): tune these values for best possible WebAudio
+		// performance. WebRTC works well at 48kHz and a buffer size of 480
+		// samples will be used for this case. Note that exclusive mode is
+		// experimental. This sample rate will be combined with a buffer size of
+		// 256 samples, which corresponds to an output delay of ~5.33ms.
+		sample_rate = 48000;
+		buffer_size = 256;
+		if (input_params.IsValid())
+		  channel_layout_config = input_params.channel_layout_config();
+	  } else {
+		AudioParameters params;
+		HRESULT hr = CoreAudioUtil::GetPreferredAudioParameters(
+			output_device_id.empty() ? GetDefaultOutputDeviceID()
+									 : output_device_id,
+			true, &params);
+		if (FAILED(hr)) {
+		  // This can happen when CoreAudio isn't supported or available
+		  // (e.g. certain installations of Windows Server 2008 R2).
+		  // Instead of returning the input_params, we'll return invalid
+		  // AudioParameters to make sure that an attempt to create this output
+		  // stream, won't succeed. This behavior is also consistent with
+		  // GetInputStreamParameters.
+		  DLOG(ERROR) << "GetPreferredAudioParameters failed: " << std::hex << hr;
+		  return AudioParameters();
+		}
+		DVLOG(1) << params.AsHumanReadableString();
+		DCHECK(params.IsValid());
+
+		channel_layout_config = params.channel_layout_config();
+		buffer_size = params.frames_per_buffer();
+		sample_rate = params.sample_rate();
+		effects = params.effects();
+
+		AudioParameters::HardwareCapabilities hardware_capabilities =
+			params.hardware_capabilities().value_or(
+				AudioParameters::HardwareCapabilities());
+		min_buffer_size = hardware_capabilities.min_frames_per_buffer;
+		max_buffer_size = hardware_capabilities.max_frames_per_buffer;
+	  }
+
+	  if (input_params.IsValid()) {
+		// If the user has enabled checking supported channel layouts or we don't
+		// have a valid channel layout yet, try to use the input layout.  See bugs
+		// http://crbug.com/259165 and http://crbug.com/311906 for more details.
+		if (cmd_line->HasSwitch(switches::kTrySupportedChannelLayouts) ||
+			channel_layout_config.channel_layout() == CHANNEL_LAYOUT_UNSUPPORTED) {
+		  // Check if it is possible to open up at the specified input channel
+		  // layout but avoid checking if the specified layout is the same as the
+		  // hardware (preferred) layout. We do this extra check to avoid the
+		  // CoreAudioUtil::IsChannelLayoutSupported() overhead in most cases.
+		  if (input_params.channel_layout() !=
+			  channel_layout_config.channel_layout()) {
+			// TODO(henrika): Internally, IsChannelLayoutSupported does many of the
+			// operations that have already been done such as opening up a client
+			// and fetching the WAVEFORMATPCMEX format.  Ideally we should only do
+			// that once.  Then here, we can check the layout from the data we
+			// already hold.
+			if (CoreAudioUtil::IsChannelLayoutSupported(
+					output_device_id, eRender, eConsole,
+					input_params.channel_layout())) {
+			  // Open up using the same channel layout as the source if it is
+			  // supported by the hardware.
+			  channel_layout_config = input_params.channel_layout_config();
+			  DVLOG(1) << "Hardware channel layout is not used; using same layout"
+					   << " as the source instead ("
+					   << channel_layout_config.channel_layout() << ")";
+			}
+		  }
+		}
     }
-    DVLOG(1) << params.AsHumanReadableString();
-    DCHECK(params.IsValid());
-
-    channel_layout_config = params.channel_layout_config();
-    buffer_size = params.frames_per_buffer();
-    sample_rate = params.sample_rate();
-    effects = params.effects();
-
-    AudioParameters::HardwareCapabilities hardware_capabilities =
-        params.hardware_capabilities().value_or(
-            AudioParameters::HardwareCapabilities());
-    min_buffer_size = hardware_capabilities.min_frames_per_buffer;
-    max_buffer_size = hardware_capabilities.max_frames_per_buffer;
-  }
-
-  if (input_params.IsValid()) {
-    // If the user has enabled checking supported channel layouts or we don't
-    // have a valid channel layout yet, try to use the input layout.  See bugs
-    // http://crbug.com/259165 and http://crbug.com/311906 for more details.
-    if (cmd_line->HasSwitch(switches::kTrySupportedChannelLayouts) ||
-        channel_layout_config.channel_layout() == CHANNEL_LAYOUT_UNSUPPORTED) {
-      // Check if it is possible to open up at the specified input channel
-      // layout but avoid checking if the specified layout is the same as the
-      // hardware (preferred) layout. We do this extra check to avoid the
-      // CoreAudioUtil::IsChannelLayoutSupported() overhead in most cases.
-      if (input_params.channel_layout() !=
-          channel_layout_config.channel_layout()) {
-        // TODO(henrika): Internally, IsChannelLayoutSupported does many of the
-        // operations that have already been done such as opening up a client
-        // and fetching the WAVEFORMATPCMEX format.  Ideally we should only do
-        // that once.  Then here, we can check the layout from the data we
-        // already hold.
-        if (CoreAudioUtil::IsChannelLayoutSupported(
-                output_device_id, eRender, eConsole,
-                input_params.channel_layout())) {
-          // Open up using the same channel layout as the source if it is
-          // supported by the hardware.
-          channel_layout_config = input_params.channel_layout_config();
-          DVLOG(1) << "Hardware channel layout is not used; using same layout"
-                   << " as the source instead ("
-                   << channel_layout_config.channel_layout() << ")";
-        }
-      }
-    }
-
     effects |= input_params.effects();
+	
+    if (!CoreAudioUtil::IsSupported()) {
+      // If WASAPI isn't supported we'll fallback to WaveOut, which will take
+      // care of resampling and bits per sample changes.  By setting these
+      // equal to the input values, AudioOutputResampler will skip resampling
+      // and bit per sample differences (since the input parameters will match
+      // the output parameters).
+      buffer_size = input_params.frames_per_buffer();
+      sample_rate = input_params.sample_rate();
+	  channel_layout_config = input_params.channel_layout_config();
+    }
 
     // Allow non-default buffer sizes if we have a valid min and max.
     if (min_buffer_size > 0 && max_buffer_size > 0) {
@@ -436,6 +492,23 @@ AudioParameters AudioManagerWin::GetPreferredOutputStreamParameters(
   params.set_effects(effects);
   DCHECK(params.IsValid());
   return params;
+}
+
+AudioInputStream* AudioManagerWin::CreatePCMWaveInAudioInputStream(
+    const AudioParameters& params,
+    const std::string& device_id) {
+  std::string xp_device_id = device_id;
+  if (device_id != AudioDeviceDescription::kDefaultDeviceId) {
+    xp_device_id = ConvertToWinXPInputDeviceId(device_id);
+    if (xp_device_id.empty()) {
+      DLOG(ERROR) << "Cannot find a waveIn device which matches the device ID "
+                  << device_id;
+      return NULL;
+    }
+  }
+
+  return new PCMWaveInAudioInputStream(this, params, kNumInputBuffers,
+                                       xp_device_id);
 }
 
 // static
