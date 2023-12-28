@@ -423,6 +423,9 @@ ResultCode InterceptionManager::PatchClientFunctions(
     DllInterceptionData* dll_data) {
   DCHECK(thunks);
   DCHECK(dll_data);
+  
+  DWORD base_code = 0;
+  DWORD bytes_read = 0;
 
   HMODULE ntdll_base = ::GetModuleHandle(kNtdllName);
   if (!ntdll_base)
@@ -439,8 +442,20 @@ ResultCode InterceptionManager::PatchClientFunctions(
       thunk.reset(new Wow64W10ResolverThunk(child_->Process(), true));
     else if (real_os_version >= base::win::Version::WIN8)
       thunk.reset(new Wow64W8ResolverThunk(child_->Process(), true));
-    else
+    else {
       thunk.reset(new Wow64ResolverThunk(child_->Process(), true));
+	  if(!::ReadProcessMemory(child_->Process(), ntdll_base, &base_code,
+			sizeof(base_code), &bytes_read)) {
+				if(::GetLastError() == ERROR_PARTIAL_COPY) {
+					::ResumeThread(child_->MainThread());
+					while(!::ReadProcessMemory(child_->Process(), ntdll_base, &base_code,
+						sizeof(base_code), &bytes_read)) {
+						;
+					}
+					::SuspendThread(child_->MainThread());
+					}
+			}
+	}
   } else if (real_os_version >= base::win::Version::WIN8) {
     thunk.reset(new Win8ResolverThunk(child_->Process(), true));
   } else {

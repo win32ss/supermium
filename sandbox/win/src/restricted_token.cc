@@ -185,7 +185,7 @@ absl::optional<base::win::AccessToken> RestrictedToken::CreateRestricted(
     return absl::nullopt;
   }
 
-  if (lockdown_default_dacl_) {
+  if (lockdown_default_dacl_ && base::win::GetVersion() >= base::win::Version::VISTA) {
     // Don't add Restricted sid and also remove logon sid access.
     absl::optional<base::win::Sid> logon_sid = new_token->LogonId();
     if (logon_sid.has_value()) {
@@ -193,7 +193,7 @@ absl::optional<base::win::AccessToken> RestrictedToken::CreateRestricted(
                                 base::win::SecurityAccessMode::kRevoke, 0, 0);
     } else {
       DWORD last_error = ::GetLastError();
-      if (last_error != ERROR_NOT_FOUND && last_error != ERROR_INVALID_PARAMETER) {
+      if (last_error != ERROR_NOT_FOUND) {
         return absl::nullopt;
       }
     }
