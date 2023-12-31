@@ -892,10 +892,15 @@ bool HandleNewTabPageLocationOverride(
 
   // Don't change the URL when incognito mode.
   if (profile->IsOffTheRecord())
+   if (!base::CommandLine::ForCurrentProcess()->HasSwitch("custom-ntp"))
     return false;
 
   std::string ntp_location =
       profile->GetPrefs()->GetString(prefs::kNewTabPageLocationOverride);
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("custom-ntp"))
+    ntp_location = base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("custom-ntp");
+  if (profile->IsOffTheRecord() && ntp_location.find("chrome://") != std::string::npos) 
+	return false;
   if (ntp_location.empty())
     return false;
   url::Component scheme;

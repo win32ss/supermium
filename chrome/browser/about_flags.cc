@@ -11415,6 +11415,10 @@ const FeatureEntry kFeatureEntries[] = {
      "Tab Hover Cards",
      "Allows removing the tab hover cards or using a tooltip as a replacement. ungoogled-chromium flag.",
      kOsDesktop, MULTI_VALUE_TYPE(kTabHoverCards)},
+    {"custom-ntp",
+     "Custom New Tab Page",
+     "Allows setting a custom URL for the new tab page. Value can be internal (e.g. `about:blank` or `chrome://new-tab-page`), external (e.g. `example.com`), or local (e.g. `file:///tmp/startpage.html`). This applies for incognito windows as well when not set to a `chrome://` internal page. ungoogled-chromium flag",
+     kOsDesktop, ORIGIN_LIST_VALUE_TYPE("custom-ntp", "")},
     // NOTE: Adding a new flag requires adding a corresponding entry to enum
     // "LoginCustomFlags" in tools/metrics/histograms/enums.xml. See "Flag
     // Histograms" in tools/metrics/histograms/README.md (run the
