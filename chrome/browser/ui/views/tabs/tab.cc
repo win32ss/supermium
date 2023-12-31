@@ -11,6 +11,7 @@
 #include <memory>
 #include <utility>
 
+#include "base/command_line.h"
 #include "base/debug/alias.h"
 #include "base/functional/bind.h"
 #include "base/i18n/rtl.h"
@@ -684,7 +685,9 @@ void Tab::OnGestureEvent(ui::GestureEvent* event) {
 }
 
 std::u16string Tab::GetTooltipText(const gfx::Point& p) const {
-  // Tab hover cards replace tooltips for tabs.
+  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("tab-hover-cards") == "tooltip")
+     return GetTooltipText(data_.title, GetAlertStateToShow(data_.alert_state));
+  // Tab hover cards don't replace tooltips for tabs in all cases ^.
   return std::u16string();
 }
 

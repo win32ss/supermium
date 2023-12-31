@@ -424,8 +424,7 @@ ResultCode InterceptionManager::PatchClientFunctions(
   DCHECK(thunks);
   DCHECK(dll_data);
   
-  DWORD base_code = 0;
-  DWORD bytes_read = 0;
+
 
   HMODULE ntdll_base = ::GetModuleHandle(kNtdllName);
   if (!ntdll_base)
@@ -434,7 +433,9 @@ ResultCode InterceptionManager::PatchClientFunctions(
   std::unique_ptr<ServiceResolverThunk> thunk;
 #if defined(_WIN64)
   thunk = std::make_unique<ServiceResolverThunk>(child_->Process(), true);
-#else
+#else  
+  DWORD base_code = 0;
+  DWORD bytes_read = 0;
   base::win::OSInfo* os_info = base::win::OSInfo::GetInstance();
   base::win::Version real_os_version = os_info->Kernel32Version();
   if (os_info->IsWowX86OnAMD64()) {

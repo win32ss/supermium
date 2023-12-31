@@ -4065,6 +4065,15 @@ const FeatureEntry::FeatureVariation kWebAuthnAndroidCredManVariations[] = {
      nullptr}};
 #endif  // BUILDFLAG(IS_ANDROID)
 
+const FeatureEntry::Choice kTabHoverCards[] = {
+    {flags_ui::kGenericExperimentChoiceDefault, "", ""},
+    {"None",
+     "tab-hover-cards",
+     "none"},
+    {"Tooltip",
+     "tab-hover-cards",
+     "tooltip"},
+};
 
 // RECORDING USER METRICS FOR FLAGS:
 // -----------------------------------------------------------------------------
@@ -11402,7 +11411,10 @@ const FeatureEntry kFeatureEntries[] = {
      kOsAll,
      FEATURE_VALUE_TYPE(features::kSupermiumCustomTabs)},
 
-
+    {"tab-hover-cards",
+     "Tab Hover Cards",
+     "Allows removing the tab hover cards or using a tooltip as a replacement. ungoogled-chromium flag.",
+     kOsDesktop, MULTI_VALUE_TYPE(kTabHoverCards)},
     // NOTE: Adding a new flag requires adding a corresponding entry to enum
     // "LoginCustomFlags" in tools/metrics/histograms/enums.xml. See "Flag
     // Histograms" in tools/metrics/histograms/README.md (run the
