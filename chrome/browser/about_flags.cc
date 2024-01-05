@@ -4075,6 +4075,13 @@ const FeatureEntry::Choice kTabHoverCards[] = {
      "tooltip"},
 };
 
+const FeatureEntry::Choice kBookmarkBarNewTab[] = {
+    {flags_ui::kGenericExperimentChoiceDefault, "", ""},
+    {"Never",
+     "bookmark-bar-ntp",
+     "never"},
+};
+
 // RECORDING USER METRICS FOR FLAGS:
 // -----------------------------------------------------------------------------
 // The first line of the entry is the internal name.
@@ -11419,6 +11426,10 @@ const FeatureEntry kFeatureEntries[] = {
      "Custom New Tab Page",
      "Allows setting a custom URL for the new tab page. Value can be internal (e.g. `about:blank` or `chrome://new-tab-page`), external (e.g. `example.com`), or local (e.g. `file:///tmp/startpage.html`). This applies for incognito windows as well when not set to a `chrome://` internal page. ungoogled-chromium flag",
      kOsDesktop, ORIGIN_LIST_VALUE_TYPE("custom-ntp", "")},
+    {"bookmark-bar-ntp",
+     "Bookmark Bar on New-Tab-Page",
+     "Disable the Bookmark Bar on the New-Tab-Page. ungoogled-chromium flag.",
+     kOsDesktop, MULTI_VALUE_TYPE(kBookmarkBarNewTab)},
     // NOTE: Adding a new flag requires adding a corresponding entry to enum
     // "LoginCustomFlags" in tools/metrics/histograms/enums.xml. See "Flag
     // Histograms" in tools/metrics/histograms/README.md (run the

@@ -4,6 +4,7 @@
 
 #include "chrome/browser/ui/bookmarks/bookmark_tab_helper.h"
 
+#include "base/command_line.h"
 #include "base/observer_list.h"
 #include "build/build_config.h"
 #include "build/chromeos_buildflags.h"
@@ -70,10 +71,12 @@ bool BookmarkTabHelper::ShouldShowBookmarkBar() const {
       !prefs->GetBoolean(bookmarks::prefs::kShowBookmarkBar))
     return false;
 
+  const std::string flag_value =
+    base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("bookmark-bar-ntp");
   // The bookmark bar is only shown on the NTP if the user
   // has added something to it.
   return IsNTP(web_contents()) && bookmark_model_ &&
-         bookmark_model_->HasBookmarks();
+         bookmark_model_->HasBookmarks() && (flag_value != "never");
 }
 
 void BookmarkTabHelper::AddObserver(BookmarkTabHelperObserver* observer) {
