@@ -4081,6 +4081,21 @@ const FeatureEntry::Choice kBookmarkBarNewTab[] = {
      "bookmark-bar-ntp",
      "never"},
 };
+const FeatureEntry::Choice kOmniboxAutocompleteFiltering[] = {
+    {flags_ui::kGenericExperimentChoiceDefault, "", ""},
+    {"Search suggestions only",
+     "omnibox-autocomplete-filtering",
+     "search"},
+    {"Search suggestions and bookmarks",
+     "omnibox-autocomplete-filtering",
+     "search-bookmarks"},
+    {"Search suggestions and internal chrome pages",
+     "omnibox-autocomplete-filtering",
+     "search-chrome"},
+    {"Search suggestions, bookmarks, and internal chrome pages",
+     "omnibox-autocomplete-filtering",
+     "search-bookmarks-chrome"},
+};
 
 // RECORDING USER METRICS FOR FLAGS:
 // -----------------------------------------------------------------------------
@@ -11430,6 +11445,14 @@ const FeatureEntry kFeatureEntries[] = {
      "Bookmark Bar on New-Tab-Page",
      "Disable the Bookmark Bar on the New-Tab-Page. ungoogled-chromium flag.",
      kOsDesktop, MULTI_VALUE_TYPE(kBookmarkBarNewTab)},
+    {"remove-grab-handle",
+     "Remove Grab Handle",
+     "Removes the reserved empty space in the tabstrip for moving the window. ungoogled-chromium flag",
+     kOsDesktop, SINGLE_VALUE_TYPE("remove-grab-handle")},
+    {"omnibox-autocomplete-filtering",
+     "Omnibox Autocomplete Filtering",
+     "Restrict omnibox autocomplete results to a combination of search suggestions (if enabled), bookmarks, and internal chrome pages. ungoogled-chromium flag.",
+     kOsAll, MULTI_VALUE_TYPE(kOmniboxAutocompleteFiltering)},
     // NOTE: Adding a new flag requires adding a corresponding entry to enum
     // "LoginCustomFlags" in tools/metrics/histograms/enums.xml. See "Flag
     // Histograms" in tools/metrics/histograms/README.md (run the
