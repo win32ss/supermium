@@ -4,6 +4,7 @@
 
 #include "chrome/browser/sharing_hub/sharing_hub_features.h"
 
+#include "base/command_line.h"
 #include "build/build_config.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/share/share_features.h"
@@ -37,6 +38,8 @@ bool ScreenshotsDisabledByPolicy(content::BrowserContext* context) {
 }  // namespace
 
 bool SharingHubOmniboxEnabled(content::BrowserContext* context) {
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("disable-sharing-hub")) 
+	  return false;
 #if BUILDFLAG(IS_CHROMEOS)
   return false;
 #else

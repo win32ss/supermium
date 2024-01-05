@@ -379,7 +379,8 @@ void ToolbarView::Init() {
     if (base::FeatureList::IsEnabled(features::kSidePanelPinning)) {
       // TODO(b:299463334): Use the new SidePanelContainer which supports
       // ActionItems
-    } else if (companion::IsCompanionFeatureEnabled()) {
+    } else if (companion::IsCompanionFeatureEnabled() &&
+      !base::CommandLine::ForCurrentProcess()->HasSwitch("hide-sidepanel-button")) {
       side_panel_toolbar_container =
           std::make_unique<SidePanelToolbarContainer>(browser_view_);
     } else {
@@ -392,7 +393,6 @@ void ToolbarView::Init() {
   forward_ = container_view_->AddChildView(std::move(forward));
   reload_ = container_view_->AddChildView(std::move(reload));
   home_ = container_view_->AddChildView(std::move(home));
-
   location_bar_ = container_view_->AddChildView(std::move(location_bar));
 
   if (extensions_container)

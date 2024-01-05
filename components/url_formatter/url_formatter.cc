@@ -9,6 +9,7 @@
 #include <utility>
 #include <vector>
 
+#include "base/command_line.h"
 #include "base/lazy_instance.h"
 #include "base/memory/raw_ptr.h"
 #include "base/numerics/safe_conversions.h"
@@ -310,6 +311,13 @@ IDNConversionResult IDNToUnicodeWithAdjustmentsImpl(
   std::u16string host16;
   host16.reserve(host.length());
   host16.insert(host16.end(), host.begin(), host.end());
+
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("force-punycode-hostnames")) {
+    // Leave as punycode.
+    IDNConversionResult result;
+    result.result = host16;
+    return result;
+  }
 
   // Compute the top level domain to be used in spoof checks later.
   base::StringPiece top_level_domain;

@@ -110,7 +110,8 @@ void AddInfoBarsIfNecessary(Browser* browser,
     return;
 
   // Web apps should not display the session restore bubble (crbug.com/1264121)
-  if (!is_web_app && HasPendingUncleanExit(browser->profile()))
+  if (!is_web_app && HasPendingUncleanExit(browser->profile()) &&
+      !startup_command_line.HasSwitch("hide-crashed-bubble"))
     SessionCrashedBubble::ShowIfNotOffTheRecordProfile(
         browser, /*skip_tab_checking=*/false);
 

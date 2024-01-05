@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <memory>
 
+#include "base/command_line.h"
 #include "base/feature_list.h"
 #include "base/functional/bind.h"
 #include "base/functional/callback_helpers.h"
@@ -32,6 +33,7 @@
 #include "chrome/browser/ui/views/frame/toolbar_button_provider.h"
 #include "chrome/browser/ui/views/toolbar/toolbar_action_hover_card_controller.h"
 #include "chrome/browser/ui/views/toolbar/toolbar_actions_bar_bubble_views.h"
+#include "chrome/browser/ui/views/toolbar/toolbar_view.h"
 #include "components/feature_engagement/public/event_constants.h"
 #include "content/public/browser/web_contents.h"
 #include "extensions/common/extension_features.h"
@@ -360,10 +362,20 @@ void ExtensionsToolbarContainer::AnchorAndShowWidgetImmediately(
   // * AnchorAndShowWidgetImmediately runs.
   // Revisit how to handle that, likely the Widget should Close on removal which
   // would remove the AnchoredWidget entry.
-  views::View* const anchor_view = GetViewForId(iter->extension_id);
+  views::View* anchor_view = GetViewForId(iter->extension_id);
   widget->widget_delegate()->AsBubbleDialogDelegate()->SetAnchorView(
       anchor_view && anchor_view->GetVisible() ? anchor_view
                                                : GetExtensionsButton());
+											   
+  // Fix the position of widgets. Without this fix, extension-installed-bubble
+  // and extension-uninstall-dialog may be out of the window border on Linux.
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("hide-extensions-menu"))
+  {
+    anchor_view = BrowserView::GetBrowserViewForBrowser(browser_)
+      ->toolbar_button_provider()->GetAppMenuButton();
+    widget->widget_delegate()->AsBubbleDialogDelegate()
+      ->SetAnchorView(anchor_view);
+  }
   widget->Show();
 }
 
@@ -908,6 +920,9 @@ void ExtensionsToolbarContainer::UpdateContainerVisibility() {
 }
 
 bool ExtensionsToolbarContainer::ShouldContainerBeVisible() const {
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("hide-extensions-menu"))
+    return false;
+
   // The container (and extensions-menu button) should not be visible if we have
   // no extensions.
   if (!HasAnyExtensions())

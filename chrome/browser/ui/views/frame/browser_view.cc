@@ -1868,6 +1868,9 @@ void BrowserView::UpdateExclusiveAccessExitBubbleContent(
     ExclusiveAccessBubbleHideCallback bubble_first_hide_callback,
     bool notify_download,
     bool force_update) {
+	if (base::CommandLine::ForCurrentProcess()->HasSwitch(
+          "hide-fullscreen-exit-ui"))
+		return;
   // Trusted pinned mode does not allow to escape. So do not show the bubble.
   bool is_trusted_pinned =
       platform_util::IsBrowserLockedFullscreen(browser_.get());
