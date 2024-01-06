@@ -11,6 +11,10 @@
 #include "build/build_config.h"
 #include "build/chromeos_buildflags.h"
 
+#if BUILDFLAG(IS_WIN)
+#include "base/win/windows_version.h"
+#endif
+
 #if BUILDFLAG(IS_ANDROID)
 #include "base/android/build_info.h"
 #endif
@@ -256,7 +260,8 @@ BASE_FEATURE(kPointerEventsForTouch,
 BASE_FEATURE(kTSFImeSupport, "TSFImeSupport", base::FEATURE_ENABLED_BY_DEFAULT);
 
 bool IsUsingWMPointerForTouch() {
-  return base::FeatureList::IsEnabled(kPointerEventsForTouch);
+  return base::win::GetVersion() >= base::win::Version::WIN8 &&
+			base::FeatureList::IsEnabled(kPointerEventsForTouch);
 }
 
 #endif  // BUILDFLAG(IS_WIN)
