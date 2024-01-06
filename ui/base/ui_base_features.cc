@@ -259,6 +259,11 @@ BASE_FEATURE(kPointerEventsForTouch,
 // Enables using TSF (over IMM32) for IME.
 BASE_FEATURE(kTSFImeSupport, "TSFImeSupport", base::FEATURE_ENABLED_BY_DEFAULT);
 
+bool IsUsingTSFForIME() {
+  return base::win::GetVersion() >= base::win::Version::VISTA &&
+			base::FeatureList::IsEnabled(kTSFImeSupport);
+}
+
 bool IsUsingWMPointerForTouch() {
   return base::win::GetVersion() >= base::win::Version::WIN8 &&
 			base::FeatureList::IsEnabled(kPointerEventsForTouch);

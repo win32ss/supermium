@@ -717,7 +717,7 @@ HRESULT TSFBridge::Initialize() {
   }
 
   // If we aren't supporting TSF early out.
-  if (!base::FeatureList::IsEnabled(features::kTSFImeSupport))
+  if (!features::IsUsingTSFForIME())
     return E_FAIL;
 
   auto delegate = std::make_unique<TSFBridgeImpl>();
@@ -733,7 +733,7 @@ void TSFBridge::InitializeForTesting() {
   if (!base::CurrentUIThread::IsSet()) {
     return;
   }
-  if (!base::FeatureList::IsEnabled(features::kTSFImeSupport))
+  if (!features::IsUsingTSFForIME())
     return;
   ReplaceThreadLocalTSFBridge(std::make_unique<MockTSFBridge>());
 }

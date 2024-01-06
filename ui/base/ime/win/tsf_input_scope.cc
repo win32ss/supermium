@@ -10,6 +10,7 @@
 #include "base/compiler_specific.h"
 #include "base/containers/contains.h"
 #include "base/task/current_thread.h"
+#include "base/win/windows_version.h"
 
 namespace ui::tsf_inputscope {
 namespace {
@@ -157,6 +158,10 @@ void InitializeTsfForInputScopes() {
   // Thread safety is not required because this function is under UI thread.
   if (!g_get_proc_done) {
     g_get_proc_done = true;
+
+   // For stability reasons, we do not support Windows XP.
+    if (base::win::GetVersion() < base::win::Version::VISTA)
+      return;
 
     HMODULE module = NULL;
     if (GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_PIN, L"msctf.dll",

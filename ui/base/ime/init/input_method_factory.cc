@@ -54,7 +54,7 @@ std::unique_ptr<InputMethod> CreateInputMethod(
     return base::WrapUnique(new MockInputMethod(ime_key_event_dispatcher));
 
 #if BUILDFLAG(IS_WIN)
-  if (base::FeatureList::IsEnabled(features::kTSFImeSupport)) {
+  if (features::IsUsingTSFForIME()) {
     return std::make_unique<InputMethodWinTSF>(ime_key_event_dispatcher,
                                                widget);
   }
