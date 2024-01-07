@@ -8,6 +8,7 @@
 #include "base/feature_list.h"
 
 namespace browsing_data::features {
+BASE_DECLARE_FEATURE(kClearDataOnExit);
 
 // Enable BrowsingDataLifetimeManager that periodically delete browsing data as
 // defined by the BrowsingDataLifetime policy.

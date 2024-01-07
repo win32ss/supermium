@@ -8,6 +8,7 @@
 #include "ui/gfx/geometry/size.h"
 
 #if BUILDFLAG(IS_WIN)
+#include "base/command_line.h"
 #include "chrome/browser/ui/browser.h"
 #include "chrome/browser/ui/ui_features.h"
 #include "ui/base/ui_base_features.h"
@@ -34,7 +35,8 @@ gfx::Size WindowFrameUtil::GetWindowsCaptionButtonAreaSize() {
 bool WindowFrameUtil::IsWindowsTabSearchCaptionButtonEnabled(
     const Browser* browser) {
 #if BUILDFLAG(IS_WIN)
-  return !features::IsChromeRefresh2023() && browser->is_type_normal();
+  return !features::IsChromeRefresh2023() && browser->is_type_normal() &&
+      !base::CommandLine::ForCurrentProcess()->HasSwitch("remove-tabsearch-button");
 #else
   return false;
 #endif  // BUILDFLAG(IS_WIN)

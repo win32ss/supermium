@@ -7,6 +7,8 @@
 #include "build/build_config.h"
 
 namespace browsing_data::features {
+BASE_FEATURE(kClearDataOnExit, "ClearDataOnExit", base::FEATURE_DISABLED_BY_DEFAULT);
+
 BASE_FEATURE(kEnableBrowsingDataLifetimeManager,
              "BrowsingDataLifetimeManager",
              base::FEATURE_ENABLED_BY_DEFAULT);

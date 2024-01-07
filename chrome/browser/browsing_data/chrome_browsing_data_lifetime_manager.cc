@@ -28,6 +28,7 @@
 #include "chrome/browser/sync/sync_service_factory.h"
 #include "chrome/common/chrome_switches.h"
 #include "chrome/common/pref_names.h"
+#include "components/browsing_data/core/features.h"
 #include "components/browsing_data/core/browsing_data_policies_utils.h"
 #include "components/browsing_data/core/pref_names.h"
 #include "components/keep_alive_registry/keep_alive_types.h"
@@ -147,6 +148,21 @@ class BrowsingDataRemoverObserver
   std::unique_ptr<ScopedKeepAlive> keep_alive_;
 #endif
 };
+
+uint64_t AllOriginTypeMask() {
+  return content::BrowsingDataRemover::ORIGIN_TYPE_PROTECTED_WEB |
+         content::BrowsingDataRemover::ORIGIN_TYPE_UNPROTECTED_WEB;
+}
+
+uint64_t AllRemoveMask() {
+  return content::BrowsingDataRemover::DATA_TYPE_CACHE |
+         content::BrowsingDataRemover::DATA_TYPE_DOWNLOADS |
+         chrome_browsing_data_remover::DATA_TYPE_CONTENT_SETTINGS |
+         chrome_browsing_data_remover::DATA_TYPE_FORM_DATA |
+         chrome_browsing_data_remover::DATA_TYPE_HISTORY |
+         chrome_browsing_data_remover::DATA_TYPE_PASSWORDS |
+         chrome_browsing_data_remover::DATA_TYPE_SITE_DATA;
+}
 
 uint64_t GetOriginTypeMask(const base::Value::List& data_types) {
   uint64_t result = 0;
@@ -315,9 +331,10 @@ void ChromeBrowsingDataLifetimeManager::ClearBrowsingDataForOnExitPolicy(
   const base::Value::List& data_types = profile_->GetPrefs()->GetList(
       browsing_data::prefs::kClearBrowsingDataOnExitList);
 
-  if (!data_types.empty() &&
+   bool cdoe = base::FeatureList::IsEnabled(browsing_data::features::kClearDataOnExit);
+   if (cdoe || (!data_types.empty() &&
       IsConditionSatisfiedForBrowsingDataRemoval(GetSyncTypesForPolicyPref(
-          profile_, browsing_data::prefs::kClearBrowsingDataOnExitList))) {
+          profile_, browsing_data::prefs::kClearBrowsingDataOnExitList)))) {
     profile_->GetPrefs()->SetBoolean(
         browsing_data::prefs::kClearBrowsingDataOnExitDeletionPending, true);
     auto* remover = profile_->GetBrowsingDataRemover();
@@ -328,8 +345,8 @@ void ChromeBrowsingDataLifetimeManager::ClearBrowsingDataForOnExitPolicy(
       DCHECK(keep_browser_alive);
 #endif
     remover->RemoveAndReply(base::Time(), base::Time::Max(),
-                            GetRemoveMask(data_types),
-                            GetOriginTypeMask(data_types),
+                            cdoe ? AllRemoveMask() : GetRemoveMask(data_types),
++                           cdoe ? AllOriginTypeMask() : GetOriginTypeMask(data_types),
                             BrowsingDataRemoverObserver::Create(
                                 remover, /*filterable_deletion=*/true, profile_,
                                 keep_browser_alive));

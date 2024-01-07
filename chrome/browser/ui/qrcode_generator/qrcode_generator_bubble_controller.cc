@@ -23,7 +23,7 @@ QRCodeGeneratorBubbleController::~QRCodeGeneratorBubbleController() {
 
 // static
 bool QRCodeGeneratorBubbleController::IsGeneratorAvailable(const GURL& url) {
-  if (!url.SchemeIsHTTPOrHTTPS())
+  if (!url.SchemeIsHTTPOrHTTPS() || base::FeatureList::IsEnabled(kDisableQRGenerator))
     return false;
 
   return true;

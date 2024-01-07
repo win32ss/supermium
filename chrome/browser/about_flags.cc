@@ -4096,6 +4096,15 @@ const FeatureEntry::Choice kOmniboxAutocompleteFiltering[] = {
      "omnibox-autocomplete-filtering",
      "search-bookmarks-chrome"},
 };
+const FeatureEntry::Choice kExtensionHandlingChoices[] = {
+    {flags_ui::kGenericExperimentChoiceDefault, "", ""},
+    {"Download as regular file",
+     "extension-mime-request-handling",
+     "download-as-regular-file"},
+    {"Always prompt for install",
+     "extension-mime-request-handling",
+     "always-prompt-for-install"},
+};
 
 // RECORDING USER METRICS FOR FLAGS:
 // -----------------------------------------------------------------------------
@@ -11481,6 +11490,34 @@ const FeatureEntry kFeatureEntries[] = {
      "Hide SidePanel Button",
      "Hides the SidePanel Button. ungoogled-chromium flag.",
      kOsDesktop, SINGLE_VALUE_TYPE("hide-sidepanel-button")},
+	{"hide-tab-close-buttons",
+     "Hide tab close buttons",
+     "Hides the close buttons on tabs. ungoogled-chromium flag.",
+     kOsDesktop, SINGLE_VALUE_TYPE("hide-tab-close-buttons")},
+    {"remove-tabsearch-button",
+     "Remove Tabsearch Button",
+     "Removes the tabsearch button from the tabstrip. ungoogled-chromium flag",
+     kOsDesktop, SINGLE_VALUE_TYPE("remove-tabsearch-button")},
+    {"http-accept-header",
+     "Custom HTTP Accept Header",
+     "Set a custom value for the Accept header which is sent by the browser with every HTTP request.  (e.g. `text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8`). ungoogled-chromium flag.",
+     kOsAll, ORIGIN_LIST_VALUE_TYPE("http-accept-header", "")},
+    {"clear-data-on-exit",
+     "Clear data on exit",
+     "Clears all browsing data on exit. ungoogled-chromium flag",
+     kOsDesktop, FEATURE_VALUE_TYPE(browsing_data::features::kClearDataOnExit)},
+    {"extension-mime-request-handling",
+     "Handling of extension MIME type requests",
+     "Used when deciding how to handle a request for a CRX or User Script MIME type. ungoogled-chromium flag.",
+     kOsAll, MULTI_VALUE_TYPE(kExtensionHandlingChoices)},
+	{"keep-old-history",
+     "Keep old history",
+     "Keep history older than 3 months. ungoogled-chromium flag",
+     kOsAll, SINGLE_VALUE_TYPE("keep-old-history")},
+	{"disable-qr-generator",
+     "Disable QR Generator",
+     "Disables the QR generator for sharing page links. ungoogled-chromium flag",
+     kOsDesktop, FEATURE_VALUE_TYPE(kDisableQRGenerator)}
     // NOTE: Adding a new flag requires adding a corresponding entry to enum
     // "LoginCustomFlags" in tools/metrics/histograms/enums.xml. See "Flag
     // Histograms" in tools/metrics/histograms/README.md (run the

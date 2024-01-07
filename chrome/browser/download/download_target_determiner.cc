@@ -1194,10 +1194,12 @@ DownloadConfirmationReason DownloadTargetDeterminer::NeedsConfirmation(
     return DownloadConfirmationReason::SAVE_AS;
 
 #if BUILDFLAG(ENABLE_EXTENSIONS)
-  // Don't prompt for extension downloads if the installation site is white
-  // listed.
-  if (download_crx_util::IsTrustedExtensionDownload(GetProfile(), *download_))
-    return DownloadConfirmationReason::NONE;
+if (!download_crx_util::ShouldDownloadAsRegularFile()) {
+    // Don't prompt for extension downloads.
+    if (download_crx_util::IsTrustedExtensionDownload(GetProfile(), *download_) ||
+        filename.MatchesExtension(extensions::kExtensionFileExtension))
+      return DownloadConfirmationReason::NONE;
+  }
 #endif
 
   // Don't prompt for file types that are marked for opening automatically.

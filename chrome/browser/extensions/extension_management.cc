@@ -8,6 +8,7 @@
 #include <string>
 #include <utility>
 
+#include "base/command_line.h"
 #include "base/containers/contains.h"
 #include "base/feature_list.h"
 #include "base/functional/bind.h"
@@ -253,6 +254,13 @@ bool ExtensionManagement::IsInstallationExplicitlyBlocked(
 bool ExtensionManagement::IsOffstoreInstallAllowed(
     const GURL& url,
     const GURL& referrer_url) const {
+   const base::CommandLine& command_line =
+      *base::CommandLine::ForCurrentProcess();
+  if (command_line.HasSwitch("extension-mime-request-handling") &&
+      command_line.GetSwitchValueASCII("extension-mime-request-handling") ==
+      "always-prompt-for-install") {
+    return true;
+  }
   // No allowed install sites specified, disallow by default.
   if (!global_settings_->install_sources.has_value())
     return false;

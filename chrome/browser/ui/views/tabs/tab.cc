@@ -1041,8 +1041,12 @@ void Tab::UpdateIconVisibility() {
   if (IsActive()) {
     // Close button is shown on active tabs regardless of the size.
     showing_close_button_ = true;
+	 if (base::CommandLine::ForCurrentProcess()->HasSwitch("hide-tab-close-buttons")) {
+      showing_close_button_ = false;
+    } else {
     available_width -= close_button_width;
-
+    }
+	
     showing_alert_indicator_ =
         has_alert_icon && alert_icon_width <= available_width;
     if (showing_alert_indicator_)
@@ -1062,6 +1066,8 @@ void Tab::UpdateIconVisibility() {
       available_width -= favicon_width;
 
     showing_close_button_ = large_enough_for_close_button;
+	if (base::CommandLine::ForCurrentProcess()->HasSwitch("hide-tab-close-buttons"))
+      showing_close_button_ = false;
     if (showing_close_button_)
       available_width -= close_button_width;
 

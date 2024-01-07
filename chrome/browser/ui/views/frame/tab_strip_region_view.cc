@@ -4,6 +4,7 @@
 
 #include "chrome/browser/ui/views/frame/tab_strip_region_view.h"
 
+#include "base/command_line.h"
 #include "base/functional/bind.h"
 #include "base/strings/utf_string_conversions.h"
 #include "build/build_config.h"
@@ -99,7 +100,8 @@ TabStripRegionView::TabStripRegionView(std::unique_ptr<TabStrip> tab_strip)
 
   // Add and configure the TabSearchContainer.
   std::unique_ptr<TabSearchContainer> tab_search_container;
-  if (browser && browser->is_type_normal()) {
+  if (browser && browser->is_type_normal() &&
+      !base::CommandLine::ForCurrentProcess()->HasSwitch("remove-tabsearch-button")) {
     tab_search_container = std::make_unique<TabSearchContainer>(
         tab_strip_, render_tab_search_before_tab_strip_);
     tab_search_container->SetProperty(views::kCrossAxisAlignmentKey,

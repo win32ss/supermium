@@ -13,6 +13,8 @@ BASE_DECLARE_FEATURE(kClickToCall);
 // Feature flag for matching device expiration to pulse interval.
 BASE_DECLARE_FEATURE(kSharingMatchPulseInterval);
 
+BASE_DECLARE_FEATURE(kDisableQRGenerator);
+
 // The delta from the pulse interval in hours after which a device is considered
 // expired, for Desktop devices. Chrome on Desktop is expected to update the
 // last updated timestamp quite frequently because it can do this when
