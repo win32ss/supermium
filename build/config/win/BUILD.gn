@@ -133,6 +133,8 @@ config("compiler") {
     if (current_cpu == "x86" || current_cpu == "x64") {
         if (target_cpu == "x64") {
           cflags += [ "-msse3" ]
+        } else {
+          cflags += [ "-mmmx", "-mfxsr", "-msse", "-msse2", "/arch:SSE2" ]
         }
     }
 
