@@ -632,7 +632,7 @@ config("static_crt") {
 
 # This is appended to the subsystem to specify a minimum version.
 # The number after the comma is the minimum required OS version.
-# Set to NT 5.0 since this is for Windows 200/XP/Vista
+# Set to NT 5.0 since this is for Windows 2000/XP/Vista
 subsystem_version_suffix = ",5.00"
 
 config("console") {
