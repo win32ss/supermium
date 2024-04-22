@@ -132,9 +132,9 @@ config("compiler") {
     # next step after SSE2 will be AVX.
     if (current_cpu == "x86" || current_cpu == "x64") {
         if (target_cpu == "x64") {
-          cflags += [ "-msse3" ]
+          cflags += [ "/O2", "-msse3" ]
         } else {
-          cflags += [ "-mmmx", "-mfxsr", "-msse", "-msse2" ]
+          cflags += [ "/O2", "-mmmx", "-mfxsr", "-msse", "-msse2" ]
         }
     }
 
