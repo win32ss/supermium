@@ -437,7 +437,7 @@ bool LocationBarView::IsInitialized() const {
 
 int LocationBarView::GetBorderRadius() const {
   if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox"))
-	  return 0;
+	  return 3;
   return ChromeLayoutProvider::Get()->GetCornerRadiusMetric(
       views::Emphasis::kMaximum, size());
 }
@@ -1157,7 +1157,7 @@ void LocationBarView::RefreshBackground() {
     // applied.
     border_color = color_provider->GetColor(kColorLocationBarBorderOnMismatch);
   }
-  if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox"))
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox-border"))
 	  border_color = SK_ColorBLACK;
     if (is_popup_mode_) {
     SetBackground(views::CreateSolidBackground(background_color));
@@ -1170,7 +1170,7 @@ void LocationBarView::RefreshBackground() {
   // Keep the views::Textfield in sync. It needs an opaque background to
   // correctly enable subpixel AA.
   omnibox_view_->SetBackgroundColor(background_color);
-  if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox"))
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox-border"))
 	omnibox_view_->SetBorder(views::CreateSolidSidedBorder(gfx::Insets::TLBR(1, 0, 1, 0), SK_ColorBLACK));
   SchedulePaint();
 }
