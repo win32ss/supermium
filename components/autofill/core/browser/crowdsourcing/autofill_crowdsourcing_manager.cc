@@ -808,7 +808,10 @@ bool AutofillCrowdsourcingManager::StartRequest(FormRequestData request_data) {
   // visible to a page. See crbug/1176635#c22.
   DCHECK((request_data.request_type == RequestType::kRequestUpload) ==
          !request_data.isolation_info);
-
+		 
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("ungoogled-supermium"))
+	return false;
+  
   // Get the URL and method to use for this request.
   auto [request_url, method] = GetRequestURLAndMethod(request_data);
 

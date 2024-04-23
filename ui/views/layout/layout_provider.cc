@@ -206,7 +206,7 @@ ShapeSysTokens GetShapeSysToken(ShapeContextTokens id) {
 
 int LayoutProvider::GetCornerRadiusMetric(ShapeContextTokens id,
                                           const gfx::Size& size) const {
-  if (!base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox"))
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox"))
 	  return 3;
   if (!features::IsChromeRefresh2023()) {
     switch (id) {

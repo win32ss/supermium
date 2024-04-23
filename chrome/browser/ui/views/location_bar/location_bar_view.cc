@@ -393,7 +393,8 @@ void LocationBarView::Init() {
   if (browser_) {
     if (sharing_hub::HasPageAction(profile_, is_popup_mode_) &&
         !features::IsChromeRefresh2023()) {
-      params.types_enabled.push_back(PageActionIconType::kSharingHub);
+	  if (!base::CommandLine::ForCurrentProcess()->HasSwitch("disable-sharing-hub"))
+		params.types_enabled.push_back(PageActionIconType::kSharingHub);
     }
   }
   if (browser_ && !is_popup_mode_)
@@ -1158,7 +1159,7 @@ void LocationBarView::RefreshBackground() {
     border_color = color_provider->GetColor(kColorLocationBarBorderOnMismatch);
   }
   if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox-border"))
-	  border_color = SK_ColorBLACK;
+	  border_color = SK_ColorGRAY;
     if (is_popup_mode_) {
     SetBackground(views::CreateSolidBackground(background_color));
     } else {
@@ -1171,7 +1172,7 @@ void LocationBarView::RefreshBackground() {
   // correctly enable subpixel AA.
   omnibox_view_->SetBackgroundColor(background_color);
   if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox-border"))
-	omnibox_view_->SetBorder(views::CreateSolidSidedBorder(gfx::Insets::TLBR(1, 0, 1, 0), SK_ColorBLACK));
+	omnibox_view_->SetBorder(views::CreateSolidSidedBorder(gfx::Insets::TLBR(1, 0, 1, 0), SK_ColorGRAY));
   SchedulePaint();
 }
 

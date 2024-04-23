@@ -136,7 +136,7 @@ gfx::Rect BrowserFrameViewWin::GetBoundsForTabStripRegion(
     const gfx::Size& tabstrip_minimum_size) const {
   int x = CaptionButtonsOnLeadingEdge() ? CaptionButtonsRegionWidth() : 0;
   if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox"))
-	  x = 24;
+	  x = 8;
   int end_x = width();
   if (!CaptionButtonsOnLeadingEdge()) {
     end_x = std::min(width() - CaptionButtonsRegionWidth(), end_x);

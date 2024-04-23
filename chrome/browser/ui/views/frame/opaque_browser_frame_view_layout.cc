@@ -79,7 +79,7 @@ gfx::Rect OpaqueBrowserFrameViewLayout::GetBoundsForTabStripRegion(
     int total_width) const {
   int x = available_space_leading_x_;
   if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox"))
-	  x = 24;
+	  x = 8;
   const int available_width = available_space_trailing_x_ - x;
   return gfx::Rect(x, GetTabStripInsetsTop(false), std::max(0, available_width),
                    tabstrip_minimum_size.height());

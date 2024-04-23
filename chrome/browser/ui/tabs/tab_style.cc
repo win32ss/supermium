@@ -121,6 +121,8 @@ int GM2TabStyle::GetMinimumInactiveWidth() const {
 }
 
 int GM2TabStyle::GetTabOverlap() const {
+	if (base::CommandLine::ForCurrentProcess()->HasSwitch("rectangular-tabs"))
+	    return -6;
 	return GetBottomCornerRadius() * 2 + GetSeparatorSize().width();
 }
 
