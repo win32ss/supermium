@@ -1171,7 +1171,11 @@ void LocationBarView::RefreshBackground() {
   // Keep the views::Textfield in sync. It needs an opaque background to
   // correctly enable subpixel AA.
   omnibox_view_->SetBackgroundColor(background_color);
-  if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox-border"))
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox") &&
+      base::CommandLine::ForCurrentProcess()->HasSwitch("compact-ui"))
+        // When the location bar is shrunken, the border above is only drawn on the sides.
+        // To resolve this, an extra border is drawn in that area on the top and bottom.
+        // Ideally, only one border would be drawn.
 	omnibox_view_->SetBorder(views::CreateSolidSidedBorder(gfx::Insets::TLBR(1, 0, 1, 0), SK_ColorGRAY));
   SchedulePaint();
 }
