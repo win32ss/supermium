@@ -11419,7 +11419,7 @@ const FeatureEntry kFeatureEntries[] = {
     {"disable-webbloat-mitigation",
      "Disable Blockage Of Unnecessarily Bloated Web Elements",
      "Disable blockage of unnecessarily bloated web elements, including large images that can force the browser to allocate hundreds of megabytes of memory.",
-     kOsAll, SINGLE_VALUE_TYPE("native-ui-style")},
+     kOsAll, SINGLE_VALUE_TYPE("disable-webbloat-mitigation")},
 	// TODO: move all Supermium-specific flags to new source file.
 
     // NOTE: Adding a new flag requires adding a corresponding entry to enum

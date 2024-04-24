@@ -12,6 +12,7 @@
 #include "base/command_line.h"
 #include "base/functional/callback_helpers.h"
 #include "base/hash/hash.h"
+#include "base/logging.h"
 #include "base/memory/discardable_memory_allocator.h"
 #include "base/metrics/histogram_macros.h"
 #include "base/process/memory.h"
@@ -73,8 +74,10 @@ SoftwareImageDecodeCacheUtils::DoDecodeImage(
   const SkISize target_size =
       SkISize::Make(key.target_size().width(), key.target_size().height());
   if(!base::CommandLine::ForCurrentProcess()->HasSwitch("disable-webbloat-mitigation") &&
-     (target_size.fWidth * target_size.fHeight) > 1000000)
+     (target_size.fWidth * target_size.fHeight) > 1000000) {
+	  LOG(ERROR) << "Supermium attempted to load an image of size " << target_size.fWidth * target_size.fHeight " pixels";
 	  return nullptr;
+  }
   DCHECK(target_size == paint_image.GetSupportedDecodeSize(target_size));
   sk_sp<SkColorSpace> target_color_space =
       key.target_color_params().color_space.ToSkColorSpace();
