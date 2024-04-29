@@ -295,9 +295,9 @@ vars = {
   'chrome_git': 'https://chrome-internal.googlesource.com',
   'chromium_git': 'https://chromium.googlesource.com',
   'dawn_git': 'https://dawn.googlesource.com',
-  'pdfium_git': 'https://pdfium.googlesource.com',
+  'pdfium_git': 'https://github.com/Alex313031/pdfium-supermium',
   'quiche_git': 'https://quiche.googlesource.com',
-  'skia_git': 'https://skia.googlesource.com',
+  'skia_git': 'https://github.com/Alex313031/skia-supermium',
   'swiftshader_git': 'https://swiftshader.googlesource.com',
   'webrtc_git': 'https://webrtc.googlesource.com',
   'betocore_git': 'https://beto-core.googlesource.com',
@@ -308,7 +308,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': '8464f41cf051974e499be9caeab3243506e025c2',
+  'skia_revision': '6ad6899794e9cfea256f4dda2ca69fc9895ad756',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
@@ -324,7 +324,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling PDFium
   # and whatever else without interference from each other.
-  'pdfium_revision': '4c4f9ab25dab142d7888f3258ab54df24b97b44f',
+  'pdfium_revision': 'c84236ccec55c19cfe98e9bef61fbc555ef1b12a',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling BoringSSL
   # and whatever else without interference from each other.
@@ -526,6 +526,7 @@ allowed_hosts = [
   'chromium.googlesource.com',
   'dawn.googlesource.com',
   'pdfium.googlesource.com',
+  'github.com,
   'quiche.googlesource.com',
   'skia.googlesource.com',
   'swiftshader.googlesource.com',
