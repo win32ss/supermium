@@ -442,7 +442,7 @@
 	gclient-condition = checkout_openxr
 [submodule "third_party/pdfium"]
 	path = third_party/pdfium
-	url = https://pdfium.googlesource.com/pdfium
+	url = https://github.com/Alex313031/pdfium-supermium
 [submodule "third_party/perfetto"]
 	path = third_party/perfetto
 	url = https://android.googlesource.com/platform/external/perfetto
@@ -475,7 +475,7 @@
 	url = https://chromium.googlesource.com/external/github.com/google/ruy
 [submodule "third_party/skia"]
 	path = third_party/skia
-	url = https://skia.googlesource.com/skia
+	url = https://github.com/Alex313031/skia-supermium
 [submodule "third_party/smhasher/src"]
 	path = third_party/smhasher/src
 	url = https://chromium.googlesource.com/external/smhasher
