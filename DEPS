@@ -1659,7 +1659,7 @@ deps = {
   },
 
   'src/third_party/pdfium':
-    Var('pdfium_git') + '/pdfium.git' + '@' +  Var('pdfium_revision'),
+    Var('pdfium_git') + '@' +  Var('pdfium_revision'),
 
   'src/third_party/perfetto':
     Var('android_git') + '/platform/external/perfetto.git' + '@' + '1e15d01da5d619ca617dcdd870efe3c35046a89c',
@@ -1743,7 +1743,7 @@ deps = {
     Var('chromium_git') + '/external/github.com/google/ruy.git' + '@' + 'cd7b92695b5d3f0c9ff65b865c2a1e19b99d766d',
 
   'src/third_party/skia':
-    Var('skia_git') + '/skia.git' + '@' +  Var('skia_revision'),
+    Var('skia_git') + '@' +  Var('skia_revision'),
 
   'src/third_party/smhasher/src':
     Var('chromium_git') + '/external/smhasher.git' + '@' + 'e87738e57558e0ec472b2fc3a643b838e5b6e88f',
