@@ -132,7 +132,12 @@ class SafeBrowsingNetworkContext::SharedURLLoaderFactory
     network_context_params->file_paths->unsandboxed_data_path = user_data_dir_;
     network_context_params->file_paths->trigger_migration = trigger_migration_;
     network_context_params->file_paths->cookie_database_name = base::FilePath(
-        base::FilePath::StringType(kSafeBrowsingBaseFilename) + kCookiesFile);
+		base::FilePath::StringType(kSafeBrowsingBaseFilename) + kCookiesFile);
+    // These are needed for PAC scripts that use FTP URLs.
+#if !BUILDFLAG(DISABLE_FTP_SUPPORT)
+    network_context_params->enable_ftp_url_support = true;
+#endif  // !BUILDFLAG(DISABLE_FTP_SUPPORT)
+ 
     network_context_params->enable_encrypted_cookies = false;
 
     return network_context_params;

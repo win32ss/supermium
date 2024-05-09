@@ -55,6 +55,10 @@ class URLRequestJobFactory;
 class URLRequestThrottlerManager;
 class URLRequestContextBuilder;
 
+#if !BUILDFLAG(DISABLE_FTP_SUPPORT)
+class FtpAuthCache;
+#endif  // !BUILDFLAG(DISABLE_FTP_SUPPORT)
+
 #if BUILDFLAG(ENABLE_REPORTING)
 class NetworkErrorLoggingService;
 class PersistentReportingAndNelStore;
@@ -226,6 +230,13 @@ class NET_EXPORT URLRequestContext final {
   // If != handles::kInvalidNetworkHandle, the network which this
   // context has been bound to.
   handles::NetworkHandle bound_network() const { return bound_network_; }
+  
+#if !BUILDFLAG(DISABLE_FTP_SUPPORT)
+  void set_ftp_auth_cache(FtpAuthCache* auth_cache) {
+    ftp_auth_cache_ = auth_cache;
+  }
+  FtpAuthCache* ftp_auth_cache() { return ftp_auth_cache_; }
+#endif  // !BUILDFLAG(DISABLE_FTP_SUPPORT)
 
   void AssertCalledOnValidThread() {
     DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
@@ -353,6 +364,10 @@ class NET_EXPORT URLRequestContext final {
   raw_ptr<NetworkQualityEstimator> network_quality_estimator_ = nullptr;
 
   std::unique_ptr<TransportSecurityPersister> transport_security_persister_;
+
+#if !BUILDFLAG(DISABLE_FTP_SUPPORT)
+  FtpAuthCache* ftp_auth_cache_;
+#endif  // !BUILDFLAG(DISABLE_FTP_SUPPORT)
 
   std::unique_ptr<std::set<const URLRequest*>> url_requests_;
 

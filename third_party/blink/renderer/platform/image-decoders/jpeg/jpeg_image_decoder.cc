@@ -1272,6 +1272,11 @@ void JPEGImageDecoder::Decode(DecodingMode decoding_mode) {
     reader_->SetData(data_);
   }
 
+  total_size += data_->size();
+
+ if (((reader_->Info()->output_width * reader_->Info()->output_height * 4) / 100) > total_size && IsAllDataReceived())
+	 return;
+
   // If we couldn't decode the image but have received all the data, decoding
   // has failed.
   if (!reader_->Decode(decoding_mode) && IsAllDataReceived()) {

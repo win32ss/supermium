@@ -78,19 +78,6 @@ SoftwareImageDecodeCacheUtils::DoDecodeImage(
     base::OnceClosure on_no_memory) {
   const SkISize target_size =
       SkISize::Make(key.target_size().width(), key.target_size().height());
-#if BUILDFLAG (IS_WIN) && _M_IX86
-  // Supermium (#507): options for limiting the size of loaded images are very limited.
-  // Insufficient information is available at all levels on the size of the image data.
-  // So the best that can be done is to block image loading if it will increase the memory usage
-  // of a 32 bit process to more than 1.1 GB.
-  PROCESS_MEMORY_COUNTERS pmc;
-  if(!base::CommandLine::ForCurrentProcess()->HasSwitch("disable-webbloat-mitigation") &&
-     ::GetProcessMemoryInfo(::GetCurrentProcess(), &pmc, sizeof(PROCESS_MEMORY_COUNTERS)) && 
-     (target_size.fWidth * target_size.fHeight * 4) + pmc.PagefileUsage > 1100000000) {
-	  LOG(ERROR) << "Supermium attempted to load an image of size " << target_size.fWidth * target_size.fHeight << " pixels";
-	  return nullptr;
-  }
-#endif
   DCHECK(target_size == paint_image.GetSupportedDecodeSize(target_size));
   sk_sp<SkColorSpace> target_color_space =
       key.target_color_params().color_space.ToSkColorSpace();

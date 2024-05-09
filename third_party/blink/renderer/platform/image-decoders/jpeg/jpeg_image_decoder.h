@@ -106,6 +106,7 @@ class PLATFORM_EXPORT JPEGImageDecoder final : public ImageDecoder {
   const wtf_size_t offset_;
   gfx::Size decoded_size_;
   Vector<SkISize> supported_decode_sizes_;
+  unsigned int total_size = 0;
 };
 
 }  // namespace blink

@@ -26,6 +26,7 @@
 #import "ios/web/public/thread/web_thread.h"
 #import "net/cookies/cookie_store.h"
 #import "net/disk_cache/disk_cache.h"
+#include "net/ftp/ftp_network_layer.h"
 #import "net/http/http_cache.h"
 #import "net/http/http_network_session.h"
 #import "net/http/http_server_properties.h"

@@ -2423,6 +2423,10 @@ RenderFrameImpl::GetRemoteAssociatedInterfaces() {
   return remote_associated_interfaces_.get();
 }
 
+bool RenderFrameImpl::IsFTPDirectoryListing() {
+  return frame_->GetDocumentLoader()->IsListingFtpDirectory();
+}
+
 void RenderFrameImpl::SetSelectedText(const std::u16string& selection_text,
                                       size_t offset,
                                       const gfx::Range& range) {

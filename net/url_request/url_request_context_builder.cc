@@ -54,6 +54,12 @@
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "url/url_constants.h"
 
+#if !BUILDFLAG(DISABLE_FTP_SUPPORT)
+#include "net/ftp/ftp_auth_cache.h"                // nogncheck
+#include "net/ftp/ftp_network_layer.h"             // nogncheck
+#include "net/url_request/ftp_protocol_handler.h"  // nogncheck
+#endif
+
 #if BUILDFLAG(ENABLE_REPORTING)
 #include "net/network_error_logging/network_error_logging_service.h"
 #include "net/network_error_logging/persistent_reporting_and_nel_store.h"
@@ -562,6 +568,8 @@ std::unique_ptr<URLRequestContext> URLRequestContextBuilder::Build() {
 
   std::unique_ptr<URLRequestJobFactory> job_factory =
       std::make_unique<URLRequestJobFactory>();
+  // Adds caller-provided protocol handlers first so that these handlers are
+  // used over the ftp handler below.
   for (auto& scheme_handler : protocol_handlers_) {
     job_factory->SetProtocolHandler(scheme_handler.first,
                                     std::move(scheme_handler.second));
@@ -571,8 +579,19 @@ std::unique_ptr<URLRequestContext> URLRequestContextBuilder::Build() {
   job_factory->SetProtocolHandler(url::kTraceScheme,
                                   std::make_unique<TrkProtocolHandler>());
 
-  context->set_job_factory(std::move(job_factory));
+  
+  
+#if !BUILDFLAG(DISABLE_FTP_SUPPORT)
+  if (ftp_enabled_) {
+    context->set_ftp_auth_cache(new FtpAuthCache());
+    job_factory->SetProtocolHandler(
+       url::kFtpScheme, FtpProtocolHandler::Create(context->host_resolver(),
+                                                   context->ftp_auth_cache()));
+  }
+#endif  // !BUILDFLAG(DISABLE_FTP_SUPPORT)
 
+  context->set_job_factory(std::move(job_factory));
+  
   if (cookie_deprecation_label_.has_value()) {
     context->set_cookie_deprecation_label(*cookie_deprecation_label_);
   }

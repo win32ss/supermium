@@ -8127,6 +8127,12 @@ const FeatureEntry kFeatureEntries[] = {
      FEATURE_VALUE_TYPE(
          heavy_ad_intervention::features::kHeavyAdPrivacyMitigations)},
 
+#if !BUILDFLAG(DISABLE_FTP_SUPPORT)
+    {"enable-ftp", flag_descriptions::kEnableFtpName,
+     flag_descriptions::kEnableFtpDescription, kOsAll,
+     FEATURE_VALUE_TYPE(network::features::kFtpProtocol)},
+#endif
+
 #if BUILDFLAG(IS_CHROMEOS_ASH)
     {"crostini-container-install",
      flag_descriptions::kCrostiniContainerInstallName,

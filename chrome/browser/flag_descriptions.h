@@ -229,6 +229,10 @@ extern const char kFilterWebsitesForSupervisedUsersOnDesktopName[];
 extern const char kFilterWebsitesForSupervisedUsersOnDesktopDescription[];
 
 extern const char kEnableExtensionsPermissionsForSupervisedUsersOnDesktopName[];
+
+extern const char kEnableFtpName[];
+extern const char kEnableFtpDescription[];
+
 extern const char
     kEnableExtensionsPermissionsForSupervisedUsersOnDesktopDescription[];
 

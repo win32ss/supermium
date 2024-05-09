@@ -422,6 +422,8 @@ SkPath GM2TabStyleViews::GetPath(TabStyle::PathType path_type,
 			path.cubicTo(tab_right - 4, (tab_top * 0.5), (((tab_right - 4) + right) / 2), (((tab_top * 0.5) + extended_bottom) / 2), right,
 					  extended_bottom);
 		}
+		if(!force_active)
+	        path.close();
 	}
   }
 
