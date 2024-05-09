@@ -526,7 +526,7 @@ allowed_hosts = [
   'chromium.googlesource.com',
   'dawn.googlesource.com',
   'pdfium.googlesource.com',
-  'github.com,
+  'github.com',
   'quiche.googlesource.com',
   'skia.googlesource.com',
   'swiftshader.googlesource.com',
