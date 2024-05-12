@@ -1548,10 +1548,10 @@ const wchar_t* ShellUtil::kDefaultFileAssociations[] = {
 const wchar_t* ShellUtil::kPotentialFileAssociations[] = {
     L".htm", L".html",  L".pdf",  L".shtml", L".svg",
     L".xht", L".xhtml", L".webp", nullptr};
-const wchar_t* ShellUtil::kBrowserProtocolAssociations[] = {L"http", L"https",
+const wchar_t* ShellUtil::kBrowserProtocolAssociations[] = {L"ftp", L"http", L"https",
                                                             nullptr};
 const wchar_t* ShellUtil::kPotentialProtocolAssociations[] = {
-    L"http", L"https", L"irc",   L"mailto", L"mms", L"news",   L"nntp",
+    L"ftp", L"http", L"https", L"irc",   L"mailto", L"mms", L"news",   L"nntp",
     L"sms",  L"smsto", L"snews", L"tel",    L"urn", L"webcal", nullptr};
 const wchar_t* ShellUtil::kRegUrlProtocol = L"URL Protocol";
 const wchar_t* ShellUtil::kRegApplication = L"\\Application";
