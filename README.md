@@ -35,6 +35,10 @@ The Supermium web browser also provides the following features:
 
 **Future support for:**
 
+-Windows 98
+
+-Windows ME
+
 -Windows 2000
 
 -Ungoogled Chromium features (in progress)
