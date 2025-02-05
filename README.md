@@ -1,17 +1,17 @@
-![supermium logo + wordmark fw](https://github.com/win32ss/supermium/assets/68521531/f34ceb1c-15b2-4818-af1f-c0251c77af2f)
+![oldermium logo + wordmark fw](placeholder)
 
-# Supermium
+# Oldermium
 
-**Latest progwrp.dll (version 1.1.0.5022) - included in Supermium 126 R3**
-This Supermium component sees enhancements and improvements from time to time, mostly for operating systems before Windows Vista.
+**Latest progwrp.dll (version 1.1.0.5022) - included in Oldermium 132**
+This Oldermium component sees enhancements and improvements from time to time, mostly for operating systems before Windows Vista.
 
-x86: [progwrp_32.zip](https://github.com/user-attachments/files/16959048/progwrp_32.zip)
+x86: [progwrp_32.zip](placeholder)
 
-x64: [progwrp_64.zip](https://github.com/user-attachments/files/16959052/progwrp_64.zip)
+x64: [progwrp_64.zip](placeholder)
 
-An up-to-date Chromium-based web browser compatible with Windows XP, 2003, Vista, 7 and 8.x.
+An up-to-date Chromium-based web browser compatible with Windows 2000, XP, 2003, Vista, 7 and 8.x.
 
-The Supermium web browser also provides the following features:
+The Oldermium web browser also provides the following features:
 
 -Aero Glass and Aero Glass-style titlebars instead of Windows 10-style ones (#force-xp-theme in chrome://flags for the latter)
 
