@@ -9,7 +9,7 @@ x86: [progwrp_32.zip](placeholder)
 
 x64: [progwrp_64.zip](placeholder)
 
-An up-to-date Chromium-based web browser compatible with Windows 2000, XP, 2003, Vista, 7 and 8.x.
+An up-to-date Chromium-based web browser compatible with Windows XP, 2003, Vista, 7 and 8.x.
 
 The Oldermium web browser also provides the following features:
 
