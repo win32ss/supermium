@@ -41,6 +41,10 @@ The Oldermium web browser also provides the following features:
 
 -WebGPU for D3D9 renderer
 
+-Android
+
+-Linux
+
 -Manifest V2 (once removed by Google)
 
 ...and more! If there's a feature you want, which cannot be replicated by a Manifest v2/v3 extension, please ask!
