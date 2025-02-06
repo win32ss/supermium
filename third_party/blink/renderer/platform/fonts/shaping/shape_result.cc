@@ -987,6 +987,14 @@ float ShapeResult::ApplySpacingImpl(
   return space;
 }
 
+void ShapeResult::DeallocRuns() 
+{
+	for(auto runs : this->runs_) {
+		delete(runs);
+		runs = nullptr;
+	}
+}
+
 float ShapeResult::ApplySpacing(ShapeResultSpacing<String>& spacing,
                                 int text_start_offset) {
   // For simplicity, we apply spacing once only. If you want to do multiple

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "base/command_line.h"
 #include "chrome/browser/ui/singleton_tabs.h"
 
 #include "chrome/browser/autocomplete/chrome_autocomplete_provider_client.h"
@@ -123,7 +124,8 @@ int GetIndexOfExistingTab(Browser* browser, const NavigateParams& params) {
     // RewriteURLIfNecessary removes the "view-source:" scheme which could lead
     // to incorrect matching, so ensure that the target and the candidate are
     // either both view-source:, or neither is.
-    if (tab_url.SchemeIs(content::kViewSourceScheme) != target_is_view_source) {
+    if (tab_url.SchemeIs(content::kViewSourceScheme) != target_is_view_source ||
+	   (base::CommandLine::ForCurrentProcess()->HasSwitch("ungoogled-supermium") && tab_url.SchemeIs(url::kTraceScheme))) {
       continue;
     }
 

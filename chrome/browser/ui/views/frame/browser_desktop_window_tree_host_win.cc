@@ -371,12 +371,20 @@ bool BrowserDesktopWindowTreeHostWin::GetDwmFrameInsetsInPixels(
     *insets = gfx::Insets();
   } else {
     // The glass should extend to the bottom of the tabstrip.
+    HWND hwnd = GetHWND();
     gfx::Rect tabstrip_region_bounds(browser_frame_->GetBoundsForTabStripRegion(
         browser_view_->tab_strip_region_view()->GetMinimumSize()));
-    tabstrip_region_bounds = display::win::ScreenWin::DIPToClientRect(
-        GetHWND(), tabstrip_region_bounds);
+    tabstrip_region_bounds =
+        display::win::ScreenWin::DIPToClientRect(hwnd, tabstrip_region_bounds);
 
-    *insets = gfx::Insets::TLBR(tabstrip_region_bounds.bottom(), 0, 0, 0);
+    // The 2 px (not DIP) at the inner edges of Win 7 glass are a light and dark
+    // line, so we must inset further to account for those.
+    constexpr int kWin7GlassInset = 2;
+    const int inset = (base::win::GetVersion() < base::win::Version::WIN8)
+                          ? kWin7GlassInset
+                          : 0;
+    *insets = gfx::Insets::TLBR(tabstrip_region_bounds.bottom() + inset, inset,
+                                inset, inset);
   }
   return true;
 }
@@ -469,6 +477,9 @@ void BrowserDesktopWindowTreeHostWin::PostHandleMSG(UINT message,
 }
 
 views::FrameMode BrowserDesktopWindowTreeHostWin::GetFrameMode() const {
+  if (browser_view_->GetIsWebAppType()) 
+	  return views::FrameMode::CUSTOM_DRAWN; 
+  
   const views::FrameMode system_frame_mode =
       ShouldBrowserCustomDrawTitlebar(browser_view_)
           ? views::FrameMode::SYSTEM_DRAWN_NO_CONTROLS
@@ -498,11 +509,13 @@ bool BrowserDesktopWindowTreeHostWin::ShouldUseNativeFrame() const {
   if (!browser_view_->browser())
     return false;
 
-  // We don't theme popup or app windows, so regardless of whether or not a
-  // theme is active for normal browser windows, we don't want to use the custom
-  // frame for popups/apps.
-  if (!browser_view_->GetIsNormalType())
-    return true;
+  // Use the custom frame where desired.
+  if (!browser_view_->GetIsNormalType()) {
+	 if(!browser_view_->GetIsWebAppType() && GetWidget()->GetThemeProvider()->ShouldUseNativeFrame())
+		return true;
+	 else
+		return false;
+  }
   // Otherwise, we use the native frame when we're told we should by the theme
   // provider (e.g. no custom theme is active).
   return GetWidget()->GetThemeProvider()->ShouldUseNativeFrame();

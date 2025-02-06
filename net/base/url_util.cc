@@ -16,6 +16,7 @@
 #include <string_view>
 
 #include "base/check_op.h"
+#include "base/command_line.h"
 #include "base/containers/fixed_flat_set.h"
 #include "base/strings/escape.h"
 #include "base/strings/strcat.h"
@@ -511,6 +512,8 @@ bool HasGoogleHost(const GURL& url) {
 }
 
 bool IsGoogleHost(std::string_view host) {
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("ungoogled-supermium"))
+	return false;
   static const char* kGoogleHostSuffixes[] = {
       ".google.com",
       ".youtube.com",

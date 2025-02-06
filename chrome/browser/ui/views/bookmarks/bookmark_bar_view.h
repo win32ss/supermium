@@ -131,8 +131,8 @@ class BookmarkBarView : public views::AccessiblePaneView,
 
   // Returns the button responsible for showing bookmarks in the
   // "Other Bookmarks" folder.
-  views::MenuButton* all_bookmarks_button() const {
-    return all_bookmarks_button_;
+  views::MenuButton* other_bookmarks_button() const {
+    return other_bookmarks_button_;
   }
 
   const tab_groups::SavedTabGroupBar* saved_tab_group_bar() const {
@@ -251,11 +251,7 @@ class BookmarkBarView : public views::AccessiblePaneView,
   friend class BookmarkBarViewEventTestBase;
 
   // Used to identify what the user is dropping onto.
-  enum DropButtonType {
-    DROP_BOOKMARK,
-    DROP_ALL_BOOKMARKS_FOLDER,
-    DROP_OVERFLOW
-  };
+  enum DropButtonType { DROP_BOOKMARK, DROP_OTHER_FOLDER, DROP_OVERFLOW };
 
   // Creates recent bookmark button and when visible button as well as
   // calculating the preferred height.
@@ -278,8 +274,8 @@ class BookmarkBarView : public views::AccessiblePaneView,
   // visible, this returns GetBookmarkButtonCount().
   size_t GetFirstHiddenNodeIndex() const;
 
-  // Creates the button showing the "All Bookmarks" folder.
-  std::unique_ptr<views::MenuButton> CreateAllBookmarksButton();
+  // Creates the button showing the "Other Bookmarks" folder.
+  std::unique_ptr<views::MenuButton> CreateOtherBookmarksButton();
 
   // Creates the button showing the "Managed Bookmarks" folder.
   std::unique_ptr<views::MenuButton> CreateManagedBookmarksButton();
@@ -429,7 +425,7 @@ class BookmarkBarView : public views::AccessiblePaneView,
   raw_ptr<tab_groups::SavedTabGroupBar> saved_tab_group_bar_ = nullptr;
 
   // Shows the "Other Bookmarks" folder button.
-  raw_ptr<views::MenuButton> all_bookmarks_button_ = nullptr;
+  raw_ptr<views::MenuButton> other_bookmarks_button_ = nullptr;
 
   // Shows the managed bookmarks entries.
   raw_ptr<views::MenuButton> managed_bookmarks_button_ = nullptr;

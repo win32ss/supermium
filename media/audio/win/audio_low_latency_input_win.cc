@@ -240,7 +240,6 @@ bool InitializeUWPSupport() {
     // Windows.Media.Effects and Windows.Media.Devices requires Windows 10 build
     // 10.0.10240.0.
     DCHECK_GE(base::win::OSInfo::GetInstance()->version_number().build, 10240u);
-
     return true;
   }();
 

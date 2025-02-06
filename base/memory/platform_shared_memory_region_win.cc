@@ -13,8 +13,12 @@
 #include "base/metrics/histogram_functions.h"
 #include "base/metrics/histogram_macros.h"
 #include "base/process/process_handle.h"
+#include "base/rand_util.h"
 #include "base/strings/string_util.h"
 #include "partition_alloc/page_allocator.h"
+#include "base/strings/stringprintf.h"
+#include "base/strings/utf_string_conversions.h"
+#include "base/win/windows_version.h"
 
 namespace base::subtle {
 
@@ -73,6 +77,7 @@ HANDLE CreateFileMappingWithReducedPermissions(SECURITY_ATTRIBUTES* sa,
   HANDLE h = CreateFileMapping(INVALID_HANDLE_VALUE, sa, PAGE_READWRITE, 0,
                                static_cast<DWORD>(rounded_size), name);
   if (!h) {
+     LOG(ERROR) << "CreateFileMappingW failed with error " << GetLastError() << ".";
     return nullptr;
   }
 
@@ -211,6 +216,20 @@ PlatformSharedMemoryRegion PlatformSharedMemoryRegion::Create(Mode mode,
   }
 
   std::u16string name;
+  if (win::GetVersion() < win::Version::WIN8_1) {
+    // Windows < 8.1 ignores DACLs on certain unnamed objects (like shared
+    // sections). So, we generate a random name when we need to enforce
+    // read-only.
+    uint64_t rand_values[4];
+    RandBytes(byte_span_from_ref(rand_values[0]));
+	RandBytes(byte_span_from_ref(rand_values[1]));
+	RandBytes(byte_span_from_ref(rand_values[2]));
+	RandBytes(byte_span_from_ref(rand_values[3]));
+    name = ASCIIToUTF16(StringPrintf("CrSharedMem_%016llx%016llx%016llx%016llx",
+                                     rand_values[0], rand_values[1],
+                                     rand_values[2], rand_values[3]));
+    DCHECK(!name.empty());
+  }
   SECURITY_ATTRIBUTES sa = {sizeof(sa), &sd, FALSE};
   // Ask for the file mapping with reduced permisions to avoid passing the
   // access control permissions granted by default into unpriviledged process.

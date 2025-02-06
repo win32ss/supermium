@@ -275,40 +275,11 @@ bool Process::SetPriority(Priority priority) {
   // priority inversion, and having a process put itself in background mode is
   // broken in Windows 11 22H2. So, it is no longer supported. See
   // https://crbug.com/1396155 for details.
+  // NOTE: NtSetInformationProcess call (SetProcessInformation really) using ProcessPowerThrottling class removed because it is useless before Windows 10.
   DCHECK(!is_current());
   const DWORD priority_class = priority == Priority::kBestEffort
                                    ? IDLE_PRIORITY_CLASS
                                    : NORMAL_PRIORITY_CLASS;
-
-  auto* os_info = base::win::OSInfo::GetInstance();
-  if (os_info->version() >= win::Version::WIN11) {
-    PROCESS_POWER_THROTTLING_STATE power_throttling;
-    RtlZeroMemory(&power_throttling, sizeof(power_throttling));
-    power_throttling.Version = PROCESS_POWER_THROTTLING_CURRENT_VERSION;
-
-    // EcoQoS is a Windows 11 only feature, but before 22H2, there is no way to
-    // query its current QoS state, GetProcessInformation API to read
-    // PROCESS_POWER_THROTTLING_STATE would fail. For kUserVisible, we
-    // intentionally exclude clients before 22H2 so that GetPriority() is
-    // consistent with SetPriority().
-    if (priority == Priority::kBestEffort ||
-        (priority == Priority::kUserVisible &&
-         os_info->version() >= win::Version::WIN11_22H2)) {
-      // Sets Eco QoS level.
-      power_throttling.ControlMask = PROCESS_POWER_THROTTLING_EXECUTION_SPEED;
-      power_throttling.StateMask = PROCESS_POWER_THROTTLING_EXECUTION_SPEED;
-    } else {
-      // Uses system default.
-      power_throttling.ControlMask = 0;
-      power_throttling.StateMask = 0;
-    }
-    bool ret =
-        ::SetProcessInformation(Handle(), ProcessPowerThrottling,
-                                &power_throttling, sizeof(power_throttling));
-    if (ret == 0) {
-      DPLOG(ERROR) << "Setting process QoS policy fails";
-    }
-  }
 
   return (::SetPriorityClass(Handle(), priority_class) != 0);
 }

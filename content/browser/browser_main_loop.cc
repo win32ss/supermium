@@ -200,6 +200,7 @@
 #include <shellapi.h>
 
 #include "base/threading/platform_thread_win.h"
+#include "content/browser/renderer_host/dwrite_font_lookup_table_builder_win.h"
 #include "net/base/winsock_init.h"
 #endif
 
@@ -1020,6 +1021,16 @@ int BrowserMainLoop::PreMainMessageLoopRun() {
   }
 
   variations::MaybeScheduleFakeCrash();
+
+#if BUILDFLAG(IS_WIN)
+  // ShellBrowserMainParts initializes a ShellBrowserContext with a profile
+  // directory only in PreMainMessageLoopRun(). DWriteFontLookupTableBuilder
+  // needs to access this directory, hence triggering after this stage has run.
+  if (base::FeatureList::IsEnabled(features::kFontSrcLocalMatching)) {
+    content::DWriteFontLookupTableBuilder::GetInstance()
+        ->SchedulePrepareFontUniqueNameTableIfNeeded();
+  }
+#endif  // BUILDFLAG(IS_WIN)
 
   // Unretained(this) is safe as the main message loop expected to run it is
   // stopped before ~BrowserMainLoop (in the event the message loop doesn't

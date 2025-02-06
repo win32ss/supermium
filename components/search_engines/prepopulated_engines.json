@@ -185,6 +185,18 @@
       "prefetch_likely_navigations" : "ALLOWED",
       "id": 1
     },
+	
+    "google_null": {
+      "name": "No Search",
+      "keyword": "nosearch",
+      "favicon_url": "about:blank",
+      "search_url": "http://{searchTerms}",
+      "new_tab_url": "about:blank",
+      "type": "SEARCH_ENGINE_GOOGLE",
+      "preconnect_to_search_url" : "ALLOWED",
+      "prefetch_likely_navigations" : "ALLOWED",
+      "id": 1
+    },
 
     "karma": {
       "name": "Karma Search",

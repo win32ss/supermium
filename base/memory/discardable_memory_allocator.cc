@@ -45,8 +45,6 @@ DiscardableMemoryAllocator::AllocateLockedDiscardableMemoryWithRetryOrDie(
   ReleaseFreeMemory();
 
   memory = allocator->AllocateLockedDiscardableMemory(size);
-  if (!memory)
-    TerminateBecauseOutOfMemory(size);
 
   return memory;
 }

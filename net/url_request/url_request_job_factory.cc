@@ -20,9 +20,9 @@ namespace {
 
 URLRequestInterceptor* g_interceptor_for_testing = nullptr;
 
-// TODO(mmenke): Look into removing this class and
-// URLRequestJobFactory::ProtocolHandlers completely. The only other subclass
-// is iOS-only.
+// TODO(mmenke): Once FTP support is removed, look into removing this class, and
+// URLRequestJobFactory::ProtocolHandlers completely. The only other subclass is
+// iOS-only.
 class HttpProtocolHandler : public URLRequestJobFactory::ProtocolHandler {
  public:
   // URLRequest::is_for_websockets() must match `is_for_websockets`, or requests

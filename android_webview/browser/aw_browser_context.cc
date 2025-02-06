@@ -590,6 +590,9 @@ void AwBrowserContext::ConfigureNetworkContextParams(
   // (http://crbug.com/921750).
   context_params->enforce_chrome_ct_policy = false;
 
+  // WebView does not support ftp yet.
+  context_params->enable_ftp_url_support = false;
+
   context_params->enable_brotli = true;
   context_params->enable_zstd =
       base::FeatureList::IsEnabled(net::features::kZstdContentEncoding);

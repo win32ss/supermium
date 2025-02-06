@@ -146,6 +146,11 @@ BASE_FEATURE(kLightweightExtensionOverrideConfirmations,
              base::FEATURE_ENABLED_BY_DEFAULT);
 #endif
 
+// Enables Bookmarks++ Side Panel UI.
+BASE_FEATURE(kPowerBookmarksSidePanel,
+             "PowerBookmarksSidePanel",
+             base::FEATURE_ENABLED_BY_DEFAULT);
+
 // Preloads a WebContents with a Top Chrome WebUI on BrowserView initialization,
 // so that it can be shown instantly at a later time when necessary.
 BASE_FEATURE(kPreloadTopChromeWebUI,

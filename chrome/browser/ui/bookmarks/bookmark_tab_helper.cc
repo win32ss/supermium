@@ -4,6 +4,7 @@
 
 #include "chrome/browser/ui/bookmarks/bookmark_tab_helper.h"
 
+#include "base/command_line.h"
 #include "base/observer_list.h"
 #include "build/build_config.h"
 #include "build/chromeos_buildflags.h"
@@ -39,6 +40,11 @@ bool IsNTP(content::WebContents* web_contents) {
   if (entry->IsInitialEntry())
     entry = web_contents->GetController().GetVisibleEntry();
   const GURL& url = entry->GetURL();
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("custom-ntp")) {
+    std::string ntp_location = base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("custom-ntp");
+	if(GURL(ntp_location).DeprecatedGetOriginAsURL() == url.DeprecatedGetOriginAsURL())
+		return true;
+  }
   return NewTabUI::IsNewTab(url) || NewTabPageUI::IsNewTabPageOrigin(url) ||
          NewTabPageThirdPartyUI::IsNewTabPageOrigin(url) ||
          search::NavEntryIsInstantNTP(web_contents, entry);
@@ -70,6 +76,9 @@ bool BookmarkTabHelper::ShouldShowBookmarkBar() const {
   if (prefs->IsManagedPreference(bookmarks::prefs::kShowBookmarkBar) &&
       !prefs->GetBoolean(bookmarks::prefs::kShowBookmarkBar))
     return false;
+	
+  const std::string flag_value = 
+     base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("bookmark-bar-ntp");
 
   const bool has_bookmarks = bookmark_model_ && bookmark_model_->HasBookmarks();
 
@@ -80,7 +89,7 @@ bool BookmarkTabHelper::ShouldShowBookmarkBar() const {
 
   // The bookmark bar is only shown on the NTP if the user
   // has added something to it.
-  return IsNTP(web_contents()) && (has_bookmarks || has_saved_tab_groups);
+  return IsNTP(web_contents()) && (has_bookmarks || has_saved_tab_groups) && (flag_value != "never");
 }
 
 void BookmarkTabHelper::AddObserver(BookmarkTabHelperObserver* observer) {

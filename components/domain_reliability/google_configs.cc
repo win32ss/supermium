@@ -6,6 +6,7 @@
 
 #include <memory>
 
+#include "base/command_line.h"
 #include "base/strings/string_util.h"
 #include "net/base/url_util.h"
 
@@ -565,22 +566,24 @@ std::unique_ptr<const DomainReliabilityConfig> MaybeGetGoogleConfig(
 
   std::unique_ptr<const DomainReliabilityConfig> config;
   std::unique_ptr<const DomainReliabilityConfig> superdomain_config;
-
-  for (const auto& params : kGoogleConfigs) {
-    if (params.hostname == hostname) {
-      config = CreateGoogleConfig(params, false);
-      break;
-    }
-    if (params.duplicate_for_www && is_www_subdomain &&
-        params.hostname == hostname_parent) {
-      config = CreateGoogleConfig(params, true);
-      break;
-    }
-    // Don't break out of the loop upon finding a superdomain config, because
-    // there might be an exact match later on.
-    if (params.include_subdomains && params.hostname == hostname_parent) {
-      superdomain_config = CreateGoogleConfig(params, false);
-    }
+  if (!base::CommandLine::ForCurrentProcess()->HasSwitch("ungoogled-supermium")) {
+	  for (const auto& params : kGoogleConfigs) {
+		if (params.hostname == hostname) {
+		  config = CreateGoogleConfig(params, false);
+		  break;
+		}
+		if (params.duplicate_for_www && is_www_subdomain &&
+			params.hostname == hostname_parent) {
+		  config = CreateGoogleConfig(params, true);
+		  break;
+		}
+		// Don't break out of the loop upon finding a superdomain config, because
+		// there might be an exact match later on.
+		if (params.include_subdomains && params.hostname == hostname_parent) {
+		  superdomain_config = CreateGoogleConfig(params, false);
+		}
+	  }
+  
   }
 
   if (config) {
@@ -601,10 +604,12 @@ std::vector<std::unique_ptr<const DomainReliabilityConfig>>
 GetAllGoogleConfigsForTesting() {
   std::vector<std::unique_ptr<const DomainReliabilityConfig>> configs_out;
 
-  for (const auto& params : kGoogleConfigs) {
-    configs_out.push_back(CreateGoogleConfig(params, false));
-    if (params.duplicate_for_www)
-      configs_out.push_back(CreateGoogleConfig(params, true));
+  if (!base::CommandLine::ForCurrentProcess()->HasSwitch("ungoogled-supermium")) {
+	  for (const auto& params : kGoogleConfigs) {
+		configs_out.push_back(CreateGoogleConfig(params, false));
+		if (params.duplicate_for_www)
+		  configs_out.push_back(CreateGoogleConfig(params, true));
+	  }
   }
   return configs_out;
 }

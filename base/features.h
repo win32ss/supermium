@@ -19,6 +19,15 @@ BASE_EXPORT BASE_DECLARE_FEATURE(kFeatureParamWithCache);
 
 BASE_EXPORT BASE_DECLARE_FEATURE(kUseRustJsonParser);
 
+BASE_EXPORT BASE_DECLARE_FEATURE(kForceDarkModeFlag);
+
+BASE_EXPORT BASE_DECLARE_FEATURE(kIncognitoBrandConsistencyForDesktop);
+
+#if BUILDFLAG(IS_WIN)
+BASE_EXPORT BASE_DECLARE_FEATURE(kForceGdi);
+#endif
+
+
 BASE_EXPORT extern const base::FeatureParam<bool>
     kUseRustJsonParserInCurrentSequence;
 

@@ -19,6 +19,9 @@ enum class WinHttpStatus {
   // Aborted by caller.
   kAborted,
 
+  // WinHttp binary failed to load.
+  kFunctionsNotLoaded,
+
   // WinHttpOpen() API failed.
   kWinHttpOpenFailed,
 

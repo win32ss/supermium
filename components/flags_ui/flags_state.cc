@@ -227,6 +227,10 @@ std::string GetCombinedOriginListValue(const FlagsStorage& flags_storage,
       command_line.GetSwitchValueASCII(command_line_switch);
   const std::string new_value =
       flags_storage.GetOriginListFlag(internal_entry_name);
+  if (command_line_switch == "custom-ntp") 
+	  return existing_value.empty() ? new_value : existing_value;
+  if (command_line_switch == "http-accept-header") 
+	  return existing_value.empty() ? new_value : existing_value;
   return CombineAndSanitizeOriginLists(existing_value, new_value);
 }
 
@@ -465,6 +469,8 @@ void FlagsState::SetOriginListFlag(const std::string& internal_name,
                                    const std::string& value,
                                    FlagsStorage* flags_storage) {
   const std::string new_value =
+      internal_name == "custom-ntp" ? value :
+	  internal_name == "http-accept-header" ? value :
       CombineAndSanitizeOriginLists(std::string(), value);
   flags_storage->SetOriginListFlag(internal_name, new_value);
 

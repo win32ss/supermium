@@ -809,7 +809,8 @@ void BookmarkMenuDelegate::BuildMenu(const BookmarkNode* parent,
                                      size_t start_child_index,
                                      MenuItemView* menu) {
   DCHECK_LE(start_child_index, parent->children().size());
-  if (parent == GetBookmarkModel()->other_node()) {
+  if (parent == GetBookmarkModel()->other_node() &&
+      base::FeatureList::IsEnabled(features::kPowerBookmarksSidePanel)) {
     ui::ImageModel bookmarks_side_panel_icon = ui::ImageModel::FromVectorIcon(
         kBookmarksSidePanelIcon, ui::kColorMenuIcon,
         ui::SimpleMenuModel::kDefaultIconSize);

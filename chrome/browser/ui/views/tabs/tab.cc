@@ -16,6 +16,7 @@
 #include <memory>
 #include <utility>
 
+#include "base/command_line.h"
 #include "base/debug/alias.h"
 #include "base/functional/bind.h"
 #include "base/i18n/rtl.h"
@@ -240,6 +241,11 @@ Tab::Tab(TabSlotController* controller)
   // need a manual suppression by detecting cases where the text is painted onto
   // onto opaque parts of a not-entirely-opaque layer.
   title_->SetSkipSubpixelRenderingOpacityCheck(true);
+
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("chrome-refresh-2023-top-chrome-font")) {
+     title_->SetTextContext(views::style::CONTEXT_LABEL);
+     title_->SetTextStyle(views::style::STYLE_BODY_4_EMPHASIS);
+  }
 
   AddChildView(title_.get());
 
@@ -570,7 +576,11 @@ void Tab::OnMouseReleased(const ui::MouseEvent& event) {
   // Close tab on middle click, but only if the button is released over the tab
   // (normal windows behavior is to discard presses of a UI element where the
   // releases happen off the element).
-  if (event.IsOnlyMiddleMouseButton()) {
+  if (event.IsOnlyMiddleMouseButton() ||
+    // Close tab on double click, mirror of IsOnlyMiddleMouseButton
+    // Based on gz83's work.
+    ((event.IsOnlyLeftMouseButton() && event.GetClickCount() == 2) && 
+      base::CommandLine::ForCurrentProcess()->HasSwitch("double-click-close-tab"))) {
     if (HitTestPoint(event.location())) {
       controller_->CloseTab(this, CLOSE_TAB_FROM_MOUSE);
     } else if (closing_) {
@@ -703,7 +713,9 @@ void Tab::OnGestureEvent(ui::GestureEvent* event) {
 }
 
 std::u16string Tab::GetTooltipText(const gfx::Point& p) const {
-  // Tab hover cards replace tooltips for tabs.
+  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("tab-hover-cards") == "tooltip")
+     return GetTooltipText(data_.title, GetAlertStateToShow(data_.alert_state));
+  // Tab hover cards don't replace tooltips for tabs in all cases ^.
   return std::u16string();
 }
 
@@ -1077,7 +1089,11 @@ void Tab::UpdateIconVisibility() {
     // Close button is shown on active tabs regardless of the size.
     showing_close_button_ = true;
 #endif  // BUILDFLAG(IS_CHROMEOS)
-    available_width -= close_button_width;
+	if (base::CommandLine::ForCurrentProcess()->HasSwitch("hide-tab-close-buttons")) {
+      showing_close_button_ = false;
+    } else {
+      available_width -= close_button_width;
+	}
 
     showing_alert_indicator_ =
         has_alert_icon && alert_icon_width <= available_width;
@@ -1106,6 +1122,8 @@ void Tab::UpdateIconVisibility() {
         !controller_->IsLockedForOnTask() &&
 #endif
         large_enough_for_close_button;
+	if (base::CommandLine::ForCurrentProcess()->HasSwitch("hide-tab-close-buttons"))
+      showing_close_button_ = false;
     if (showing_close_button_) {
       available_width -= close_button_width;
     }

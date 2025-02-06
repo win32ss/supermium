@@ -35,6 +35,8 @@ struct LazyDirectoryListerCacher {
               l10n_util::GetStringUTF8(IDS_DIRECTORY_LISTING_DATE_MODIFIED));
     value.Set("language",
               l10n_util::GetLanguage(base::i18n::GetConfiguredLocale()));
+	value.Set("listingParsingErrorBoxText",
+        l10n_util::GetStringUTF8(IDS_DIRECTORY_LISTING_PARSING_ERROR_BOX_TEXT));
     value.Set("textdirection", base::i18n::IsRTL() ? "rtl" : "ltr");
     std::string str = webui::GetI18nTemplateHtml(
         ui::ResourceBundle::GetSharedInstance().LoadDataResourceString(

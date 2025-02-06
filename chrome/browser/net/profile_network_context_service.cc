@@ -500,8 +500,13 @@ void ProfileNetworkContextService::ConfigureNetworkContextParams(
 
 void ProfileNetworkContextService::RegisterProfilePrefs(
     user_prefs::PrefRegistrySyncable* registry) {
-  registry->RegisterBooleanPref(embedder_support::kAlternateErrorPagesEnabled,
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("disable-captive-portals")) {
+     registry->RegisterBooleanPref(embedder_support::kAlternateErrorPagesEnabled,
+                                false);
+  } else {
+     registry->RegisterBooleanPref(embedder_support::kAlternateErrorPagesEnabled,
                                 true);
+  }
   registry->RegisterBooleanPref(prefs::kQuicAllowed, true);
   registry->RegisterBooleanPref(prefs::kGloballyScopeHTTPAuthCacheEnabled,
                                 false);
@@ -1369,6 +1374,15 @@ void ProfileNetworkContextService::ConfigureNetworkContextParamsInternal(
       continue;
     network_context_params->hsts_policy_bypass_list.push_back(*string_value);
   }
+
+  // NOTE(mmenke): Keep these protocol handlers and
+  // ProfileIOData::SetUpJobFactoryDefaultsForBuilder in sync with
+  // ProfileIOData::IsHandledProtocol().
+  // TODO(mmenke): Find a better way of handling tracking supported schemes.
+#if !BUILDFLAG(DISABLE_FTP_SUPPORT)
+  network_context_params->enable_ftp_url_support =
+      base::FeatureList::IsEnabled(network::features::kFtpProtocol);
+#endif  // !BUILDFLAG(DISABLE_FTP_SUPPORT)
 
   proxy_config_monitor_.AddToNetworkContextParams(network_context_params);
 

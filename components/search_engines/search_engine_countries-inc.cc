@@ -20,6 +20,7 @@
 // SearchEngineTier will be equal to kTopEngines for the top 5 engines,
 // kTyingEngines for tying 5+th engines and kRemainingEngines for the
 // remaining engines.
+
 enum class SearchEngineTier {
   kTopEngines = 1,
   kTyingEngines,
@@ -1450,7 +1451,11 @@ const std::vector<EngineAndTier> GetPrepopulationSetFromCountryID(
 
   std::vector<EngineAndTier> t_url;
   for (size_t i = 0; i < num_engines; i++) {
-    t_url.push_back(engines[i]);
+    if(base::CommandLine::ForCurrentProcess()->HasSwitch("ungoogled-supermium") && 
+		engines[i].search_engine->name == std::u16string(u"Google"))
+		t_url.push_back(EngineAndTier(SearchEngineTier::kTopEngines, &google_null));
+	else
+		t_url.push_back(engines[i]);
   }
   return t_url;
 }

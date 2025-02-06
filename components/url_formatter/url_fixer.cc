@@ -13,6 +13,8 @@
 
 #include <string_view>
 
+#include "base/containers/contains.h"
+#include "base/command_line.h"
 #include "base/check_op.h"
 #include "base/files/file_path.h"
 #include "base/files/file_util.h"
@@ -579,7 +581,9 @@ GURL FixupURLInternal(const std::string& text,
                       .possibly_invalid_spec());
     }
   }
-
+  if (scheme == url::kTraceScheme && base::CommandLine::ForCurrentProcess()->HasSwitch("ungoogled-supermium")) {
+    return GURL();
+  }
   // We handle the file scheme separately.
   if (scheme == url::kFileScheme)
     return GURL(parts.scheme.is_valid() ? text : FixupPath(text));
@@ -621,6 +625,8 @@ GURL FixupURLInternal(const std::string& text,
 
     FixupHost(trimmed, parts.host, parts.scheme.is_valid(), desired_tld, &url);
     if (chrome_url && !parts.host.is_valid())
+		if (!base::CommandLine::ForCurrentProcess()->HasSwitch("omnibox-autocomplete-filtering") ||
+			base::Contains(base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("omnibox-autocomplete-filtering"), "chrome"))
       url.append(kChromeUIDefaultHost);
     FixupPort(trimmed, parts.port, &url);
     FixupPath(trimmed, parts.path, &url);

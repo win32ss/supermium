@@ -47,6 +47,7 @@
 
 #include "base/base_switches.h"
 #include "base/command_line.h"
+#include "base/features.h"
 #include "base/files/file_path.h"
 #include "base/logging.h"
 #include "base/metrics/histogram_functions.h"
@@ -81,6 +82,21 @@ namespace win {
 
 namespace {
 
+// Disables the DirectWrite font rendering system on windows.
+const char kDisableDirectWrite[] = "disable-direct-write";
+	
+bool ShouldUseDirectWrite() {
+  // Considering that there are seemingly some decent DirectWrite implementations
+  // out there for XP, we will no longer discriminate by OS version.
+  if (!::LoadLibraryA("dwrite.dll")) {
+    return false;
+  }
+  // If forced off, don't use it.
+  const base::CommandLine& command_line =
+      *base::CommandLine::ForCurrentProcess();
+  return !command_line.HasSwitch(kDisableDirectWrite);
+}
+
 using QueryKeyFunction =
     ScopedDeviceConvertibilityStateForTesting::QueryFunction;
 
@@ -108,14 +124,44 @@ bool SetPropVariantValueForPropertyStore(
   return false;
 }
 
-void __cdecl ForceCrashOnSigAbort(int) {
-  *((volatile int*)nullptr) = 0x1337;
-}
+//void __cdecl ForceCrashOnSigAbort(int) {
+//  *((volatile int*)nullptr) = 0x1337;
+//}
 
-// Returns the current platform role. We use the PowerDeterminePlatformRoleEx
+// Returns the current platform role. We use the PowerDeterminePlatformRole
 // API for that.
 POWER_PLATFORM_ROLE GetPlatformRole() {
-  return PowerDeterminePlatformRoleEx(POWER_PLATFORM_ROLE_V2);
+	return PowerDeterminePlatformRole();
+}
+
+// Because we used to support versions earlier than 8.1, we dynamically load
+// this function from user32.dll, so it won't fail to load in runtime.
+// TODO(https://crbug.com/1408307): Call SetProcessDpiAwareness directly.
+bool SetProcessDpiAwarenessWrapper(PROCESS_DPI_AWARENESS value) {
+  if (!IsUser32AndGdi32Available())
+    return false;
+
+  static const auto set_process_dpi_awareness_func =
+      reinterpret_cast<decltype(&::SetProcessDpiAwareness)>(
+          GetUser32FunctionPointer("SetProcessDpiAwarenessInternal"));
+  if (set_process_dpi_awareness_func) {
+    HRESULT hr = set_process_dpi_awareness_func(value);
+    if (SUCCEEDED(hr))
+      return true;
+    DLOG_IF(ERROR, hr == E_ACCESSDENIED)
+        << "Access denied error from SetProcessDpiAwarenessInternal. "
+           "Function called twice, or manifest was used.";
+    NOTREACHED()
+        << "SetProcessDpiAwarenessInternal failed with unexpected error: "
+        << hr;
+    return false;
+  }
+
+  DCHECK_LT(GetVersion(), Version::WIN8_1) << "SetProcessDpiAwarenessInternal "
+                                              "should be available on all "
+                                              "platforms >= Windows 8.1";
+
+  return false;
 }
 
 // Enable V2 per-monitor high-DPI support for the process. This will cause
@@ -408,7 +454,7 @@ bool IsWindows10OrGreaterTabletMode(HWND hwnd) {
   ScopedHString view_settings_guid = ScopedHString::Create(
       RuntimeClass_Windows_UI_ViewManagement_UIViewSettings);
   Microsoft::WRL::ComPtr<IUIViewSettingsInterop> view_settings_interop;
-  HRESULT hr = ::RoGetActivationFactory(view_settings_guid.get(),
+  HRESULT hr = win::RoGetActivationFactory(view_settings_guid.get(),
                                         IID_PPV_ARGS(&view_settings_interop));
   if (FAILED(hr))
     return false;
@@ -699,7 +745,7 @@ void SetAbortBehaviorForCrashReporting() {
   // Set a SIGABRT handler for good measure. We will crash even if the default
   // is left in place, however this allows us to crash earlier. And it also
   // lets us crash in response to code which might directly call raise(SIGABRT)
-  signal(SIGABRT, ForceCrashOnSigAbort);
+ // signal(SIGABRT, ForceCrashOnSigAbort);
 }
 
 bool IsTabletDevice(std::string* reason, HWND hwnd) {
@@ -801,8 +847,17 @@ bool IsJoinedToAzureAD() {
 bool IsUser32AndGdi32Available() {
   static const bool is_user32_and_gdi32_available = [] {
     // If win32k syscalls aren't disabled, then user32 and gdi32 are available.
+	if (!ShouldUseDirectWrite())
+        return true;
+	  auto get_process_mitigation_policy =
+      reinterpret_cast<decltype(&GetProcessMitigationPolicy)>(::GetProcAddress(
+          ::GetModuleHandleA("kernel32.dll"), "GetProcessMitigationPolicy"));
+  
+    if(!get_process_mitigation_policy)
+		return true;
+
     PROCESS_MITIGATION_SYSTEM_CALL_DISABLE_POLICY policy = {};
-    if (::GetProcessMitigationPolicy(GetCurrentProcess(),
+    if (get_process_mitigation_policy(GetCurrentProcess(),
                                      ProcessSystemCallDisablePolicy, &policy,
                                      sizeof(policy))) {
       return policy.DisallowWin32kSystemCalls == 0;
@@ -871,7 +926,7 @@ void DisableFlicks(HWND hwnd) {
 }
 
 void EnableHighDPISupport() {
-  if (!IsUser32AndGdi32Available())
+  if (!IsUser32AndGdi32Available() || GetVersion() < Version::VISTA)
     return;
 
   // Enable per-monitor V2 if it is available (Win10 1703 or later).
@@ -880,7 +935,7 @@ void EnableHighDPISupport() {
 
   // Fall back to per-monitor DPI for older versions of Win10.
   PROCESS_DPI_AWARENESS process_dpi_awareness = PROCESS_PER_MONITOR_DPI_AWARE;
-  if (!::SetProcessDpiAwareness(process_dpi_awareness)) {
+  if (!SetProcessDpiAwarenessWrapper(process_dpi_awareness)) {
     // For windows versions where SetProcessDpiAwareness fails, try its
     // predecessor.
     BOOL result = ::SetProcessDPIAware();

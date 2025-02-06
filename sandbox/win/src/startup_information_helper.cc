@@ -125,6 +125,8 @@ bool StartupInformationHelper::BuildStartupInformation() {
   if (!startup_info_.InitializeProcThreadAttributeList(expected_attributes))
     return false;
 
+  if (base::win::GetVersion() >= base::win::Version::WIN7) {
+
   if (mitigations_[0] || mitigations_[1]) {
     if (!startup_info_.UpdateProcThreadAttribute(
             PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, &mitigations_[0],
@@ -143,7 +145,7 @@ bool StartupInformationHelper::BuildStartupInformation() {
     }
     expected_attributes--;
   }
-
+  }
   if (restrict_child_process_creation_) {
     child_process_creation_ = PROCESS_CREATION_CHILD_PROCESS_RESTRICTED;
     if (!startup_info_.UpdateProcThreadAttribute(
@@ -169,7 +171,7 @@ bool StartupInformationHelper::BuildStartupInformation() {
     inherit_handles_ = true;
     expected_attributes--;
   }
-
+  if (base::win::GetVersion() >= base::win::Version::WIN7) {
   if (!job_handle_list_.empty()) {
     if (!startup_info_.UpdateProcThreadAttribute(
             PROC_THREAD_ATTRIBUTE_JOB_LIST, &job_handle_list_[0],
@@ -201,6 +203,7 @@ bool StartupInformationHelper::BuildStartupInformation() {
   }
 
   CHECK(expected_attributes == 0);
+  }
   return true;
 }
 

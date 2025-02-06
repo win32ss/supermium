@@ -403,6 +403,7 @@ class CONTENT_EXPORT RenderFrameImpl
       mojo::ScopedMessagePipeHandle interface_pipe) override;
   blink::AssociatedInterfaceRegistry* GetAssociatedInterfaceRegistry() override;
   blink::AssociatedInterfaceProvider* GetRemoteAssociatedInterfaces() override;
+  bool IsFTPDirectoryListing() override;
   void SetSelectedText(const std::u16string& selection_text,
                        size_t offset,
                        const gfx::Range& range) override;

@@ -11,6 +11,7 @@
 #include <limits>
 #include <utility>
 
+#include "base/command_line.h"
 #include "base/i18n/rtl.h"
 #include "base/strings/string_split.h"
 #include "base/strings/utf_string_conversions.h"
@@ -38,6 +39,10 @@
 #include "ui/views/focus/focus_manager.h"
 #include "ui/views/selection_controller.h"
 #include "ui/views/style/typography_provider.h"
+
+#if BUILDFLAG(IS_WIN)
+#include "ui/gfx/win/direct_write.h"
+#endif
 
 namespace {
 
@@ -862,7 +867,18 @@ int Label::GetFontListY() const {
 
 void Label::PaintText(gfx::Canvas* canvas) {
   MaybeBuildDisplayText();
-
+  #if BUILDFLAG(IS_WIN)
+  if (!gfx::win::IsDirectWriteEnabled()) {
+    if (text_context_ == style::CONTEXT_BUTTON || text_context_ == style::CONTEXT_LABEL ||
+			text_context_ == style::CONTEXT_BUTTON_MD) 
+	  display_text_->SetVerticalAlignment(gfx::ALIGN_SPECIAL);  
+    // The bookmark bar labels and some of the side text in the menus are CONTEXT_BUTTON.
+	// The "new tab" labels are CONTEXT_LABEL.  
+	// Of note, some UI elements such as the placeholder text in the address bar were not being
+	// having the proper offset applied so the few elements that do not require offsets are
+	// singled out and the rest are given the 4px offset.
+  }
+  #endif
   if (display_text_)
     display_text_->Draw(canvas);
 

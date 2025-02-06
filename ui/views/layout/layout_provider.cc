@@ -6,6 +6,8 @@
 
 #include <algorithm>
 
+#include "base/command_line.h"
+#include "base/environment.h"
 #include "base/containers/fixed_flat_map.h"
 #include "base/logging.h"
 #include "ui/base/ui_base_features.h"
@@ -23,6 +25,11 @@ LayoutProvider* g_layout_delegate = nullptr;
 }  // namespace
 
 LayoutProvider::LayoutProvider() {
+  // On creation of the LayoutProvider object, update the metrics with user preferences if applicable.
+  std::string corner_metrics;
+  auto env = base::Environment::Create();
+  if (env->GetVar("davenport_corner_metrics", &corner_metrics))
+    kMenuCornerRadius = std::stoi(corner_metrics);
   g_layout_delegate = this;
 }
 
@@ -219,6 +226,8 @@ int LayoutProvider::GetCornerRadiusMetric(ShapeContextTokens id,
   ShapeSysTokens token = GetShapeSysToken(id);
   DCHECK_NE(token, ShapeSysTokens::kDefault)
       << "kDefault token means there is a missing mapping between shape tokens";
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox"))
+    return 0;
   switch (token) {
     case ShapeSysTokens::kXSmall:
       return 4;

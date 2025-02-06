@@ -326,6 +326,9 @@ const char kEnableExperimentalWebPlatformFeatures[] =
 // status:"experimental", which are enabled when running web tests.
 const char kEnableBlinkTestFeatures[] = "enable-blink-test-features";
 
+// Enables support for FTP URLs. See https://crbug.com/333943.
+const char kEnableFtp[] = "enable-ftp";
+
 // Disables all RuntimeEnabledFeatures that can be enabled via OriginTrials.
 const char kDisableOriginTrialControlledBlinkFeatures[] =
     "disable-origin-trial-controlled-blink-features";
@@ -971,6 +974,10 @@ const char kDeviceScaleFactor[]     = "device-scale-factor";
 
 // Disable the Legacy Window which corresponds to the size of the WebContents.
 const char kDisableLegacyIntermediateWindow[] = "disable-legacy-window";
+
+// Enables H264 HW decode acceleration for WebRtc on Win 7.
+const char kEnableWin7WebRtcHWH264Decoding[] =
+    "enable-win7-webrtc-hw-h264-decoding";
 
 // DirectWrite FontCache is shared by browser to renderers using shared memory.
 // This switch allows us to pass the shared memory handle to the renderer.

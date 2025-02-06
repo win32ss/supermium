@@ -1853,6 +1853,9 @@ TEST_F(ChromeDownloadManagerDelegateTest,
 #if !BUILDFLAG(IS_ANDROID)
 #if !BUILDFLAG(IS_CHROMEOS_ASH)
 TEST_F(ChromeDownloadManagerDelegateTest, ScheduleCancelForEphemeralWarning) {
+  base::test::ScopedFeatureList feature_list;
+  feature_list.InitAndEnableFeature(safe_browsing::kDownloadBubble);
+
   std::unique_ptr<download::MockDownloadItem> download_item =
       CreateActiveDownloadItem(0);
   EXPECT_CALL(*download_item, GetDangerType())
@@ -1869,6 +1872,8 @@ TEST_F(ChromeDownloadManagerDelegateTest, ScheduleCancelForEphemeralWarning) {
 
 TEST_F(ChromeDownloadManagerDelegateTest,
        ScheduleCancelForEphemeralWarning_DownloadKept) {
+  base::test::ScopedFeatureList feature_list;
+  feature_list.InitAndEnableFeature(safe_browsing::kDownloadBubble);
   std::unique_ptr<download::MockDownloadItem> download_item =
       CreateActiveDownloadItem(0);
   EXPECT_CALL(*download_item, GetDangerType())

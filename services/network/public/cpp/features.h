@@ -59,6 +59,10 @@ BASE_DECLARE_FEATURE(kOpaqueResponseBlockingErrorsForAllFetches);
 COMPONENT_EXPORT(NETWORK_CPP)
 BASE_DECLARE_FEATURE(kAttributionReportingCrossAppWeb);
 
+COMPONENT_EXPORT(NETWORK_CPP)
+BASE_DECLARE_FEATURE(kFtpProtocol);
+
+
 // Both flags need to be checked for required PST components as they are being
 // used in different experiments.
 //

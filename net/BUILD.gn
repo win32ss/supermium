@@ -95,6 +95,7 @@ buildflag_header("buildflags") {
   flags = [
     "POSIX_BYPASS_MMAP=$posix_bypass_mmap",
     "DISABLE_FILE_SUPPORT=$disable_file_support",
+    "DISABLE_FTP_SUPPORT=$disable_ftp_support",
     "ENABLE_MDNS=$enable_mdns",
     "ENABLE_REPORTING=$enable_reporting",
     "ENABLE_WEBSOCKETS=$enable_websockets",
@@ -1054,6 +1055,8 @@ component("net") {
     "url_request/referrer_policy.h",
     "url_request/static_http_user_agent_settings.cc",
     "url_request/static_http_user_agent_settings.h",
+    "url_request/trk_protocol_handler.cc",
+    "url_request/trk_protocol_handler.h",
     "url_request/url_request.cc",
     "url_request/url_request.h",
     "url_request/url_request_context.cc",
@@ -1602,6 +1605,41 @@ component("net") {
       "base/directory_lister.h",
       "base/directory_listing.cc",
       "base/directory_listing.h",
+    ]
+  }
+
+  if (!disable_ftp_support) {
+    sources += [
+      "ftp/ftp_auth_cache.cc",
+      "ftp/ftp_auth_cache.h",
+      "ftp/ftp_ctrl_response_buffer.cc",
+      "ftp/ftp_ctrl_response_buffer.h",
+      "ftp/ftp_directory_listing_parser.cc",
+      "ftp/ftp_directory_listing_parser.h",
+      "ftp/ftp_directory_listing_parser_ls.cc",
+      "ftp/ftp_directory_listing_parser_ls.h",
+      "ftp/ftp_directory_listing_parser_vms.cc",
+      "ftp/ftp_directory_listing_parser_vms.h",
+      "ftp/ftp_directory_listing_parser_windows.cc",
+      "ftp/ftp_directory_listing_parser_windows.h",
+      "ftp/ftp_network_layer.cc",
+      "ftp/ftp_network_layer.h",
+      "ftp/ftp_network_session.cc",
+      "ftp/ftp_network_session.h",
+      "ftp/ftp_network_transaction.cc",
+      "ftp/ftp_network_transaction.h",
+      "ftp/ftp_request_info.h",
+      "ftp/ftp_response_info.cc",
+      "ftp/ftp_response_info.h",
+      "ftp/ftp_server_type.h",
+      "ftp/ftp_transaction.h",
+      "ftp/ftp_transaction_factory.h",
+      "ftp/ftp_util.cc",
+      "ftp/ftp_util.h",
+      "url_request/ftp_protocol_handler.cc",
+      "url_request/ftp_protocol_handler.h",
+      "url_request/url_request_ftp_job.cc",
+      "url_request/url_request_ftp_job.h",
     ]
   }
 
@@ -3237,6 +3275,21 @@ target(_test_target_type, "net_unittests") {
     ]
   }
 
+  if (!disable_ftp_support) {
+    sources += [
+      "ftp/ftp_auth_cache_unittest.cc",
+      "ftp/ftp_ctrl_response_buffer_unittest.cc",
+      "ftp/ftp_directory_listing_parser_ls_unittest.cc",
+      "ftp/ftp_directory_listing_parser_unittest.cc",
+      "ftp/ftp_directory_listing_parser_unittest.h",
+      "ftp/ftp_directory_listing_parser_vms_unittest.cc",
+      "ftp/ftp_directory_listing_parser_windows_unittest.cc",
+      "ftp/ftp_network_transaction_unittest.cc",
+      "ftp/ftp_util_unittest.cc",
+      "url_request/url_request_ftp_job_unittest.cc",
+    ]
+  }
+
   if (enable_built_in_dns) {
     sources += [ "url_request/http_with_dns_over_https_unittest.cc" ]
   }
@@ -3765,6 +3818,45 @@ fuzzer_test("net_spdy_headers_to_http_response_headers_fuzzer") {
   ]
   dict = "data/fuzzer_dictionaries/net_http_stream_parser_fuzzer.dict"
   libfuzzer_options = [ "max_len = 512" ]
+}
+if (!disable_ftp_support) {
+  fuzzer_test("net_ftp_ctrl_response_fuzzer") {
+    sources = [ "ftp/ftp_ctrl_response_fuzzer.cc" ]
+    deps = [
+      ":net_fuzzer_test_support",
+      "//base",
+      "//net",
+    ]
+  }
+
+  fuzzer_test("net_ftp_directory_listing_fuzzer") {
+    sources = [ "ftp/ftp_directory_listing_fuzzer.cc" ]
+    deps = [
+      ":net_fuzzer_test_support",
+      "//base",
+      "//net",
+    ]
+
+    # TODO(https://crbug.com/921297): Re-enable once source of timeout is
+    # understood (probably just needs to restrict maximum input size).
+    additional_configs = [ "//testing/libfuzzer:no_clusterfuzz" ]
+  }
+
+  fuzzer_test("net_url_request_ftp_fuzzer") {
+    sources = [ "url_request/url_request_ftp_fuzzer.cc" ]
+    deps = [
+      ":net_fuzzer_test_support",
+      ":test_support",
+      "//base",
+      "//net",
+    ]
+    dict = "data/fuzzer_dictionaries/net_url_request_ftp_fuzzer.dict"
+    seed_corpus = "data/fuzzer_data/net_url_request_ftp_fuzzer/"
+
+    # TODO(https://crbug.com/962087): Re-enable once source of timeout is
+    # understood (probably just needs to restrict maximum input size).
+    additional_configs = [ "//testing/libfuzzer:no_clusterfuzz" ]
+  }
 }
 
 fuzzer_test("net_unescape_url_component_fuzzer") {

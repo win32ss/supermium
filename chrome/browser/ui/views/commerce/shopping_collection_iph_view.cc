@@ -40,7 +40,11 @@ ShoppingCollectionIphView::ShoppingCollectionIphView() {
       views::style::STYLE_BODY_4_MEDIUM));
   title->SetHorizontalAlignment(gfx::HorizontalAlignment::ALIGN_LEFT);
 
-  const auto label_context = views::style::CONTEXT_LABEL;
+  const bool power_bookmarks_side_panel_enabled =
+      base::FeatureList::IsEnabled(features::kPowerBookmarksSidePanel);
+  const auto label_context = power_bookmarks_side_panel_enabled
+                                 ? views::style::CONTEXT_LABEL
+                                 : views::style::CONTEXT_DIALOG_BODY_TEXT;
   std::u16string body_text =
       l10n_util::GetStringUTF16(IDS_SHOPPING_COLLECTION_IPH_BODY);
   views::Label* body_label = AddChildView(std::make_unique<views::Label>(
@@ -48,7 +52,10 @@ ShoppingCollectionIphView::ShoppingCollectionIphView() {
   body_label->SetEnabledColorId(ui::kColorSysOnSurfaceSubtle);
   body_label->SetMultiLine(true);
   body_label->SetHorizontalAlignment(gfx::ALIGN_LEFT);
-  body_label->SetFontList(body_label->font_list().DeriveWithSizeDelta(-1));
+
+  if (power_bookmarks_side_panel_enabled) {
+    body_label->SetFontList(body_label->font_list().DeriveWithSizeDelta(-1));
+  }
 }
 
 ShoppingCollectionIphView::~ShoppingCollectionIphView() = default;

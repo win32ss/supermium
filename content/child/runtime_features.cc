@@ -4,7 +4,6 @@
 
 #include "content/child/runtime_features.h"
 
-#include <string>
 #include <vector>
 
 #include "base/base_switches.h"
@@ -54,6 +53,10 @@
 
 #if BUILDFLAG(ENABLE_VR)
 #include "device/vr/public/cpp/features.h"
+#endif
+
+#if BUILDFLAG(IS_WIN)
+#include "base/win/windows_version.h"
 #endif
 
 using blink::WebRuntimeFeatures;
@@ -725,7 +728,7 @@ void SetRuntimeFeaturesDefaultsAndUpdateFromArgs(
     const base::CommandLine& command_line) {
   // Sets experimental features.
   bool enable_experimental_web_platform_features =
-      command_line.HasSwitch(switches::kEnableExperimentalWebPlatformFeatures);
+      !command_line.HasSwitch(switches::kEnableExperimentalWebPlatformFeatures);
   bool enable_blink_test_features =
       command_line.HasSwitch(switches::kEnableBlinkTestFeatures);
 

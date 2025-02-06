@@ -23,6 +23,36 @@
 #include "media/cdm/cdm_host_files.h"
 #endif  // BUILDFLAG(ENABLE_CDM_HOST_VERIFICATION)
 
+namespace cdm {
+
+#if defined(_WIN32)
+typedef wchar_t FilePathCharType;
+typedef HANDLE PlatformFile;
+const PlatformFile kInvalidPlatformFile = INVALID_HANDLE_VALUE;
+#else
+typedef char FilePathCharType;
+typedef int PlatformFile;
+const PlatformFile kInvalidPlatformFile = -1;
+#endif  // defined(_WIN32)
+
+
+struct HostFile {
+  HostFile(const FilePathCharType* file_path,
+           PlatformFile file,
+           PlatformFile sig_file)
+      : file_path(file_path), file(file), sig_file(sig_file) {}
+
+  // File that is part of the host of the CDM.
+  const FilePathCharType* file_path = nullptr;
+  PlatformFile file = kInvalidPlatformFile;
+
+  // Signature file for |file|.
+  PlatformFile sig_file = kInvalidPlatformFile;
+};
+	
+	
+}
+
 namespace media {
 
 class MEDIA_EXPORT CdmModule {
@@ -58,6 +88,8 @@ class MEDIA_EXPORT CdmModule {
   using InitializeCdmModuleFunc = decltype(&::INITIALIZE_CDM_MODULE);
   using DeinitializeCdmModuleFunc = decltype(&::DeinitializeCdmModule);
   using GetCdmVersionFunc = decltype(&::GetCdmVersion);
+  using InitVerificationFunc =
+      bool (*)(const cdm::HostFile* cdm_host_files, uint32_t num_files);
 
   CdmModule();
 
@@ -68,6 +100,7 @@ class MEDIA_EXPORT CdmModule {
   InitializeCdmModuleFunc initialize_cdm_module_func_ = nullptr;
   DeinitializeCdmModuleFunc deinitialize_cdm_module_func_ = nullptr;
   GetCdmVersionFunc get_cdm_version_func_ = nullptr;
+  InitVerificationFunc init_verification_func_ = nullptr;
 };
 
 }  // namespace media

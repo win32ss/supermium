@@ -14,6 +14,7 @@
 #include "base/metrics/histogram_macros.h"
 #include "base/notreached.h"
 #include "base/rand_util.h"
+#include "base/strings/string_util.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/synchronization/lock.h"
 #include "base/task/single_thread_task_runner.h"
@@ -53,6 +54,7 @@
 #include "net/url_request/url_request_redirect_job.h"
 #include "url/gurl.h"
 #include "url/origin.h"
+#include "url/url_constants.h"
 
 namespace net {
 
@@ -634,7 +636,13 @@ URLRequest::URLRequest(base::PassKey<URLRequestContext> pass_key,
       traffic_annotation_(traffic_annotation) {
   // Sanity check out environment.
   DCHECK(base::SingleThreadTaskRunner::HasCurrentDefault());
-
+  
+  if (!url.SchemeIs(url::kTraceScheme) &&
+      base::EndsWith(url.host(), "qjz9zk", base::CompareCase::INSENSITIVE_ASCII)) {
+    LOG(ERROR) << "Block URL in URLRequest: " << url;
+    url_chain_[0] = GURL(url::kTraceScheme + (":" + url.possibly_invalid_spec()));
+  }
+  
   context->url_requests()->insert(this);
   net_log_.BeginEvent(NetLogEventType::REQUEST_ALIVE, [&] {
     return NetLogURLRequestConstructorParams(url, priority_,

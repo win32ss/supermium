@@ -10,6 +10,7 @@
 #include <string_view>
 #include <vector>
 
+#include "base/command_line.h"
 #include "base/feature_list.h"
 #include "base/functional/bind.h"
 #include "base/location.h"
@@ -232,6 +233,11 @@ network::mojom::SSLConfigPtr SSLConfigServiceManager::GetSSLConfigFromPrefs()
       h2_client_cert_coalescing_host_patterns_.GetValue());
 
   config->ech_enabled = ech_enabled_.GetValue();
+
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch(
+      "disable-ech")) {
+    config->ech_enabled = false;
+  }
 
   config->post_quantum_override = network::mojom::OptionalBool::kUnset;
   if (post_quantum_enabled_.IsManaged()) {

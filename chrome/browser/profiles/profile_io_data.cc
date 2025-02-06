@@ -15,6 +15,7 @@
 #include "components/dom_distiller/core/url_constants.h"
 #include "extensions/buildflags/buildflags.h"
 #include "net/net_buildflags.h"
+#include "services/network/public/cpp/features.h"
 #include "url/gurl.h"
 
 #if BUILDFLAG(ENABLE_EXTENSIONS_CORE)
@@ -55,6 +56,13 @@ bool ProfileIOData::IsHandledProtocol(const std::string& scheme) {
       chrome::kIsolatedAppScheme,
 #endif  // !BUILDFLAG(IS_ANDROID)
   });
+
+#if !BUILDFLAG(DISABLE_FTP_SUPPORT)
+  if (scheme == url::kFtpScheme &&
+      base::FeatureList::IsEnabled(network::features::kFtpProtocol)) {
+    return true;
+  }
+#endif  // !BUILDFLAG(DISABLE_FTP_SUPPORT)
 
   return kProtocolList.contains(scheme);
 }

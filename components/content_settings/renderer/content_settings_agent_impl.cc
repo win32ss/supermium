@@ -309,6 +309,9 @@ bool ContentSettingsAgentImpl::AllowRunningInsecureContent(
   if (allowed_per_settings || allow_running_insecure_content_)
     return true;
 
+  if (render_frame()->IsFTPDirectoryListing())
+    return true;
+
   if (content_setting_rules_) {
     ContentSetting setting = GetContentSettingFromRules(
         content_setting_rules_->mixed_content_rules, GURL());

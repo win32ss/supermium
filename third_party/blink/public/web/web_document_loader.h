@@ -135,6 +135,9 @@ class BLINK_EXPORT WebDocumentLoader {
   // committed in this WebDocumentLoader had transient activation.
   virtual bool LastNavigationHadTransientUserActivation() const = 0;
 
+  // Returns true when the document is a FTP directory.
+  virtual bool IsListingFtpDirectory() const = 0;
+
   // Sets the CodeCacheHosts for this loader.
   virtual void SetCodeCacheHost(
       CrossVariantMojoRemote<mojom::CodeCacheHostInterfaceBase> code_cache_host,

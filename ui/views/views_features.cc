@@ -38,6 +38,11 @@ BASE_FEATURE(kKeyboardAccessibleTooltipInViews,
              "KeyboardAccessibleTooltipInViews",
              base::FEATURE_ENABLED_BY_DEFAULT);
 
+// When enabled, widgets inherit the theme from their parent widget.
+BASE_FEATURE(kInheritNativeThemeFromParentWidget,
+			 "InheritNativeThemeFromParentWidget", 
+			 base::FEATURE_ENABLED_BY_DEFAULT);
+
 // Used to enable additional a11y attributes when announcing text.
 BASE_FEATURE(kAnnounceTextAdditionalAttributes,
              "AnnounceTextAdditionalAttributes",

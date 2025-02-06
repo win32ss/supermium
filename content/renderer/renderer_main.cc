@@ -93,6 +93,11 @@
 #include "mojo/public/cpp/bindings/lib/test_random_mojo_delays.h"
 #endif
 
+#if BUILDFLAG(IS_WIN)
+#include "base/win/windows_version.h"
+#include "ui/gfx/win/direct_write.h"
+#endif
+
 namespace content {
 namespace {
 
@@ -234,8 +239,18 @@ int RendererMain(MainFunctionParams parameters) {
   {
     content::ContentRendererClient* client = GetContentClient()->renderer();
     bool should_run_loop = true;
-    bool need_sandbox =
+#if BUILDFLAG(IS_WIN)
+    bool need_sandbox = true;
+    if(base::win::GetVersion() >= base::win::Version::WIN8) {
+	// Windows 8+ specific limitations required renderer sandbox disabled for GDI
+    need_sandbox = gfx::win::ShouldUseDirectWrite() && 
         !command_line.HasSwitch(sandbox::policy::switches::kNoSandbox);
+	}
+	else
+	need_sandbox = !command_line.HasSwitch(sandbox::policy::switches::kNoSandbox);
+#else
+    bool need_sandbox = !command_line.HasSwitch(sandbox::policy::switches::kNoSandbox);
+#endif
 
     if (!need_sandbox) {
       // The post-sandbox actions still need to happen at some point.

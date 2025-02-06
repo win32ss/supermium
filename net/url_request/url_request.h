@@ -756,7 +756,8 @@ class NET_EXPORT URLRequest : public base::SupportsUserData {
   }
 
   // The number of bytes in the raw response body (before any decompression,
-  // etc.). This is only available after the final Read completes.
+  // etc.). This is only available after the final Read completes. Not available
+  // for FTP responses.
   int64_t received_response_content_length() const {
     return received_response_content_length_;
   }

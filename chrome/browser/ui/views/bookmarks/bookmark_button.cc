@@ -4,6 +4,7 @@
 
 #include "chrome/browser/ui/views/bookmarks/bookmark_button.h"
 
+#include "base/command_line.h"
 #include "base/metrics/histogram_functions.h"
 #include "chrome/browser/browser_features.h"
 #include "chrome/browser/predictors/loading_predictor.h"
@@ -67,6 +68,10 @@ BookmarkButtonBase::BookmarkButtonBase(PressedCallback callback,
   SetFocusBehavior(FocusBehavior::ACCESSIBLE_ONLY);
   views::FocusRing::Get(this)->SetOutsetFocusRingDisabled(true);
   SetHideInkDropWhenShowingContextMenu(false);
+
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("chrome-refresh-2023-top-chrome-font")) {
+     label()->SetTextStyle(views::style::STYLE_BODY_4_EMPHASIS);
+  }
 
   show_animation_ = std::make_unique<gfx::SlideAnimation>(this);
   if (!BookmarkBarView::GetAnimationsEnabled()) {

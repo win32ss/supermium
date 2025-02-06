@@ -35,6 +35,7 @@
 #include "net/cookies/cookie_util.h"
 #include "net/disk_cache/disk_cache.h"
 #include "net/first_party_sets/first_party_set_metadata.h"
+#include "net/ftp/ftp_network_layer.h"
 #include "net/http/http_auth_handler_factory.h"
 #include "net/http/http_cache.h"
 #include "net/http/http_network_layer.h"

@@ -4800,6 +4800,11 @@
     "expiry_milestone": -1
   },
   {
+    "name": "force-xp-theme",
+    "owners": [ "win32", "supermium" ],
+    "expiry_milestone": -1
+  },
+  {
     "name": "forced-colors",
     "owners": [ "almaher@microsoft.com" ],
     "expiry_milestone": 137
@@ -5017,11 +5022,6 @@
     "expiry_milestone": 145
   },
   {
-    "name": "history-journeys",
-    "owners": [ "tommycli@chromium.org", "chrome-journeys@google.com" ],
-    "expiry_milestone": 125
-  },
-  {
     "name": "history-journeys-show-all-clusters",
     "owners": [ "sophiechang@chromium.org", "chrome-journeys@google.com", "chrome-intelligence-core@google.com" ],
     "expiry_milestone": 125
@@ -5218,11 +5218,6 @@
     "name": "info-card-acknowledgement-tracking",
     "owners": [ "//chrome/android/feed/OWNERS", "jianli@chromium.org" ],
     "expiry_milestone": 130
-  },
-  {
-    "name": "insecure-download-warnings",
-    "owners": [ "jdeblasio@chromium.org", "trusty-transport@chromium.org" ],
-    "expiry_milestone": 120
   },
   {
     "name": "install-isolated-web-app-from-url",
@@ -5922,11 +5917,6 @@
     "name": "media-remoting-without-fullscreen",
     "owners": [ "muyaoxu@google.com", "openscreen-eng@google.com" ],
     "expiry_milestone": 140
-  },
-  {
-    "name": "media-route-dial-provider",
-    "owners": [ "sunggch@microsoft.com" ],
-    "expiry_milestone": 124
   },
   {
     "name": "media-router-cast-allow-all-ips",

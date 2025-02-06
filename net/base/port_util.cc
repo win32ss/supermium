@@ -139,6 +139,11 @@ bool IsPortAllowedForScheme(int port, std::string_view url_scheme) {
   if (g_explicitly_allowed_ports.Get().count(port) > 0)
     return true;
 
+  // FTP requests are permitted to use port 21.
+  if ((base::ToLowerASCII(url_scheme) == url::kFtpScheme) && port == 21) {
+    return true;
+  }
+
   // Finally check against the generic list of restricted ports for all
   // schemes.
   for (int restricted_port : kRestrictedPorts) {

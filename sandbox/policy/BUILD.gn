@@ -173,6 +173,8 @@ component("policy") {
       "win/sandbox_win.h",
     ]
     deps += [ "//sandbox/win:sandbox" ]
+
+    public_deps += [ "//ui/gfx" ]
   }
   if (is_fuchsia) {
     sources += [

@@ -20,6 +20,7 @@
 #include <vector>
 
 #include "base/check_op.h"
+#include "base/command_line.h"
 #include "base/compiler_specific.h"
 #include "base/containers/circular_deque.h"
 #include "base/containers/contains.h"
@@ -153,9 +154,9 @@ const size_t kMaxHostLength = 4096;
 const int kIPv6ProbePeriodMs = 1000;
 
 // Google DNS address used for IPv6 probes.
-const uint8_t kIPv6ProbeAddress[] = {0x20, 0x01, 0x48, 0x60, 0x48, 0x60,
+const uint8_t kIPv6ProbeAddress[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                                      0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                                     0x00, 0x00, 0x88, 0x88};
+                                     0x00, 0x00, 0x00, 0x00};
 
 // True if |hostname| ends with either ".local" or ".local.".
 bool ResemblesMulticastDNSName(std::string_view hostname) {
@@ -1438,10 +1439,12 @@ int HostResolverManager::StartIPv6ReachabilityCheck(
       (tick_clock_->NowTicks() - last_ipv6_probe_time_).InMilliseconds() >
           kIPv6ProbePeriodMs) {
     probing_ipv6_ = true;
-    rv = StartGloballyReachableCheck(
-        IPAddress(kIPv6ProbeAddress), net_log, client_socket_factory,
-        base::BindOnce(&HostResolverManager::FinishIPv6ReachabilityCheck,
-                       weak_ptr_factory_.GetWeakPtr(), std::move(callback)));
+	if (!base::CommandLine::ForCurrentProcess()->HasSwitch("ungoogled-supermium")) {
+		rv = StartGloballyReachableCheck(
+			IPAddress(kIPv6ProbeAddress), net_log, client_socket_factory,
+			base::BindOnce(&HostResolverManager::FinishIPv6ReachabilityCheck,
+						   weak_ptr_factory_.GetWeakPtr(), std::move(callback)));
+	}
     if (rv != ERR_IO_PENDING) {
       SetLastIPv6ProbeResult((rv == OK) ? true : false);
       rv = OK;

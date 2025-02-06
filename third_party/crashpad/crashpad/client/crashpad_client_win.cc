@@ -456,7 +456,7 @@ bool StartHandlerProcess(
       initialize_proc_thread_attribute_list
           ? GET_FUNCTION(L"kernel32.dll", ::UpdateProcThreadAttribute)
           : nullptr;
-  if (!initialize_proc_thread_attribute_list || !update_proc_thread_attribute) {
+  if (!initialize_proc_thread_attribute_list || !update_proc_thread_attribute || !IsWindowsVistaOrGreater()) {
     // The OS doesn’t allow handle inheritance to be restricted, so the handler
     // will inherit every inheritable handle.
     creation_flags = 0;

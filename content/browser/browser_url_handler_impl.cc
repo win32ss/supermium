@@ -34,6 +34,7 @@ static bool HandleViewSource(GURL* url, BrowserContext* browser_context) {
   std::vector<std::string> all_allowed_sub_schemes({
       url::kHttpScheme,
       url::kHttpsScheme,
+      url::kFtpScheme,
       kChromeUIScheme,
       url::kFileScheme,
       url::kFileSystemScheme,

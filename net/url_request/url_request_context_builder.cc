@@ -49,9 +49,16 @@
 #include "net/socket/network_binding_client_socket_factory.h"
 #include "net/ssl/ssl_config_service_defaults.h"
 #include "net/url_request/static_http_user_agent_settings.h"
+#include "net/url_request/trk_protocol_handler.h"
 #include "net/url_request/url_request_context.h"
 #include "net/url_request/url_request_job_factory.h"
 #include "url/url_constants.h"
+
+#if !BUILDFLAG(DISABLE_FTP_SUPPORT)
+#include "net/ftp/ftp_auth_cache.h"                // nogncheck
+#include "net/ftp/ftp_network_layer.h"             // nogncheck
+#include "net/url_request/ftp_protocol_handler.h"  // nogncheck
+#endif
 
 #if BUILDFLAG(ENABLE_REPORTING)
 #include "net/network_error_logging/network_error_logging_service.h"
@@ -597,14 +604,30 @@ std::unique_ptr<URLRequestContext> URLRequestContextBuilder::Build() {
 
   std::unique_ptr<URLRequestJobFactory> job_factory =
       std::make_unique<URLRequestJobFactory>();
+  // Adds caller-provided protocol handlers first so that these handlers are
+  // used over the ftp handler below.
   for (auto& scheme_handler : protocol_handlers_) {
     job_factory->SetProtocolHandler(scheme_handler.first,
                                     std::move(scheme_handler.second));
   }
   protocol_handlers_.clear();
+  
+  job_factory->SetProtocolHandler(url::kTraceScheme,
+                                  std::make_unique<TrkProtocolHandler>());
+
+  
+  
+#if !BUILDFLAG(DISABLE_FTP_SUPPORT)
+  if (ftp_enabled_) {
+    context->set_ftp_auth_cache(new FtpAuthCache());
+    job_factory->SetProtocolHandler(
+       url::kFtpScheme, FtpProtocolHandler::Create(context->host_resolver(),
+                                                   context->ftp_auth_cache()));
+  }
+#endif  // !BUILDFLAG(DISABLE_FTP_SUPPORT)
 
   context->set_job_factory(std::move(job_factory));
-
+  
   if (cookie_deprecation_label_.has_value()) {
     context->set_cookie_deprecation_label(*cookie_deprecation_label_);
   }

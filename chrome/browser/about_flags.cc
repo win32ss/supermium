@@ -21,6 +21,7 @@
 #include "base/allocator/partition_alloc_features.h"
 #include "base/base_switches.h"
 #include "base/command_line.h"
+#include "base/features.h"
 #include "base/feature_list.h"
 #include "base/functional/bind.h"
 #include "base/functional/callback.h"
@@ -351,6 +352,7 @@
 #if BUILDFLAG(IS_WIN)
 #include "chrome/browser/enterprise/platform_auth/platform_auth_features.h"
 #include "chrome/browser/win/mica_titlebar.h"
+#include "chrome/browser/win/titlebar_config.h"
 #endif
 
 #if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_MAC) || BUILDFLAG(IS_WIN)
@@ -687,66 +689,23 @@ const FeatureEntry::FeatureVariation
 #endif  // BUILDFLAG(IS_ANDROID)
 
 #if !BUILDFLAG(IS_CHROMEOS_ASH)
-const FeatureEntry::FeatureParam kForceDark_SimpleHsl[] = {
-    {"inversion_method", "hsl_based"},
-    {"image_behavior", "none"},
-    {"foreground_lightness_threshold", "150"},
-    {"background_lightness_threshold", "205"}};
-
-const FeatureEntry::FeatureParam kForceDark_SimpleCielab[] = {
-    {"inversion_method", "cielab_based"},
-    {"image_behavior", "none"},
-    {"foreground_lightness_threshold", "150"},
-    {"background_lightness_threshold", "205"}};
-
-const FeatureEntry::FeatureParam kForceDark_SimpleRgb[] = {
-    {"inversion_method", "rgb_based"},
-    {"image_behavior", "none"},
-    {"foreground_lightness_threshold", "150"},
-    {"background_lightness_threshold", "205"}};
-
-// Keep in sync with the kForceDark_SelectiveImageInversion
-// in aw_feature_entries.cc if you tweak these parameters.
-const FeatureEntry::FeatureParam kForceDark_SelectiveImageInversion[] = {
-    {"inversion_method", "cielab_based"},
-    {"image_behavior", "selective"},
-    {"foreground_lightness_threshold", "150"},
-    {"background_lightness_threshold", "205"}};
-
-const FeatureEntry::FeatureParam kForceDark_SelectiveElementInversion[] = {
-    {"inversion_method", "cielab_based"},
-    {"image_behavior", "none"},
-    {"foreground_lightness_threshold", "150"},
-    {"background_lightness_threshold", "205"}};
-
-const FeatureEntry::FeatureParam kForceDark_SelectiveGeneralInversion[] = {
-    {"inversion_method", "cielab_based"},
-    {"image_behavior", "selective"},
-    {"foreground_lightness_threshold", "150"},
-    {"background_lightness_threshold", "205"}};
-
-const FeatureEntry::FeatureParam kForceDark_TransparencyAndNumColors[] = {
-    {"classifier_policy", "transparency_and_num_colors"}};
-
-const FeatureEntry::FeatureVariation kForceDarkVariations[] = {
-    {"with simple HSL-based inversion", kForceDark_SimpleHsl,
-     std::size(kForceDark_SimpleHsl), nullptr},
-    {"with simple CIELAB-based inversion", kForceDark_SimpleCielab,
-     std::size(kForceDark_SimpleCielab), nullptr},
-    {"with simple RGB-based inversion", kForceDark_SimpleRgb,
-     std::size(kForceDark_SimpleRgb), nullptr},
-    {"with selective image inversion", kForceDark_SelectiveImageInversion,
-     std::size(kForceDark_SelectiveImageInversion), nullptr},
-    {"with selective inversion of non-image elements",
-     kForceDark_SelectiveElementInversion,
-     std::size(kForceDark_SelectiveElementInversion), nullptr},
-    {"with selective inversion of everything",
-     kForceDark_SelectiveGeneralInversion,
-     std::size(kForceDark_SelectiveGeneralInversion), nullptr},
+const FeatureEntry::Choice kDarkModeSettings[] = {
+    {"Disabled", "", ""},
+    {"with simple HSL-based inversion", "dark-mode-settings",
+     "InversionAlgorithm=2,ImagePolicy=1,ForegroundBrightnessThreshold=150,BackgroundBrightnessThreshold=205"},
+    {"with simple CIELAB-based inversion", "dark-mode-settings",
+     "InversionAlgorithm=3,ImagePolicy=1,ForegroundBrightnessThreshold=150,BackgroundBrightnessThreshold=205"},
+    {"with simple RGB-based inversion", "dark-mode-settings",
+     "InversionAlgorithm=1,ImagePolicy=1,ForegroundBrightnessThreshold=150,BackgroundBrightnessThreshold=205"},
+    {"with selective CIELAB-based image inversion", "dark-mode-settings",
+     "InversionAlgorithm=3,ImagePolicy=2,ForegroundBrightnessThreshold=150,BackgroundBrightnessThreshold=205"},
+    {"with selective RGB-based image inversion", "dark-mode-settings",
+     "InversionAlgorithm=1,ImagePolicy=2,ForegroundBrightnessThreshold=150,BackgroundBrightnessThreshold=205"},
+    {"with selective HSL-based image inversion", "dark-mode-settings",
+     "InversionAlgorithm=2,ImagePolicy=2,ForegroundBrightnessThreshold=150,BackgroundBrightnessThreshold=205"},
     {"with selective image inversion based on transparency and number of "
-     "colors",
-     kForceDark_TransparencyAndNumColors,
-     std::size(kForceDark_TransparencyAndNumColors), nullptr}};
+     "colors", "dark-mode-settings",
+    "InversionAlgorithm=2,ImagePolicy=2,ForegroundBrightnessThreshold=150,BackgroundBrightnessThreshold=205,ImageClassifierPolicy=1"}};
 #endif  // !BUILDFLAG(IS_CHROMEOS)
 
 const FeatureEntry::FeatureParam
@@ -4338,9 +4297,11 @@ const FeatureEntry::FeatureVariation kServiceWorkerAutoPreloadVariations[] = {
 // calculate and verify checksum.
 //
 // When adding a new choice, add it to the end of the list.
+#include "chrome/browser/supermium_flag_choices.h"
 const FeatureEntry kFeatureEntries[] = {
 // Include generated flags for flag unexpiry; see //docs/flag_expiry.md and
 // //tools/flags/generate_unexpire_flags.py.
+#include "chrome/browser/supermium_flag_entries.h"
 #include "build/chromeos_buildflags.h"
 #include "chrome/browser/unexpire_flags_gen.inc"
     {variations::switches::kEnableBenchmarking,
@@ -5814,16 +5775,14 @@ const FeatureEntry kFeatureEntries[] = {
      flag_descriptions::kRefreshFeedOnRestartDescription, kOsAndroid,
      FEATURE_VALUE_TYPE(feed::kRefreshFeedOnRestart)},
 #endif  // BUILDFLAG(IS_ANDROID)
-    {"enable-force-dark", flag_descriptions::kAutoWebContentsDarkModeName,
+    {"dark-mode-settings", flag_descriptions::kAutoWebContentsDarkModeName,
      flag_descriptions::kAutoWebContentsDarkModeDescription, kOsAll,
 #if BUILDFLAG(IS_CHROMEOS_ASH)
      // TODO(crbug.com/40651782): Investigate crash reports and
      // re-enable variations for ChromeOS.
      FEATURE_VALUE_TYPE(blink::features::kForceWebContentsDarkMode)},
 #else
-     FEATURE_WITH_PARAMS_VALUE_TYPE(blink::features::kForceWebContentsDarkMode,
-                                    kForceDarkVariations,
-                                    "ForceDarkVariations")},
+     MULTI_VALUE_TYPE(kDarkModeSettings)},
 #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
 #if BUILDFLAG(IS_ANDROID)
     {"enable-accessibility-include-long-click-action",

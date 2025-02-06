@@ -32,8 +32,8 @@
 #include <windows.h>
 
 #include <shellapi.h>
-
 #include "base/strings/string_util_win.h"
+#include "base/win/windows_version.h"
 #endif  // BUILDFLAG(IS_WIN)
 
 namespace base {

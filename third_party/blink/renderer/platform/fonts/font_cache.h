@@ -59,6 +59,11 @@
 #include "ui/gfx/font_fallback_linux.h"
 #endif
 
+#if BUILDFLAG(IS_WIN)
+#include "third_party/blink/public/mojom/dwrite_font_proxy/dwrite_font_proxy.mojom-blink.h"
+#include "third_party/blink/renderer/platform/fonts/win/fallback_family_style_cache_win.h"
+#endif
+
 class SkString;
 class SkTypeface;
 
@@ -190,8 +195,10 @@ class PLATFORM_EXPORT FontCache final {
 #if BUILDFLAG(IS_WIN)
   // TODO(https://crbug.com/808221) System font style configuration is not
   // related to FontCache. Move it somewhere else, e.g. to WebThemeEngine.
+  static bool useDirectWrite() { return s_useDirectWrite; }
   static bool AntialiasedTextEnabled() { return antialiased_text_enabled_; }
   static bool LcdTextEnabled() { return lcd_text_enabled_; }
+  static void setUseDirectWrite(bool useDirectWrite) { s_useDirectWrite = useDirectWrite; }
   static void SetAntialiasedTextEnabled(bool enabled) {
     antialiased_text_enabled_ = enabled;
   }
@@ -215,6 +222,14 @@ class PLATFORM_EXPORT FontCache final {
   static const AtomicString& StatusFontFamily() {
     return *status_font_family_name_;
   }
+  
+  static void SetUseSkiaFontFallback(bool use_skia_font_fallback) {
+    use_skia_font_fallback_ = use_skia_font_fallback;
+  }
+
+  // On Windows pre 8.1 establish a connection to the DWriteFontProxy service in
+  // order to retrieve family names for fallback lookup.
+  void EnsureServiceConnected();
 
   const SimpleFontData* GetFallbackFamilyNameFromHardcodedChoices(
       const FontDescription&,
@@ -337,6 +352,7 @@ class PLATFORM_EXPORT FontCache final {
   static SkFontMgr* static_font_manager_;
 
 #if BUILDFLAG(IS_WIN)
+  static bool s_useDirectWrite;
   static WebFontPrewarmer* prewarmer_;
   static bool antialiased_text_enabled_;
   static bool lcd_text_enabled_;
@@ -347,10 +363,12 @@ class PLATFORM_EXPORT FontCache final {
   static int32_t small_caption_font_height_;
   static AtomicString* status_font_family_name_;
   static int32_t status_font_height_;
+  static bool use_skia_font_fallback_;
 
   // Windows creates an SkFontMgr for unit testing automatically. This flag is
   // to ensure it's not happening in the production from the crash log.
   bool is_test_font_mgr_ = false;
+  std::unique_ptr<FallbackFamilyStyleCache> fallback_params_cache_;
 #endif  // BUILDFLAG(IS_WIN)
 
 #if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)

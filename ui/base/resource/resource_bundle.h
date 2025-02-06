@@ -26,6 +26,7 @@
 #include "ui/base/resource/resource_scale_factor.h"
 #include "ui/gfx/font_list.h"
 #include "ui/gfx/image/image.h"
+#undef LoadBitmap
 
 #if BUILDFLAG(IS_CHROMEOS)
 #include "ui/base/models/image_model.h"

@@ -6,6 +6,8 @@
 
 #include <windows.h>
 
+#include "base/win/windows_version.h"
+
 #include <algorithm>
 
 #include "extensions/browser/app_window/native_app_window.h"
@@ -33,13 +35,32 @@ gfx::Insets AppWindowFrameViewWin::GetFrameInsets() const {
       display::win::ScreenWin::GetSystemMetricsInDIP(SM_CYSIZEFRAME) +
       display::win::ScreenWin::GetSystemMetricsInDIP(SM_CYCAPTION);
 
-  return gfx::Insets::TLBR(caption_height, 0, 0, 0);
+  int frame_size =
+      base::win::GetVersion() < base::win::Version::WIN10
+          ? display::win::ScreenWin::GetSystemMetricsInDIP(SM_CXSIZEFRAME)
+          : 0;
+
+  return gfx::Insets::TLBR(caption_height, frame_size, frame_size, frame_size);
 }
 
 gfx::Insets AppWindowFrameViewWin::GetClientAreaInsets(HMONITOR monitor) const {
-  const int frame_thickness = ui::GetFrameThickness(monitor);
-  return gfx::Insets::TLBR(0, frame_thickness, frame_thickness,
-                           frame_thickness);
+  gfx::Insets insets;
+  if (base::win::GetVersion() < base::win::Version::WIN10) {
+    // This tells Windows that most of the window is a client area, meaning
+    // Chrome will draw it. Windows still fills in the glass bits because of the
+    // DwmExtendFrameIntoClientArea call in |UpdateDWMFrame|.
+    // Without this 1 pixel offset on the right and bottom:
+    //   * windows paint in a more standard way, and
+    //   * we get weird black bars at the top when maximized in multiple monitor
+    //     configurations.
+    int border_thickness = 1;
+    insets = gfx::Insets::TLBR(0, 0, border_thickness, border_thickness);
+  } else {
+    const int frame_thickness = ui::GetFrameThickness(monitor);
+    insets =
+        gfx::Insets::TLBR(0, frame_thickness, frame_thickness, frame_thickness);
+  }
+  return insets;
 }
 
 gfx::Rect AppWindowFrameViewWin::GetBoundsForClientView() const {

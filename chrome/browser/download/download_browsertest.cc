@@ -511,19 +511,23 @@ void CreateCompletedDownload(content::DownloadManager* download_manager,
 // Whether download UI is visible at all (download toolbar button for download
 // bubble, or download shelf).
 bool IsDownloadUiVisible(BrowserWindow* window) {
-  return window->GetDownloadBubbleUIController()
-      ->GetDownloadDisplayController()
-      ->download_display_for_testing()
-      ->IsShowing();
+  return base::FeatureList::IsEnabled(safe_browsing::kDownloadBubble)
+             ? window->GetDownloadBubbleUIController()
+                   ->GetDownloadDisplayController()
+                   ->download_display_for_testing()
+                   ->IsShowing()
+             : window->IsDownloadShelfVisible();
 }
 
 // Whether download details are visible in the UI (partial view for download
 // bubble, or download shelf).
 bool IsDownloadDetailedUiVisible(BrowserWindow* window) {
-  return window->GetDownloadBubbleUIController()
-      ->GetDownloadDisplayController()
-      ->download_display_for_testing()
-      ->IsShowingDetails();
+  return base::FeatureList::IsEnabled(safe_browsing::kDownloadBubble)
+             ? window->GetDownloadBubbleUIController()
+                   ->GetDownloadDisplayController()
+                   ->download_display_for_testing()
+                   ->IsShowingDetails()
+             : window->IsDownloadShelfVisible();
 }
 #endif
 
@@ -5115,12 +5119,20 @@ IN_PROC_BROWSER_TEST_F(DownloadTest, DISABLED_DownloadAndWait) {
   EXPECT_TRUE(IsDownloadDetailedUiVisible(browser()->window()));
 }
 
-// Tests for the download shelf.
-#if BUILDFLAG(IS_CHROMEOS_ASH)
+class DownloadShelfTest : public DownloadTest {
+ public:
+  DownloadShelfTest() {
+    feature_list_.InitAndDisableFeature(safe_browsing::kDownloadBubble);
+  }
+
+ private:
+  base::test::ScopedFeatureList feature_list_;
+};
+
 // Test that the download shelf is per-window by starting a download in one
 // tab, opening a second tab, closing the shelf, going back to the first tab,
 // and checking that the shelf is closed.
-IN_PROC_BROWSER_TEST_F(DownloadTest, PerWindowShelf) {
+IN_PROC_BROWSER_TEST_F(DownloadShelfTest, PerWindowShelf) {
   embedded_test_server()->ServeFilesFromDirectory(GetTestDataDirectory());
   ASSERT_TRUE(embedded_test_server()->Start());
   GURL url = embedded_test_server()->GetURL("/download-test3.gif");
@@ -5159,7 +5171,7 @@ IN_PROC_BROWSER_TEST_F(DownloadTest, PerWindowShelf) {
 
 // Check whether the downloads shelf is closed when the downloads tab is
 // invoked.
-IN_PROC_BROWSER_TEST_F(DownloadTest, CloseShelfOnDownloadsTab) {
+IN_PROC_BROWSER_TEST_F(DownloadShelfTest, CloseShelfOnDownloadsTab) {
   embedded_test_server()->ServeFilesFromDirectory(GetTestDataDirectory());
   ASSERT_TRUE(embedded_test_server()->Start());
   GURL url =
@@ -5177,7 +5189,6 @@ IN_PROC_BROWSER_TEST_F(DownloadTest, CloseShelfOnDownloadsTab) {
   // The download shelf should now be closed.
   EXPECT_FALSE(browser()->window()->IsDownloadShelfVisible());
 }
-#endif  // BUILDFLAG(IS_CHROMEOS_ASH)
 
 // Flaky. crbug.com/1383009
 // Test that when downloading an item in Incognito mode, the download surface is

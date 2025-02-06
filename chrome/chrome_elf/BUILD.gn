@@ -144,6 +144,7 @@ static_library("hook_util") {
   deps = [
     "//base:base_static",  # pe_image
   ]
+  public_deps = [ "//base" ]
 }
 
 # This target contains utility functions which must only depend on

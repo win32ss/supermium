@@ -29,7 +29,7 @@ are declared in tools/grit/grit_rule.gni.
     <output filename="generated_resources_de.pak" type="data_package" lang="de" />
     <output filename="generated_resources_el.pak" type="data_package" lang="el" />
     <output filename="generated_resources_en-GB.pak" type="data_package" lang="en-GB" />
-    <output filename="generated_resources_en-US.pak" type="data_package" lang="en" />
+    <output filename="generated_resources_en-US.pak" type="data_package" lang="en-GB" />
     <output filename="generated_resources_es.pak" type="data_package" lang="es" />
     <output filename="generated_resources_es-419.pak" type="data_package" lang="es-419" />
     <output filename="generated_resources_et.pak" type="data_package" lang="et" />
@@ -14108,6 +14108,9 @@ This can include information about installed software, files, your browser, and 
       </message>
       <message name="IDS_DIRECTORY_LISTING_DATE_MODIFIED" desc="When viewing a local directory, this is the text for the column above the last modified dates.">
         Date Modified
+      </message>
+      <message name="IDS_DIRECTORY_LISTING_PARSING_ERROR_BOX_TEXT" desc="Text to show in a box when we failed to parse FTP directory listing.">
+        Oh, no! This server is sending data <ph name="PRODUCT_NAME">$1<ex>Google Chrome</ex></ph> can't understand. Please <ph name="BEGIN_LINK">&lt;a href="http://code.google.com/p/chromium/issues/entry"&gt;</ph>report a bug<ph name="END_LINK">&lt;/a&gt;<ex>&lt;/a&gt;</ex></ph>, and include the <ph name="BEGIN2_LINK">&lt;a href="LOCATION"&gt;</ph>raw listing<ph name="END2_LINK">&lt;/a&gt;</ph>.
       </message>
 
       <!-- Saving Page-->

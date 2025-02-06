@@ -224,6 +224,11 @@ BASE_FEATURE(kAcceptCHFrame, "AcceptCHFrame", base::FEATURE_ENABLED_BY_DEFAULT);
 BASE_FEATURE(kGetCookiesStringUma,
              "GetCookiesStringUma",
              base::FEATURE_ENABLED_BY_DEFAULT);
+// Enables support for FTP URLs. When disabled FTP URLs will behave the same as
+// any other URL scheme that's unknown to the UA. See https://crbug.com/333943
+BASE_FEATURE(kFtpProtocol,
+	         "FtpProtocol",
+             base::FEATURE_ENABLED_BY_DEFAULT);
 
 namespace {
 

@@ -201,7 +201,8 @@ class SSLClientSocketImpl::SSLContext {
     SSL_CTX_sess_set_new_cb(ssl_ctx_.get(), NewSessionCallback);
     SSL_CTX_set_timeout(ssl_ctx_.get(), 1 * 60 * 60 /* one hour */);
 
-    SSL_CTX_set_grease_enabled(ssl_ctx_.get(), 1);
+	int grease_mode = !base::CommandLine::ForCurrentProcess()->HasSwitch("disable-grease-tls");
+    SSL_CTX_set_grease_enabled(ssl_ctx_.get(), grease_mode);
 
     // Deduplicate all certificates minted from the SSL_CTX in memory.
     SSL_CTX_set0_buffer_pool(ssl_ctx_.get(), x509_util::GetBufferPool());

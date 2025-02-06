@@ -257,8 +257,8 @@ color_utils::HSL ThemeProperties::GetDefaultTint(int id,
       return {-1, 0.54, 0.567};  // Roughly kGoogleGrey900 -> kGoogleGrey800
 
     if (incognito)
-      return {0.57, 0.65, 0.1405};  // #DEE1E6 -> kGoogleGrey800
-    return {-1, -1, 0.642};         // #DEE1E6 -> #E7EAED
+      return {0.57, 0.65, 0.87};  // #DEE1E6 -> kGoogleGrey800
+    return {-1, -1, 0.75};         // #DEE1E6 -> #E7EAED
   }
 
   return {-1, -1, -1};

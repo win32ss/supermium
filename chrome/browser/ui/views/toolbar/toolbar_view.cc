@@ -281,7 +281,7 @@ void ToolbarView::Init() {
   size_animation_.Reset(1);
 
   std::unique_ptr<DownloadToolbarButtonView> download_button;
-  if (download::IsDownloadBubbleEnabled()) {
+  if (download::IsDownloadBubbleEnabled(browser_->profile())) {
     download_button =
         std::make_unique<DownloadToolbarButtonView>(browser_view_);
   }
@@ -481,6 +481,17 @@ void ToolbarView::Init() {
                                browser_->profile()->IsGuestSession() ||
                                browser_->profile()->IsRegularProfile();
 #endif
+
+  const std::string sab_value = base::CommandLine::ForCurrentProcess()->
+                                GetSwitchValueASCII("show-avatar-button");
+  if (sab_value == "always")
+    show_avatar_toolbar_button = true;
+  else if (sab_value == "incognito-and-guest")
+    show_avatar_toolbar_button = browser_->profile()->IsIncognitoProfile() ||
+                                 browser_->profile()->IsGuestSession();
+  else if (sab_value == "never")
+    show_avatar_toolbar_button = false;
+
   avatar_->SetVisible(show_avatar_toolbar_button);
 
 #if BUILDFLAG(ENABLE_WEBUI_TAB_STRIP)

@@ -19,6 +19,7 @@
 #include "base/logging.h"
 #include "base/win/static_constants.h"
 #include "base/win/win_util.h"
+#include "base/win/windows_version.h"
 #include "sandbox/win/src/heap_helper.h"
 #include "sandbox/win/src/sandbox_nt_util.h"
 #include "sandbox/win/src/win_utils.h"
@@ -166,6 +167,13 @@ bool HandleCloserAgent::CloseHandles() {
   DWORD handle_count;
   if (!::GetProcessHandleCount(::GetCurrentProcess(), &handle_count)) {
     return false;
+  }
+  
+  if (base::win::GetVersion() < base::win::Version::WIN8_1)  {
+	if(GetCurrentProcessHandlesWin7())
+		return true;
+	else
+		return false;
   }
 
   // The system call will return only handles up to the buffer size so add a

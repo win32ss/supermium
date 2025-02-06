@@ -1812,6 +1812,16 @@ int ChromeBrowserMainParts::PreMainMessageLoopRunImpl() {
         g_browser_process->profile_manager()->GetLastOpenedProfiles();
   }
 #endif  // BUILDFLAG(IS_CHROMEOS_ASH)
+
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch(
+            "apply-ungoogled-supermium")) {
+        flags_ui::PrefServiceFlagsStorage flags_storage(g_browser_process->local_state());
+        about_flags::SetFeatureEntryEnabled(&flags_storage, "ungoogled-supermium",
+                                      /*enable=*/true);
+		flags_storage.CommitPendingWrites();		
+		return chrome::RESULT_CODE_NORMAL_EXIT_UPGRADE_RELAUNCHED;
+	}
+
   // This step is costly.
   if (browser_creator_->Start(*base::CommandLine::ForCurrentProcess(),
                               base::FilePath(), profile_info,

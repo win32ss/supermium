@@ -97,6 +97,9 @@ void NtpBackgroundService::Shutdown() {
 }
 
 void NtpBackgroundService::FetchCollectionInfo() {
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("ungoogled-supermium")) {
+	  return;
+  }
   if (collections_loader_ != nullptr)
     return;
   collection_error_info_.ClearError();

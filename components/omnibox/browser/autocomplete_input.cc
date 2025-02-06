@@ -12,6 +12,7 @@
 #include <string_view>
 #include <vector>
 
+#include "base/command_line.h"
 #include "base/logging.h"
 #include "base/strings/strcat.h"
 #include "base/strings/string_number_conversions.h"
@@ -572,7 +573,9 @@ void AutocompleteInput::ParseForEmphasizeComponents(
   // For the view-source and blob schemes, we should emphasize the host of the
   // URL qualified by the view-source or blob prefix.
   if ((base::EqualsCaseInsensitiveASCII(scheme_str, kViewSourceScheme) ||
-       base::EqualsCaseInsensitiveASCII(scheme_str, url::kBlobScheme)) &&
+       base::EqualsCaseInsensitiveASCII(scheme_str, url::kBlobScheme) ||
+	   (base::CommandLine::ForCurrentProcess()->HasSwitch("ungoogled-supermium") && 
+	   base::EqualsCaseInsensitiveASCII(scheme_str, url::kTraceScheme))) &&
       (static_cast<int>(text.length()) > after_scheme_and_colon)) {
     // Obtain the URL prefixed by view-source or blob and parse it.
     std::u16string real_url(text.substr(after_scheme_and_colon));

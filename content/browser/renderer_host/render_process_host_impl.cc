@@ -1702,7 +1702,7 @@ bool RenderProcessHostImpl::Init() {
   GetRendererInterface()->InitializeRenderer(
       GetContentClient()->browser()->GetUserAgentBasedOnPolicy(
           browser_context_),
-      GetContentClient()->browser()->GetUserAgentMetadata(),
+      base::FeatureList::IsEnabled(blink::features::kRemoveClientHints) ? blink::UserAgentMetadata() : GetContentClient()->browser()->GetUserAgentMetadata(),
       storage_partition_impl_->cors_exempt_header_list(),
       GetContentClient()->browser()->GetOriginTrialsSettings());
 
@@ -3449,7 +3449,9 @@ void RenderProcessHostImpl::PropagateBrowserCommandLineToRenderer(
       switches::kRendererWaitForJavaDebugger,
 #endif
 #if BUILDFLAG(IS_WIN)
+      switches::kDisableDirectWrite,
       switches::kDisableHighResTimer,
+      switches::kEnableWin7WebRtcHWH264Decoding,
       switches::kTextContrast,
       switches::kTextGamma,
       switches::kTrySupportedChannelLayouts,
@@ -3513,7 +3515,7 @@ void RenderProcessHostImpl::PropagateBrowserCommandLineToRenderer(
     }
   }
 
-#if BUILDFLAG(IS_WIN) && !defined(OFFICIAL_BUILD)
+#if BUILDFLAG(IS_WIN) && defined(OFFICIAL_BUILD)
   // Needed because we can't show the dialog from the sandbox. Don't pass
   // --no-sandbox in official builds because that would bypass the bad_flgs
   // prompt.
