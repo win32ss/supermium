@@ -45,6 +45,8 @@ The Oldermium web browser also provides the following features:
 
 -Linux
 
+-WoA (Windows on ARM)
+
 -Manifest V2 (once removed by Google)
 
 ...and more! If there's a feature you want, which cannot be replicated by a Manifest v2/v3 extension, please ask!
