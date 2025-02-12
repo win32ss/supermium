@@ -163,7 +163,6 @@ config("default_libs") {
     # instead the targets that use the less common ones (e.g. wininet or
     # winspool) should include those explicitly.
     libs = [
-      "progwrp.lib",
       "ntdll.lib",
       "advapi32.lib",
       "comdlg32.lib",
