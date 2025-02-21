@@ -79,7 +79,7 @@ BASE_FEATURE(kExtensionIconVariants,
 
 BASE_FEATURE(kExtensionManifestV2DeprecationWarning,
              "ExtensionManifestV2DeprecationWarning",
-             base::FEATURE_ENABLED_BY_DEFAULT);
+             base::FEATURE_DISABLED_BY_DEFAULT);
 
 BASE_FEATURE(kExtensionManifestV2Unsupported,
              "ExtensionManifestV2Unsupported",
@@ -100,7 +100,7 @@ const base::FeatureParam<std::string> kExtensionManifestV2ExceptionListParam(
 
 BASE_FEATURE(kAllowLegacyMV2Extensions,
              "AllowLegacyMV2Extensions",
-             base::FEATURE_DISABLED_BY_DEFAULT);
+             base::FEATURE_ENABLED_BY_DEFAULT);
 
 BASE_FEATURE(kExtensionSourceUrlEnforcement,
              "ExtensionSourceUrlEnforcement",
