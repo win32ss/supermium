@@ -30,5 +30,6 @@ bool ThemeHelperWin::ShouldUseNativeFrame(
 		// Aero Glass is "native", Mica is "native", and so is the Windows 10-style theme that is drawn
 		// by Chromium itself.
 		// Only the "original" Chromium theme that mimicks Aero is not considered native.
-  return (!HasCustomImage(IDR_THEME_FRAME, theme_supplier) && (base::win::GetVersion() >= base::win::Version::WIN8)) && !base::FeatureList::IsEnabled(kForceXpTheme);
+  return !HasCustomImage(IDR_THEME_FRAME, theme_supplier) && ((base::win::GetVersion() >= base::win::Version::WIN8) 
+         || !ShouldCustomDrawSystemTitlebar()) && !base::FeatureList::IsEnabled(kForceXpTheme);
 }
