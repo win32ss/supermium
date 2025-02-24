@@ -134,6 +134,7 @@ gfx::Size ChromeRefresh2023TabStyle::GetSeparatorSize() const {
 }
 
 gfx::Insets ChromeRefresh2023TabStyle::GetSeparatorMargins() const {
+  SetLayoutConstants();
   return gfx::Insets::TLBR(GetLayoutConstant(TAB_STRIP_PADDING),
                            kChromeRefreshSeparatorHorizontalMargin,
                            GetLayoutConstant(TAB_STRIP_PADDING),

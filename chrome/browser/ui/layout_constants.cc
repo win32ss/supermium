@@ -18,6 +18,10 @@
 #include "chromeos/constants/chromeos_features.h"
 #endif
 
+void SetLayoutConstants() {
+
+}
+
 int GetLayoutConstant(LayoutConstant constant) {
   const bool touch_ui = ui::TouchUiController::Get()->touch_ui();
   switch (constant) {

@@ -7,10 +7,15 @@
 #include <algorithm>
 #include <utility>
 
+#include "base/files/file_util.h"
+#include "base/functional/bind.h"
 #include "base/i18n/rtl.h"
+#include "base/logging.h"
 #include "base/memory/raw_ptr.h"
 #include "base/numerics/safe_conversions.h"
+#include "base/path_service.h"
 #include "base/strings/strcat.h"
+#include "base/task/thread_pool.h"
 #include "cc/paint/paint_record.h"
 #include "cc/paint/paint_shader.h"
 #include "chrome/browser/themes/theme_properties.h"
@@ -27,6 +32,7 @@
 #include "chrome/browser/ui/views/tabs/tab_group_underline.h"
 #include "chrome/browser/ui/views/tabs/tab_slot_controller.h"
 #include "chrome/browser/ui/views/tabs/tab_slot_view.h"
+#include "chrome/common/chrome_paths.h"
 #include "chrome/grit/theme_resources.h"
 #include "components/tab_groups/tab_group_visual_data.h"
 #include "third_party/skia/include/core/SkRRect.h"
@@ -205,6 +211,114 @@ TabStyleViewsImpl::TabStyleViewsImpl(Tab* tab)
   // repurposing CONTEXT_BUTTON_MD.
 }
 
+typedef struct DataItem {
+	int datakey; // index of point on the tab
+	std::vector<float> values; // 
+}DataItem;
+
+bool GetTabCustomStr(std::string& tabstr, bool IsActive, bool IsPinned, bool IsFirst) {
+    base::FilePath userdir;
+    if(!base::PathService::Get(chrome::DIR_USER_DATA, &userdir))
+        return false; // Things are seriously wrong if the user data directory cannot be located.
+    const base::FilePath userpath = userdir.Append(FILE_PATH_LITERAL("scs"));
+    std::string bufstr;
+    base::ReadFileToString(userpath, &bufstr);
+
+    if (bufstr.empty())
+        return false;
+    std::string::size_type sectionstart = bufstr.find("tab");
+    std::string::size_type sectionend = bufstr.find("endtab");
+
+    std::string::size_type fallbacksectionstart = sectionstart;
+    std::string::size_type fallbacksectionend = sectionend;
+
+    if (IsPinned) {
+        sectionstart = bufstr.find("pinnedtab");
+      sectionend = bufstr.find("endpinnedtab");
+      if (sectionstart == std::string::npos || sectionend == std::string::npos) {
+         sectionstart = fallbacksectionstart;
+         sectionend = fallbacksectionend;
+      }
+   }
+
+   if (IsActive) {
+      sectionstart = bufstr.find("activetab");
+      sectionend = bufstr.find("endactivetab");
+      if (sectionstart == std::string::npos || sectionend == std::string::npos) {
+         sectionstart = fallbacksectionstart;
+         sectionend = fallbacksectionend;
+      }
+   } else {
+      sectionstart = bufstr.find("inactivetab");
+      sectionend = bufstr.find("endinactivetab");
+      if (sectionstart == std::string::npos || sectionend == std::string::npos) {
+         sectionstart = fallbacksectionstart;
+         sectionend = fallbacksectionend;
+      }      
+   }
+   
+   if (IsFirst) {
+      sectionstart = bufstr.find("firsttab");
+      sectionend = bufstr.find("endfirsttab");
+      if (sectionstart == std::string::npos || sectionend == std::string::npos) {
+         sectionstart = fallbacksectionstart;
+         sectionend = fallbacksectionend;
+      }
+   }
+   
+   if (sectionstart == std::string::npos || sectionend == std::string::npos)
+      return false;
+   
+    tabstr.append(bufstr.substr(sectionstart, sectionend - sectionstart).c_str());
+    return true;
+}
+
+bool UserDefinedTabShape(SkPath& path, std::string& sectionContent, float left, float tab_top) {
+    std::string::size_type pos = 0;
+    while ((pos = sectionContent.find("{", pos)) != std::string::npos) {
+        std::string::size_type endPos = sectionContent.find("}", pos);
+        if (endPos == std::string::npos) {
+            break;
+        }
+
+        std::string dataItemStr = sectionContent.substr(pos + 1, endPos - pos - 1);
+        std::string::size_type equalPos = dataItemStr.find('=');
+
+        if (equalPos != std::string::npos) {
+            DataItem dataItem;
+         std::string key = dataItemStr.substr(0, equalPos);
+         if(!std::all_of(key.begin(), key.end(), [](char c) {return c >= '0' && c <= '9';}))
+             break;
+            dataItem.datakey = std::stoi(key);
+            std::string valuesStr = dataItemStr.substr(equalPos + 1);
+
+            // Parse the values
+            std::istringstream valuesStream(valuesStr);
+            std::string value;
+            while (std::getline(valuesStream, value, ',')) {
+            if(!std::all_of(value.begin(), value.end(), [](char c) {return (c >= '0' && c <= '9') || c == '.';}))
+               break; // No exceptions, so we must verify that there are only integers in the value before continuing.
+                       // If not, the config file is considered to be "compromised" and needs to be replaced or fixed.
+                     // We will not tolerate any unexpected values in the data.
+            if(value.size() > 6)
+               break; // Any "unnecessarily large" numbers will also be blocked.
+            float val = std::stof(value);
+
+                dataItem.values.push_back(val);
+            }
+         
+         if (dataItem.values.size() != 6)
+            break; // Fail if there is an incorrect quantity of values in the data item.
+          path.cubicTo(left + dataItem.values.at(0), tab_top + dataItem.values.at(1), left + dataItem.values.at(2), tab_top + dataItem.values.at(3), left + dataItem.values.at(4),
+                      tab_top + dataItem.values.at(5));
+        }
+
+        pos = endPos + 1;
+    }
+   
+   return true;
+}
+
 SkPath TabStyleViewsImpl::GetPath(TabStyle::PathType path_type,
                                   float scale,
                                   bool force_active,
@@ -212,7 +326,7 @@ SkPath TabStyleViewsImpl::GetPath(TabStyle::PathType path_type,
   CHECK(tab());
   const int stroke_thickness = GetStrokeThickness(force_active);
 
-  const TabStyle::TabSelectionState state = GetSelectionState();
+ // const TabStyle::TabSelectionState state = GetSelectionState();
 
   // We'll do the entire path calculation in aligned pixels.
   // TODO(dfried): determine if we actually want to use |stroke_thickness| as
@@ -225,102 +339,6 @@ SkPath TabStyleViewsImpl::GetPath(TabStyle::PathType path_type,
   float content_corner_radius =
       GetTopCornerRadiusForWidth(tab()->width()) * scale;
   float extension_corner_radius = tab_style()->GetBottomCornerRadius() * scale;
-
-  // Selected, hover, and inactive tab fills are a detached squarcle tab.
-  if ((path_type == TabStyle::PathType::kFill &&
-       state != TabStyle::TabSelectionState::kActive) ||
-      path_type == TabStyle::PathType::kHighlight ||
-      path_type == TabStyle::PathType::kInteriorClip ||
-      path_type == TabStyle::PathType::kHitTest) {
-    // TODO (crbug.com/1451400): This constant should be unified with
-    // kCRtabstripRegionViewControlPadding in tab_strip_region_view.
-
-    float top_content_corner_radius = content_corner_radius;
-    float bottom_content_corner_radius = content_corner_radius;
-    float tab_height = GetLayoutConstant(TAB_HEIGHT) * scale;
-
-    // The tab displays favicon animations that can emerge from the toolbar. The
-    // interior clip needs to extend the entire height of the toolbar to support
-    // this. Detached tab shapes do not need to respect this.
-    if (path_type != TabStyle::PathType::kInteriorClip &&
-        path_type != TabStyle::PathType::kHitTest) {
-      tab_height -= GetLayoutConstant(TAB_STRIP_PADDING) * scale;
-      tab_height -= GetLayoutConstant(TABSTRIP_TOOLBAR_OVERLAP) * scale;
-    }
-
-    // Don't round the bottom corners to avoid creating dead space between tabs.
-    if (path_type == TabStyle::PathType::kHitTest) {
-      bottom_content_corner_radius = 0;
-    }
-
-    int left = aligned_bounds.x() + extension_corner_radius;
-    int top = aligned_bounds.y() + GetLayoutConstant(TAB_STRIP_PADDING) * scale;
-    int right = aligned_bounds.right() - extension_corner_radius;
-    const int bottom = top + tab_height;
-
-    // For maximized and full screen windows, extend the tab hit test to the top
-    // of the tab, encompassing the top padding. This makes it easy to click on
-    // tabs by moving the mouse to the top of the screen.
-    if (path_type == TabStyle::PathType::kHitTest &&
-        tab()->controller()->IsFrameCondensed()) {
-      top -= GetLayoutConstant(TAB_STRIP_PADDING) * scale;
-      // Don't round the top corners to avoid creating dead space between tabs.
-      top_content_corner_radius = 0;
-    }
-
-    // if the size of the space for the path is smaller than the size of a
-    // favicon or if we are building a path for the hit test, expand to take the
-    // entire width of the separator margins AND the separator.
-    if ((right - left) < (gfx::kFaviconSize * scale) ||
-        path_type == TabStyle::PathType::kHitTest) {
-      // Take the entire size of the separator. in odd separator size cases, the
-      // right side will take the remaining space.
-      const int left_separator_overlap =
-          tab_style()->GetSeparatorSize().width() / 2;
-      const int right_separator_overlap =
-          tab_style()->GetSeparatorSize().width() - left_separator_overlap;
-
-      // If there is a tab before this one, then expand into its overlap.
-      const Tab* const previous_tab =
-          tab()->controller()->GetAdjacentTab(tab(), -1);
-      if (previous_tab) {
-        left -= (tab_style()->GetSeparatorMargins().right() +
-                 left_separator_overlap) *
-                scale;
-      }
-
-      // If there is a tab after this one, then expand into its overlap.
-      const Tab* const next_tab = tab()->controller()->GetAdjacentTab(tab(), 1);
-      if (next_tab) {
-        right += (tab_style()->GetSeparatorMargins().left() +
-                  right_separator_overlap) *
-                 scale;
-      }
-    }
-
-    // Radii are clockwise from top left.
-    const SkVector radii[4] = {
-        SkVector(top_content_corner_radius, top_content_corner_radius),
-        SkVector(top_content_corner_radius, top_content_corner_radius),
-        SkVector(bottom_content_corner_radius, bottom_content_corner_radius),
-        SkVector(bottom_content_corner_radius, bottom_content_corner_radius)};
-    SkRRect rrect;
-    rrect.setRectRadii(SkRect::MakeLTRB(left, top, right, bottom), radii);
-    SkPath path;
-    path.addRRect(rrect);
-
-    // Convert path to be relative to the tab origin.
-    gfx::PointF origin(tab()->origin());
-    origin.Scale(scale);
-    path.offset(-origin.x(), -origin.y());
-
-    // Possibly convert back to DIPs.
-    if (render_units == TabStyle::RenderUnits::kDips && scale != 1.0f) {
-      path.transform(SkMatrix::Scale(1.0f / scale, 1.0f / scale));
-    }
-
-    return path;
-  }
 
   // Compute |extension| as the width outside the separators.  This is a fixed
   // value equal to the normal corner radius.
@@ -359,8 +377,6 @@ SkPath TabStyleViewsImpl::GetPath(TabStyle::PathType path_type,
   const bool compact_left_to_bottom =
       !extend_left_to_bottom && (shape_modifier & kCompactLeftArc);
 
-  SkPath path;
-
   float left_extension_corner_radius = extension_corner_radius;
   if (compact_left_to_bottom) {
     left_extension_corner_radius = (tab_style()->GetBottomCornerRadius() -
@@ -368,6 +384,8 @@ SkPath TabStyleViewsImpl::GetPath(TabStyle::PathType path_type,
                                    scale;
   }
 
+  std::string tabstr;
+  SkPath path;
   // Avoid mallocs at every new path verb by preallocating an
   // empirically-determined amount of space in the verb and point buffers.
   const int kMaxPathPoints = 20;
@@ -382,6 +400,33 @@ SkPath TabStyleViewsImpl::GetPath(TabStyle::PathType path_type,
 
   // Start with the left side of the shape.
   path.moveTo(left, extended_bottom);
+
+  bool is_active_tab = tab_->controller()->IsActiveTab(tab_);
+  bool is_pinned_tab = tab_->controller()->IsTabPinned(tab_);
+  bool is_first_tab = tab_->controller()->IsTabFirst(tab_);
+/*
+  base::ThreadPool::PostTask(FROM_HERE, {base::TaskPriority::USER_BLOCKING}, 
+                                                       base::BindOnce(base::IgnoreResult(&GetTabCustomStr),
+                                                       tabstr,
+                                                       is_active_tab,
+                                                       is_pinned_tab,
+                                                       is_first_tab));*/
+  bool is_custom_str_available = GetTabCustomStr(tabstr, is_active_tab, is_pinned_tab, is_first_tab);
+  UserDefinedTabShape(path, tabstr, left, tab_top);
+
+  if (is_custom_str_available && !path.isEmpty()) {
+    // Convert path to be relative to the tab origin.
+    gfx::PointF origin(tab_->origin());
+    origin.Scale(scale);
+    path.offset(-origin.x(), -origin.y());
+
+    // Possibly convert back to DIPs.
+    if (render_units == TabStyle::RenderUnits::kDips && scale != 1.0f) {
+       path.transform(SkMatrix::Scale(1.0f / scale, 1.0f / scale));
+    }
+    path.close();
+    return path;
+  }
 
   if (tab_left != left) {
     // Draw the left edge of the extension.

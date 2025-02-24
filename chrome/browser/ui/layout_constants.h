@@ -219,6 +219,8 @@ enum LayoutInset {
   WEBUI_TAB_STRIP_TOOLBAR_INTERIOR_MARGIN,
 };
 
+void SetLayoutConstants();
+
 int GetLayoutConstant(LayoutConstant constant);
 
 gfx::Insets GetLayoutInsets(LayoutInset inset);
