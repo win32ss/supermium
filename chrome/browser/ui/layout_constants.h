@@ -172,6 +172,9 @@ enum LayoutConstant {
 
   // The size of page action icons in a web app title bar.
   WEB_APP_PAGE_ACTION_ICON_SIZE,
+
+  // Maximum value of the layout constants.
+  LAYOUT_CONSTANTS_MAX_VALUE,
 };
 
 enum LayoutInset {
