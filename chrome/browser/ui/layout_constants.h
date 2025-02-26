@@ -173,6 +173,21 @@ enum LayoutConstant {
   // The size of page action icons in a web app title bar.
   WEB_APP_PAGE_ACTION_ICON_SIZE,
 
+  // The maxiumum length of a tab.
+  TAB_WIDTH,
+
+  // Horizontal padding for the tab label.
+  TAB_HORIZONTAL_PADDING,
+
+  // Vertical padding for the tab label.
+  TAB_VERTICAL_PADDING,
+
+  // Top corner radius of the tab.
+  TAB_TOP_CORNER_RADIUS,
+
+  // Bottom corner radius. Used to determine tab overlap and tab insets as well.
+  TAB_BOTTOM_CORNER_RADIUS,
+
   // Maximum value of the layout constants.
   LAYOUT_CONSTANTS_MAX_VALUE,
 };

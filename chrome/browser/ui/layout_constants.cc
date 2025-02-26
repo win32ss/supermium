@@ -80,6 +80,11 @@ void SetLayoutConstantsFallback() {
   layout_constant_values[PAGE_INFO_ICON_SIZE] = 20;
   layout_constant_values[DOWNLOAD_ICON_SIZE] = 20;
   layout_constant_values[TOOLBAR_CORNER_RADIUS] = 8;
+  layout_constant_values[TAB_WIDTH] = 193;
+  layout_constant_values[TAB_HORIZONTAL_PADDING] = 8;
+  layout_constant_values[TAB_VERTICAL_PADDING] = 6;
+  layout_constant_values[TAB_TOP_CORNER_RADIUS] = 10;
+  layout_constant_values[TAB_BOTTOM_CORNER_RADIUS] = 12;
 }
 
 void SetLayoutConstants() {
@@ -116,7 +121,6 @@ void SetLayoutConstants() {
 
 int GetLayoutConstant(LayoutConstant constant) {
   int result = constant[layout_constant_values];
-  LOG(ERROR) << "Constant value " << constant << ": " << result;
   return result;
 }
 
