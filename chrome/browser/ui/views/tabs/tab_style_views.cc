@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <utility>
 
+#include "base/command_line.h"
 #include "base/files/file_util.h"
 #include "base/functional/bind.h"
 #include "base/i18n/rtl.h"
@@ -336,9 +337,13 @@ SkPath TabStyleViewsImpl::GetPath(TabStyle::PathType path_type,
 
   // Calculate the corner radii. Note that corner radius is based on original
   // tab width (in DIP), not our new, scaled-and-aligned bounds.
-  float content_corner_radius =
-      GetTopCornerRadiusForWidth(tab()->width()) * scale;
-  float extension_corner_radius = tab_style()->GetBottomCornerRadius() * scale;
+  float content_corner_radius = 0.0f;
+  float extension_corner_radius = 0.0f;
+  if (!base::CommandLine::ForCurrentProcess()->HasSwitch("rectangular-tabs")) {
+    content_corner_radius =
+        GetTopCornerRadiusForWidth(tab()->width()) * scale;
+    extension_corner_radius = tab_style()->GetBottomCornerRadius() * scale;
+  }
 
   // Compute |extension| as the width outside the separators.  This is a fixed
   // value equal to the normal corner radius.
@@ -1010,6 +1015,9 @@ void TabStyleViewsImpl::PaintTabBackgroundFill(
     cc::PaintFlags flags;
     flags.setAntiAlias(true);
     flags.setColor(GetCurrentTabBackgroundColor(selection_state, hovered));
+	if (base::CommandLine::ForCurrentProcess()->HasSwitch("transparent-tabs") &&
+	    selection_state != TabStyle::TabSelectionState::kActive)
+		flags.setAlphaf(0.7f);
     canvas->DrawRect(gfx::ScaleToEnclosingRect(tab_->GetLocalBounds(), scale),
                      flags);
   }

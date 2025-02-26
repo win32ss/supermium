@@ -217,4 +217,7 @@
     {"disable-captive-portals", "Disable Captive Portals",
      "Disables captive portals, such as login pages for public WiFi services.", kOsAll,
      SINGLE_VALUE_TYPE("disable-captive-portals")},
+    {"tab-strip-control-button-left", "Place Tab Strip Control Button on Left",
+     "Places tab strip control button to the left of the tabs.", kOsDesktop,
+     SINGLE_VALUE_TYPE("tab-strip-control-button-left")},
 #endif  // SUPERMIUM_FLAG_ENTRIES_H_

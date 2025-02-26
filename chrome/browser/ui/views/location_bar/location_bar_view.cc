@@ -9,6 +9,7 @@
 #include <memory>
 #include <utility>
 
+#include "base/command_line.h"
 #include "base/containers/adapters.h"
 #include "base/feature_list.h"
 #include "base/functional/bind.h"
@@ -210,7 +211,8 @@ LocationBarView::LocationBarView(Browser* browser,
                  !v->GetOmniboxPopupView()->IsOpen();
         }));
     views::FocusRing::Get(this)->SetOutsetFocusRingDisabled(true);
-    views::InstallPillHighlightPathGenerator(this);
+	if (!base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox"))
+		views::InstallPillHighlightPathGenerator(this);
 
 #if BUILDFLAG(OS_LEVEL_GEOLOCATION_PERMISSION_SUPPORTED)
     if (features::IsOsLevelGeolocationPermissionSupportEnabled()) {
@@ -361,7 +363,9 @@ void LocationBarView::Init() {
     if (!apps::features::ShouldShowLinkCapturingUX()) {
       params.types_enabled.push_back(PageActionIconType::kIntentPicker);
     }
-    params.types_enabled.push_back(PageActionIconType::kPwaInstall);
+	if (!base::CommandLine::ForCurrentProcess()->HasSwitch("disable-pwa-install-prompt")) {
+      params.types_enabled.push_back(PageActionIconType::kPwaInstall);
+	}
     params.types_enabled.push_back(PageActionIconType::kFind);
     params.types_enabled.push_back(PageActionIconType::kTranslate);
     params.types_enabled.push_back(PageActionIconType::kZoom);
@@ -433,6 +437,8 @@ bool LocationBarView::IsInitialized() const {
 }
 
 int LocationBarView::GetBorderRadius() const {
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox"))
+	  return 3;
   return ChromeLayoutProvider::Get()->GetCornerRadiusMetric(
       views::Emphasis::kMaximum, size());
 }
@@ -1164,6 +1170,8 @@ void LocationBarView::RefreshBackground() {
     border_color = color_provider->GetColor(kColorLocationBarBorderOnMismatch);
   }
 
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox-border"))
+	  border_color = SK_ColorGRAY;
   if (is_popup_mode_) {
     SetBackground(views::CreateSolidBackground(background_color));
   } else {
@@ -1175,6 +1183,14 @@ void LocationBarView::RefreshBackground() {
   // Keep the views::Textfield in sync. It needs an opaque background to
   // correctly enable subpixel AA.
   omnibox_view_->SetBackgroundColor(background_color);
+
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-omnibox-border") &&
+    base::CommandLine::ForCurrentProcess()->HasSwitch("compact-ui")) {
+    // When the location bar is shrunken, the border above is only drawn on the sides.
+    // To resolve this, an extra border is drawn in that area on the top and bottom.
+    // Ideally, only one border would be drawn.
+    omnibox_view_->SetBorder(views::CreateSolidSidedBorder(gfx::Insets::TLBR(1, 0, 1, 0), SK_ColorGRAY));
+  }
 
   // The divider between indicators and request chips should have the same color
   // as the omnibox.
