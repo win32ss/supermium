@@ -277,6 +277,7 @@
 #if BUILDFLAG(IS_WIN)
 #include "base/trace_event/trace_event_etw_export_win.h"
 #include "base/win/win_util.h"
+#include "base/win/windows_version.h"
 #include "chrome/browser/chrome_browser_main_win.h"
 #include "chrome/browser/first_run/upgrade_util_win.h"
 #include "chrome/browser/notifications/win/notification_launch_id.h"
@@ -1177,8 +1178,16 @@ int ChromeBrowserMainParts::PreCreateThreadsImpl() {
       ui::TouchUiController::Get());
 #endif
 
-  // Add Site Isolation switches as dictated by policy.
   auto* command_line = base::CommandLine::ForCurrentProcess();
+#if BUILDFLAG(IS_WIN)
+  // Sandbox is currently non-functional below Windows 10. Avoid it.
+  if (base::win::GetVersion() < base::win::Version::WIN10 &&
+      !command_line->HasSwitch("no-sandbox")) {
+    command_line->AppendSwitch("no-sandbox");
+  }
+#endif
+
+  // Add Site Isolation switches as dictated by policy.
   if (local_state->GetBoolean(prefs::kSitePerProcess) &&
       site_isolation::SiteIsolationPolicy::IsEnterprisePolicyApplicable() &&
       !command_line->HasSwitch(switches::kSitePerProcess)) {

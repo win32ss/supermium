@@ -329,7 +329,7 @@ void Tab::Layout(PassKey) {
 
   // The bounds for the favicon will include extra width for the attention
   // indicator, but visually it will be smaller at kFaviconSize wide.
-  gfx::Rect favicon_bounds(start, contents_rect.y(), 0, 0);
+  gfx::Rect favicon_bounds(start + 5, contents_rect.y() + 7, 0, 0);
   if (showing_icon_) {
     if (center_icon_) {
       // When centering the favicon, the favicon is allowed to escape the normal

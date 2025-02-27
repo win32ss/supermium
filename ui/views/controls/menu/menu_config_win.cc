@@ -8,6 +8,7 @@
 
 #include <Vssym32.h>
 
+#include "base/command_line.h"
 #include "ui/gfx/system_fonts_win.h"
 
 namespace views {
@@ -25,6 +26,18 @@ void MenuConfig::InitPlatform() {
   separator_upper_height = 5;
   separator_lower_height = 7;
 
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("compact-ui")) {
+      menu_horizontal_border_size = 3;
+      nonrounded_menu_vertical_border_size = 3;
+      item_vertical_margin = 3;
+      item_horizontal_border_padding = -2;
+      icons_in_label = 10;
+      always_reserve_check_region = true;
+      separator_height = 7;
+      separator_upper_height = 5;
+      separator_upper_height = 5;
+      corner_radius = 0;
+  }
   use_bubble_border = corner_radius > 0;
 }
 
