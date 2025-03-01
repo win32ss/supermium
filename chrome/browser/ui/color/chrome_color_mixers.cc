@@ -162,4 +162,6 @@ void AddChromeColorMixers(ui::ColorProvider* provider,
   if (key.app_controller) {
     key.app_controller->AddColorMixers(provider, key);
   }
+
+  AddUserDefinedMixer(provider, key);
 }

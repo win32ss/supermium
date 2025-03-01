@@ -32,7 +32,6 @@ void MenuConfig::InitPlatform() {
       item_vertical_margin = 3;
       item_horizontal_border_padding = -2;
       icons_in_label = 10;
-      always_reserve_check_region = true;
       separator_height = 7;
       separator_upper_height = 5;
       separator_upper_height = 5;
