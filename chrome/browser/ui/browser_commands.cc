@@ -1094,8 +1094,9 @@ void ToggleCompactMode(Browser* browser) {
 
 bool ShouldUseCompactMode(Profile* profile) {
   CHECK(profile);
-  return base::FeatureList::IsEnabled(features::kCompactMode) &&
-         profile->GetPrefs()->GetBoolean(prefs::kCompactModeEnabled);
+  return (base::FeatureList::IsEnabled(features::kCompactMode) &&
+         profile->GetPrefs()->GetBoolean(prefs::kCompactModeEnabled)) ||
+         base::CommandLine::ForCurrentProcess()->HasSwitch("compact-ui");
 }
 
 bool CanMoveTabsToNewWindow(Browser* browser,

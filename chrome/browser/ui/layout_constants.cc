@@ -80,7 +80,7 @@ void SetLayoutConstantsFallback() {
   layout_constant_values[PAGE_INFO_ICON_SIZE] = 20;
   layout_constant_values[DOWNLOAD_ICON_SIZE] = 20;
   layout_constant_values[TOOLBAR_CORNER_RADIUS] = 8;
-  layout_constant_values[TAB_WIDTH] = 193;
+  layout_constant_values[TAB_WIDTH] = 240;
   layout_constant_values[TAB_HORIZONTAL_PADDING] = 8;
   layout_constant_values[TAB_VERTICAL_PADDING] = 6;
   layout_constant_values[TAB_TOP_CORNER_RADIUS] = 10;
