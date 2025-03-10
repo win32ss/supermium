@@ -244,6 +244,7 @@ bool AllowExtensionResourceLoad(const network::ResourceRequest& request,
   }
 
   if (child_id != content::ChildProcessHost::kInvalidUniqueID &&
+      content::RenderProcessHost::FromID(child_id) &&
       content::RenderProcessHost::FromID(child_id)->GetProcess().is_current() &&
       base::CommandLine::ForCurrentProcess()->HasSwitch("single-process"))
        return true;
