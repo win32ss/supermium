@@ -1812,9 +1812,9 @@ const char kEvDetailsInPageInfoDescription[] =
     "Shows the EV certificate details in the Page Info bubble.";
 
 const char kExperimentalWebPlatformFeaturesName[] =
-    "Disable Experimental Web Platform features";
+    "Experimental Web Platform features";
 const char kExperimentalWebPlatformFeaturesDescription[] =
-    "Disables experimental Web Platform features that are used to increase the compatibility of Supermium 126 ESR.";
+    "Enables experimental Web Platform features that are in development.";
 
 const char kSafeBrowsingAsyncRealTimeCheckName[] =
     "Safe Browsing Async Real Time Check";

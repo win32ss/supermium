@@ -728,7 +728,7 @@ void SetRuntimeFeaturesDefaultsAndUpdateFromArgs(
     const base::CommandLine& command_line) {
   // Sets experimental features.
   bool enable_experimental_web_platform_features =
-      !command_line.HasSwitch(switches::kEnableExperimentalWebPlatformFeatures);
+      command_line.HasSwitch(switches::kEnableExperimentalWebPlatformFeatures);
   bool enable_blink_test_features =
       command_line.HasSwitch(switches::kEnableBlinkTestFeatures);
 
