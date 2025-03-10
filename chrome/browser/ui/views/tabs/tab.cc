@@ -329,7 +329,8 @@ void Tab::Layout(PassKey) {
 
   // The bounds for the favicon will include extra width for the attention
   // indicator, but visually it will be smaller at kFaviconSize wide.
-  gfx::Rect favicon_bounds(start + 5, contents_rect.y() + 7, 0, 0);
+  gfx::Rect favicon_bounds(start + GetLayoutConstant(TAB_FAVICON_X_OFFSET), 
+                           contents_rect.y() + GetLayoutConstant(TAB_FAVICON_Y_OFFSET), 0, 0);
   if (showing_icon_) {
     if (center_icon_) {
       // When centering the favicon, the favicon is allowed to escape the normal
@@ -354,7 +355,7 @@ void Tab::Layout(PassKey) {
 
   const int after_title_padding = GetLayoutConstant(TAB_AFTER_TITLE_PADDING);
 
-  int close_x = contents_rect.right();
+  int close_x = contents_rect.right() + GetLayoutConstant(TAB_CLOSE_BUTTON_X_OFFSET);
   if (showing_close_button_) {
     // The visible size is the button's hover shape size. The actual size
     // includes the border insets for the button.

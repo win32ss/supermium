@@ -85,6 +85,10 @@ void SetLayoutConstantsFallback() {
   layout_constant_values[TAB_VERTICAL_PADDING] = 6;
   layout_constant_values[TAB_TOP_CORNER_RADIUS] = 10;
   layout_constant_values[TAB_BOTTOM_CORNER_RADIUS] = 12;
+  layout_constant_values[TAB_STRIP_MAXIMIZED_ANTI_PADDING] = 6;
+  layout_constant_values[TAB_FAVICON_Y_OFFSET] = 7;
+  layout_constant_values[TAB_FAVICON_X_OFFSET] = 5;
+  layout_constant_values[TAB_CLOSE_BUTTON_X_OFFSET] = 0;
 }
 
 void SetLayoutConstants() {

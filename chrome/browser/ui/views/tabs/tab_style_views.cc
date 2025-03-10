@@ -375,6 +375,24 @@ SkPath TabStyleViewsImpl::GetPath(TabStyle::PathType path_type,
     content_corner_radius -= 0.5f * stroke_adjustment;
     tab_bottom -= 0.5f * stroke_adjustment;
     extension_corner_radius -= 0.5f * stroke_adjustment;
+  } else if (path_type == TabStyle::PathType::kHitTest) {
+    // Outside border needs to draw its bottom line a stroke width above the
+    // bottom of the tab, to line up with the stroke that runs across the rest
+    // of the bottom of the tab bar (when strokes are enabled).
+    tab_bottom -= stroke_adjustment;
+    extension_corner_radius -= stroke_adjustment;
+    if (tab_->GetWidget()->IsMaximized() || tab_->GetWidget()->IsFullscreen()) {
+      extend_to_top = true;
+      tab_top -= GetLayoutConstant(TAB_STRIP_MAXIMIZED_ANTI_PADDING) * scale;
+      if (tab_->controller()->IsTabFirst(tab_)) {
+        // The path is not mirrored in RTL and thus we must manually choose the
+        // correct "leading" edge.
+        if (base::i18n::IsRTL())
+          tab_right = right;
+        else
+          tab_left = left;
+      }
+    }
   }
   const ShapeModifier shape_modifier = GetShapeModifier(path_type);
   const bool extend_left_to_bottom = shape_modifier & kNoLowerLeftArc;
@@ -409,13 +427,7 @@ SkPath TabStyleViewsImpl::GetPath(TabStyle::PathType path_type,
   bool is_active_tab = tab_->controller()->IsActiveTab(tab_);
   bool is_pinned_tab = tab_->controller()->IsTabPinned(tab_);
   bool is_first_tab = tab_->controller()->IsTabFirst(tab_);
-/*
-  base::ThreadPool::PostTask(FROM_HERE, {base::TaskPriority::USER_BLOCKING}, 
-                                                       base::BindOnce(base::IgnoreResult(&GetTabCustomStr),
-                                                       tabstr,
-                                                       is_active_tab,
-                                                       is_pinned_tab,
-                                                       is_first_tab));*/
+
   bool is_custom_str_available = GetTabCustomStr(tabstr, is_active_tab, is_pinned_tab, is_first_tab);
   UserDefinedTabShape(path, tabstr, left, tab_top);
 

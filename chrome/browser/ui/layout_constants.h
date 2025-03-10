@@ -188,6 +188,18 @@ enum LayoutConstant {
   // Bottom corner radius. Used to determine tab overlap and tab insets as well.
   TAB_BOTTOM_CORNER_RADIUS,
 
+  // The padding to be subtracted from the tab strip when the window is maximized.
+  TAB_STRIP_MAXIMIZED_ANTI_PADDING,
+
+  // y-offset of the tab favicon. Useful for compact tabs.
+  TAB_FAVICON_Y_OFFSET,
+
+  // x-offset of the tab favicon. Useful for compact tabs.
+  TAB_FAVICON_X_OFFSET,
+
+  // x-offset of the tab close button. Adjust leftward to ensure that protruding tab shapes can scale properly.
+  TAB_CLOSE_BUTTON_X_OFFSET,
+
   // Maximum value of the layout constants.
   LAYOUT_CONSTANTS_MAX_VALUE,
 };
