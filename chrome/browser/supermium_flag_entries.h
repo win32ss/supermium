@@ -220,4 +220,10 @@
     {"tab-strip-control-button-left", "Place Tab Strip Control Button on Left",
      "Places tab strip control button to the left of the tabs.", kOsDesktop,
      SINGLE_VALUE_TYPE("tab-strip-control-button-left")},
+	{"ungoogled-supermium",
+	 flag_descriptions::kUngoogledSupermiumName, flag_descriptions::kUngoogledSupermiumDescription, 
+	 kOsAll, SINGLE_VALUE_TYPE("ungoogled-supermium")},
+	{"disable-chrome-labs",
+	 "Disable Chrome Labs", "Disables Chrome Labs, represented by a flask-shaped button on the toolbar.", 
+	 kOsAll, SINGLE_VALUE_TYPE("disable-chrome-labs")},
 #endif  // SUPERMIUM_FLAG_ENTRIES_H_
