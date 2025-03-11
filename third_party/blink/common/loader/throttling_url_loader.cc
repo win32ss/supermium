@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "base/containers/contains.h"
+#include "base/command_line.h"
 #include "base/functional/bind.h"
 #include "base/memory/raw_ptr.h"
 #include "base/metrics/histogram_functions.h"
@@ -26,6 +27,7 @@
 #include "services/network/public/cpp/record_ontransfersizeupdate_utils.h"
 #include "services/network/public/mojom/early_hints.mojom.h"
 #include "services/network/public/mojom/url_response_head.mojom.h"
+#include "third_party/blink/public/platform/web_runtime_features.h"
 
 namespace blink {
 
@@ -273,6 +275,16 @@ std::unique_ptr<ThrottlingURLLoader> ThrottlingURLLoader::CreateLoaderAndStart(
   std::unique_ptr<ThrottlingURLLoader> loader(
       new ThrottlingURLLoader(std::move(throttles), client, traffic_annotation,
                               client_receiver_delegate));
+  // A baseline for future whitelisting of websites that require certain "experimental" browser features.
+  // This example is of a site that does not presently (as of M132) function with the features enabled.
+  // Thus, they are disabled by default. However, if another site (such as twitch.tv with M126) requires
+  // the use of the features, they can be whitelisted here.
+  // if (url_request->url.DomainIs("britishgas.co.uk"))
+  //   WebRuntimeFeatures::EnableExperimentalFeatures(true);
+  // else if (base::CommandLine::ForCurrentProcess()->HasSwitch("enable-experimental-web-platform-features"))
+  //   WebRuntimeFeatures::EnableExperimentalFeatures(true);	  
+  // else
+  //   WebRuntimeFeatures::EnableExperimentalFeatures(false);
   loader->Start(std::move(factory), request_id, options, url_request,
                 std::move(task_runner), std::move(cors_exempt_header_list));
   return loader;
