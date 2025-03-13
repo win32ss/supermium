@@ -120,6 +120,7 @@ class NATIVE_THEME_EXPORT NativeThemeWin : public NativeTheme,
 
   // Paint directly to canvas' HDC.
   void PaintDirect(SkCanvas* destination_canvas,
+                   const ui::ColorProvider* color_provider,
                    HDC hdc,
                    Part part,
                    State state,
@@ -130,6 +131,7 @@ class NATIVE_THEME_EXPORT NativeThemeWin : public NativeTheme,
   // temporary HDC, and then blit the result to canvas.  This is to work around
   // the fact that Windows XP and some classic themes give bogus alpha values.
   void PaintIndirect(cc::PaintCanvas* destination_canvas,
+                     const ui::ColorProvider* color_provider,
                      Part part,
                      State state,
                      const gfx::Rect& rect,

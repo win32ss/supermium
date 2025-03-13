@@ -299,7 +299,7 @@ void NativeThemeWin::Paint(cc::PaintCanvas* canvas,
 	  }
   }
   
-  PaintIndirect(canvas, part, state, rect, extra);
+  PaintIndirect(canvas, color_provider, part, state, rect, extra);
   return;
 }
 
@@ -335,7 +335,8 @@ HRESULT PaintMenuItemBackgroundClassic(
 }
 
 HRESULT PaintMenuBackgroundClassic(HDC hdc,
-                                   const gfx::Rect& rect) {
+                                   const gfx::Rect& rect,
+                                   bool dark_mode) {
   HANDLE handle = OpenThemeData(nullptr, L"MENU_POPUPBACKGROUND");
   RECT rect_win = rect.ToRECT();
   if (handle) {
@@ -344,8 +345,13 @@ HRESULT PaintMenuBackgroundClassic(HDC hdc,
     FrameRect(hdc, &rect_win, GetSysColorBrush(COLOR_3DSHADOW));
     return result;
   }
-
-  FillRect(hdc, &rect_win, GetSysColorBrush(COLOR_MENU));
+  if (dark_mode) {
+    HBRUSH dark_menu_background = CreateSolidBrush(RGB(0x29, 0x2A, 0x2D));
+    FillRect(hdc, &rect_win, dark_menu_background);
+    DeleteObject(dark_menu_background);
+  } else {
+    FillRect(hdc, &rect_win, GetSysColorBrush(COLOR_MENU));
+  }
   DrawEdge(hdc, &rect_win, EDGE_RAISED, BF_RECT);
   return S_OK;
 }
@@ -535,6 +541,7 @@ void NativeThemeWin::PaintMenuBackground(cc::PaintCanvas* canvas,
 }
 
 void NativeThemeWin::PaintDirect(SkCanvas* destination_canvas,
+                                 const ColorProvider* color_provider,
                                  HDC hdc,
                                  Part part,
                                  State state,
@@ -732,7 +739,8 @@ void NativeThemeWin::PaintDirect(SkCanvas* destination_canvas,
 	  PaintMenuItemBackgroundClassic(hdc, state, rect, absl::get<MenuItemExtraParams>(extra));
 	  return;
     case kMenuPopupBackground:
-	  PaintMenuBackgroundClassic(hdc, rect);
+      PaintMenuBackgroundClassic(hdc, rect,
+                                 color_provider->GetColor(kColorPrimaryBackground) != SK_ColorWHITE);
 	  return;
     case kMenuPopupGutter:
 	  PaintMenuGutterClassic(hdc, rect);
@@ -833,6 +841,7 @@ NativeTheme::ColorScheme NativeThemeWin::GetDefaultSystemColorScheme() const {
 }
 
 void NativeThemeWin::PaintIndirect(cc::PaintCanvas* destination_canvas,
+                                   const ui::ColorProvider* color_provider,
                                    Part part,
                                    State state,
                                    const gfx::Rect& rect,
@@ -909,7 +918,7 @@ void NativeThemeWin::PaintIndirect(cc::PaintCanvas* destination_canvas,
       break;
   }
   // Draw the theme controls using existing HDC-drawing code.
-  PaintDirect(offscreen_canvas, offscreen_hdc.Get(), part, state,
+  PaintDirect(offscreen_canvas, color_provider, offscreen_hdc.Get(), part, state,
               adjusted_rect, adjusted_extra);
 
   SkBitmap offscreen_bitmap = skia::MapPlatformBitmap(offscreen_hdc.Get());
@@ -1327,6 +1336,7 @@ NativeThemeWin::ThemeName NativeThemeWin::GetThemeName(Part part) {
       return TRACKBAR;
     case kMenuPopupBackground:
     case kMenuItemBackground:
+      return MENU;
     case kScrollbarCorner:
     case kSliderTrack:
     case kSliderThumb:
@@ -1401,6 +1411,7 @@ int NativeThemeWin::GetWindowsPart(Part part,
                                                             : TKP_TRACK;
     case kMenuPopupBackground:
     case kMenuItemBackground:
+      return MENU_POPUPCHECKBACKGROUND;
     case kScrollbarCorner:
     case kSliderTrack:
     case kSliderThumb:
@@ -1640,6 +1651,7 @@ int NativeThemeWin::GetWindowsState(Part part,
       }
     case kMenuPopupBackground:
     case kMenuItemBackground:
+      return (state == kDisabled) ? MCB_DISABLED : MCB_NORMAL;
     case kScrollbarCorner:
     case kSliderTrack:
     case kSliderThumb:
