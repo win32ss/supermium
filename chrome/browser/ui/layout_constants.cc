@@ -29,6 +29,16 @@
 
 int layout_constant_values[LAYOUT_CONSTANTS_MAX_VALUE];
 
+void SetTabStripFullscreen() {
+  if (!layout_constant_values[TAB_STRIP_PAD_WHEN_MAXIMIZED])
+     layout_constant_values[TAB_STRIP_PADDING] = 0;
+}
+
+void SetTabStripWindowed() {
+  layout_constant_values[TAB_STRIP_PADDING] = layout_constant_values[TAB_STRIP_MAXIMIZED_ANTI_PADDING];
+}
+
+
 void SetLayoutConstantsFallback() {
 
   const bool touch_ui = ui::TouchUiController::Get()->touch_ui();
@@ -89,6 +99,7 @@ void SetLayoutConstantsFallback() {
   layout_constant_values[TAB_FAVICON_Y_OFFSET] = 7;
   layout_constant_values[TAB_FAVICON_X_OFFSET] = 5;
   layout_constant_values[TAB_CLOSE_BUTTON_X_OFFSET] = 0;
+  layout_constant_values[TAB_STRIP_PAD_WHEN_MAXIMIZED] = 0;
 }
 
 void SetLayoutConstants() {

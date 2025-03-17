@@ -92,7 +92,7 @@ bool TabSizer::TabAcceptsExtraSpace(const TabWidthConstraints& tab) const {
     return false;
   switch (domain_) {
     case LayoutDomain::kInactiveWidthBelowActiveWidth:
-      return tab.GetMinimumWidth() < tab.GetLayoutCrossoverWidth();
+      return true;
     case LayoutDomain::kInactiveWidthEqualsActiveWidth:
       return tab.GetLayoutCrossoverWidth() < tab.GetPreferredWidth();
   }

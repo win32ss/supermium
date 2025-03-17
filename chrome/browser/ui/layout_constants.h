@@ -200,6 +200,9 @@ enum LayoutConstant {
   // x-offset of the tab close button. Adjust leftward to ensure that protruding tab shapes can scale properly.
   TAB_CLOSE_BUTTON_X_OFFSET,
 
+  // A boolean value used to determine whether to apply padding to the tab strip when the window is maximized.
+  TAB_STRIP_PAD_WHEN_MAXIMIZED,
+
   // Maximum value of the layout constants.
   LAYOUT_CONSTANTS_MAX_VALUE,
 };
@@ -254,5 +257,13 @@ void SetLayoutConstants();
 int GetLayoutConstant(LayoutConstant constant);
 
 gfx::Insets GetLayoutInsets(LayoutInset inset);
+
+// This is a way of ensuring that tabs are drawn to the top of the window
+// in fullscreen or maximized mode. Many parts of the code that access
+// TAB_STRIP_PADDING cannot tell if the tabs are maximized or not some
+// this is called by the code that is "aware" of the circumstance.
+void SetTabStripFullscreen();
+
+void SetTabStripWindowed();
 
 #endif  // CHROME_BROWSER_UI_LAYOUT_CONSTANTS_H_

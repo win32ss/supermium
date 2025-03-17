@@ -274,7 +274,7 @@ bool GetTabCustomStr(std::string& tabstr, bool IsActive, bool IsPinned, bool IsF
     return true;
 }
 
-bool UserDefinedTabShape(SkPath& path, std::string& sectionContent, float left, float tab_top) {
+bool UserDefinedTabShape(SkPath& path, std::string& sectionContent, float left, float tab_top, int tab_width) {
     std::string::size_type pos = 0;
     while ((pos = sectionContent.find("{", pos)) != std::string::npos) {
         std::string::size_type endPos = sectionContent.find("}", pos);
@@ -310,8 +310,21 @@ bool UserDefinedTabShape(SkPath& path, std::string& sectionContent, float left, 
          
          if (dataItem.values.size() != 6)
             break; // Fail if there is an incorrect quantity of values in the data item.
-          path.cubicTo(left + dataItem.values.at(0), tab_top + dataItem.values.at(1), left + dataItem.values.at(2), tab_top + dataItem.values.at(3), left + dataItem.values.at(4),
-                      tab_top + dataItem.values.at(5));
+
+         int tab_shrunken_x_offset = std::max(0, GetLayoutConstant(TAB_WIDTH) - tab_width);
+
+         if (tab_shrunken_x_offset > (GetLayoutConstant(TAB_WIDTH) - 16))
+            tab_shrunken_x_offset = GetLayoutConstant(TAB_WIDTH) - 16;
+
+         if (dataItem.datakey & 0x1)
+            dataItem.values.at(0) -= tab_shrunken_x_offset;
+         if (dataItem.datakey & 0x2)
+            dataItem.values.at(2) -= tab_shrunken_x_offset;
+         if (dataItem.datakey & 0x4)
+            dataItem.values.at(4) -= tab_shrunken_x_offset;
+
+         path.cubicTo(left + dataItem.values.at(0), tab_top + dataItem.values.at(1), left + dataItem.values.at(2), 
+                      tab_top + dataItem.values.at(3), left + dataItem.values.at(4), tab_top + dataItem.values.at(5));
         }
 
         pos = endPos + 1;
@@ -327,8 +340,11 @@ SkPath TabStyleViewsImpl::GetPath(TabStyle::PathType path_type,
   CHECK(tab());
   const int stroke_thickness = GetStrokeThickness(force_active);
 
- // const TabStyle::TabSelectionState state = GetSelectionState();
-
+  if (tab_->GetWidget()->IsMaximized() || tab_->GetWidget()->IsFullscreen()) {
+    SetTabStripFullscreen();
+  } else {
+    SetTabStripWindowed();
+  }
   // We'll do the entire path calculation in aligned pixels.
   // TODO(dfried): determine if we actually want to use |stroke_thickness| as
   // the inset in this case.
@@ -429,7 +445,7 @@ SkPath TabStyleViewsImpl::GetPath(TabStyle::PathType path_type,
   bool is_first_tab = tab_->controller()->IsTabFirst(tab_);
 
   bool is_custom_str_available = GetTabCustomStr(tabstr, is_active_tab, is_pinned_tab, is_first_tab);
-  UserDefinedTabShape(path, tabstr, left, tab_top);
+  UserDefinedTabShape(path, tabstr, left, tab_top, tab_->width());
 
   if (is_custom_str_available && !path.isEmpty()) {
     // Convert path to be relative to the tab origin.

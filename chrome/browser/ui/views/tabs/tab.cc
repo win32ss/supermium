@@ -326,7 +326,6 @@ void Tab::Layout(PassKey) {
   UpdateIconVisibility();
 
   const int start = contents_rect.x();
-
   // The bounds for the favicon will include extra width for the attention
   // indicator, but visually it will be smaller at kFaviconSize wide.
   gfx::Rect favicon_bounds(start + GetLayoutConstant(TAB_FAVICON_X_OFFSET), 
@@ -355,7 +354,7 @@ void Tab::Layout(PassKey) {
 
   const int after_title_padding = GetLayoutConstant(TAB_AFTER_TITLE_PADDING);
 
-  int close_x = contents_rect.right() + GetLayoutConstant(TAB_CLOSE_BUTTON_X_OFFSET);
+  int close_x = contents_rect.right() - 10 + GetLayoutConstant(TAB_CLOSE_BUTTON_X_OFFSET);
   if (showing_close_button_) {
     // The visible size is the button's hover shape size. The actual size
     // includes the border insets for the button.
