@@ -505,7 +505,6 @@ void ExternalProtocolHandler::LaunchUrl(
 #endif
 ) {
   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
-
   // Disable anti-flood protection if the user is invoking a bookmark or
   // navigating directly using the omnibox.
   if (!g_accept_requests &&
@@ -604,6 +603,9 @@ void ExternalProtocolHandler::LaunchUrlWithoutSecurityCheck(
   // TODO(crbug.com/40551459): This essentially amounts to "remove illegal
   // characters from the URL", something that probably should be done by the
   // GURL constructor itself.
+  if (url.spec().empty()) {
+    return;
+  }
   std::string escaped_url_string = base::EscapeExternalHandlerValue(url.spec());
   GURL escaped_url(escaped_url_string);
 
