@@ -77,6 +77,7 @@ class FrameGrabHandle : public views::View {
     // Reserve some space for the frame to be grabbed by, even if the tabstrip
     // is full.
     // TODO(tbergquist): Define this relative to the NTB insets again.
+    if (base::CommandLine::ForCurrentProcess()->HasSwitch("remove-grab-handle")) return gfx::Size(0, 0);
     return gfx::Size(42, 0);
   }
 };
