@@ -8,6 +8,7 @@
 
 #include "base/metrics/histogram_macros.h"
 #include "base/threading/hang_watcher.h"
+#include "base/win/windows_version.h"
 #include "ui/aura/env.h"
 #include "ui/base/dragdrop/drag_drop_types.h"
 #include "ui/base/dragdrop/drag_source_win.h"
@@ -45,6 +46,15 @@ ui::mojom::DragOperation DesktopDragDropClientWin::StartDragAndDrop(
     int allowed_operations,
     ui::mojom::DragEventSource source) {
   gfx::Point touch_screen_point;
+
+  if (base::win::GetVersion() < base::win::Version::VISTA) {
+    // Presently, drag-drop operations restore the focus to the
+    // window, but only the UI widget; clicks to the web content widget
+    // are captured by the former. Until this is resolved, drag-drop
+    // will be disabled on NT5.
+    return ui::PreferredDragOperation(
+      ui::DragDropTypes::DropEffectToDragOperation(DROPEFFECT_NONE));
+  }
   if (source == ui::mojom::DragEventSource::kTouch) {
     display::Screen* screen = display::Screen::GetScreen();
     CHECK(screen);
