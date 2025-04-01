@@ -98,7 +98,7 @@ void SetLayoutConstantsFallback() {
   layout_constant_values[TAB_STRIP_MAXIMIZED_ANTI_PADDING] = 6;
   layout_constant_values[TAB_FAVICON_Y_OFFSET] = 7;
   layout_constant_values[TAB_FAVICON_X_OFFSET] = 5;
-  layout_constant_values[TAB_CLOSE_BUTTON_X_OFFSET] = 0;
+  layout_constant_values[TAB_CLOSE_BUTTON_X_OFFSET] = 8;
   layout_constant_values[TAB_STRIP_PAD_WHEN_MAXIMIZED] = 0;
 }
 
