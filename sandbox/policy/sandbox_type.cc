@@ -41,8 +41,6 @@ void SetCommandLineFlagsForSandboxType(base::CommandLine* command_line,
         command_line->AppendSwitchASCII(
             switches::kServiceSandboxType,
             StringFromUtilitySandboxType(sandbox_type));
-      } else {
-        command_line->AppendSwitch(switches::kNoSandbox);
       }
       break;
     case Sandbox::kRenderer:
@@ -138,15 +136,18 @@ sandbox::mojom::Sandbox SandboxTypeFromCommandLine(
   if (process_type.empty())
     return Sandbox::kNoSandbox;
 
-  if (process_type == switches::kRendererProcess)
+  if (process_type == switches::kRendererProcess) {
+    if (command_line.HasSwitch("legacy-sandbox"))
+      return Sandbox::kNoSandbox;
     return Sandbox::kRenderer;
-
+  }
   if (process_type == switches::kUtilityProcess) {
     return UtilitySandboxTypeFromString(
         command_line.GetSwitchValueASCII(switches::kServiceSandboxType));
   }
   if (process_type == switches::kGpuProcess) {
-    if (command_line.HasSwitch(switches::kDisableGpuSandbox))
+    if (command_line.HasSwitch(switches::kDisableGpuSandbox) ||
+        command_line.HasSwitch("legacy-sandbox"))
       return Sandbox::kNoSandbox;
     return Sandbox::kGpu;
   }

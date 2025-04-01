@@ -1180,10 +1180,10 @@ int ChromeBrowserMainParts::PreCreateThreadsImpl() {
 
   auto* command_line = base::CommandLine::ForCurrentProcess();
 #if BUILDFLAG(IS_WIN)
-  // Sandbox is currently non-functional below Windows 10. Avoid it.
+  // Use a special legacy sandbox if running less than Windows 10.
   if (base::win::GetVersion() < base::win::Version::WIN10 &&
       !command_line->HasSwitch("no-sandbox")) {
-    command_line->AppendSwitch("no-sandbox");
+    command_line->AppendSwitch("legacy-sandbox");
   }
 #endif
 

@@ -243,6 +243,7 @@ static const char* const kSwitchNames[] = {
     sandbox::policy::switches::kGpuSandboxFailuresFatal,
     sandbox::policy::switches::kDisableGpuSandbox,
     sandbox::policy::switches::kNoSandbox,
+    "legacy-sandbox",
 #if BUILDFLAG(IS_WIN)
     sandbox::policy::switches::kAllowThirdPartyModules,
 #endif

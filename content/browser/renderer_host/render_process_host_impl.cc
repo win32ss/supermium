@@ -3281,6 +3281,7 @@ void RenderProcessHostImpl::PropagateBrowserCommandLineToRenderer(
       switches::kDisableInProcessStackTraces,
       sandbox::policy::switches::kDisableSeccompFilterSandbox,
       sandbox::policy::switches::kNoSandbox,
+      "legacy-sandbox",
 #if BUILDFLAG(IS_LINUX) && !BUILDFLAG(IS_CHROMEOS_ASH) && \
     !BUILDFLAG(IS_CHROMEOS_LACROS)
       switches::kDisableDevShmUsage,
@@ -3519,8 +3520,10 @@ void RenderProcessHostImpl::PropagateBrowserCommandLineToRenderer(
   // Needed because we can't show the dialog from the sandbox. Don't pass
   // --no-sandbox in official builds because that would bypass the bad_flgs
   // prompt.
-  if (renderer_cmd->HasSwitch(switches::kRendererStartupDialog) &&
-      !renderer_cmd->HasSwitch(sandbox::policy::switches::kNoSandbox)) {
+  if ((renderer_cmd->HasSwitch(switches::kRendererStartupDialog) &&
+      !renderer_cmd->HasSwitch(sandbox::policy::switches::kNoSandbox)) || 
+     (renderer_cmd->HasSwitch("legacy-sandbox") &&
+      !renderer_cmd->HasSwitch(sandbox::policy::switches::kNoSandbox))) {
     renderer_cmd->AppendSwitch(sandbox::policy::switches::kNoSandbox);
   }
 #endif
