@@ -241,13 +241,14 @@ int RendererMain(MainFunctionParams parameters) {
     bool should_run_loop = true;
 #if BUILDFLAG(IS_WIN)
     bool need_sandbox = true;
-    if(base::win::GetVersion() >= base::win::Version::WIN8) {
-	// Windows 8+ specific limitations required renderer sandbox disabled for GDI
-    need_sandbox = gfx::win::ShouldUseDirectWrite() && 
-        !command_line.HasSwitch(sandbox::policy::switches::kNoSandbox);
+    if (base::win::GetVersion() >= base::win::Version::WIN8) {
+    // Windows 8+ specific limitations required renderer sandbox disabled for GDI.
+    // They're also necessary to have a functional sandbox before Windows 8 as well.
+        need_sandbox = gfx::win::ShouldUseDirectWrite() &&
+                       !command_line.HasSwitch(sandbox::policy::switches::kNoSandbox);
 	}
 	else
-	need_sandbox = !command_line.HasSwitch(sandbox::policy::switches::kNoSandbox);
+	    need_sandbox = false;
 #else
     bool need_sandbox = !command_line.HasSwitch(sandbox::policy::switches::kNoSandbox);
 #endif

@@ -53,7 +53,7 @@ void RendererMainPlatformDelegate::PlatformInitialize() {
 
   // Be mindful of what resources you acquire here. They can be used by
   // malicious code if the renderer gets compromised.
-  bool no_sandbox =command_line.HasSwitch(sandbox::policy::switches::kNoSandbox);
+  bool no_sandbox = command_line.HasSwitch(sandbox::policy::switches::kNoSandbox);
 	  
   bool use_direct_write = gfx::win::ShouldUseDirectWrite();
   

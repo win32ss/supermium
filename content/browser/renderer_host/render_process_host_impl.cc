@@ -3521,8 +3521,6 @@ void RenderProcessHostImpl::PropagateBrowserCommandLineToRenderer(
   // --no-sandbox in official builds because that would bypass the bad_flgs
   // prompt.
   if ((renderer_cmd->HasSwitch(switches::kRendererStartupDialog) &&
-      !renderer_cmd->HasSwitch(sandbox::policy::switches::kNoSandbox)) || 
-     (renderer_cmd->HasSwitch("legacy-sandbox") &&
       !renderer_cmd->HasSwitch(sandbox::policy::switches::kNoSandbox))) {
     renderer_cmd->AppendSwitch(sandbox::policy::switches::kNoSandbox);
   }
