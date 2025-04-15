@@ -241,9 +241,9 @@ int RendererMain(MainFunctionParams parameters) {
     bool should_run_loop = true;
 #if BUILDFLAG(IS_WIN)
     bool need_sandbox = true;
-    if (base::win::GetVersion() >= base::win::Version::WIN8) {
+    if (base::win::GetVersion() >= base::win::Version::WIN10) {
     // Windows 8+ specific limitations required renderer sandbox disabled for GDI.
-    // They're also necessary to have a functional sandbox before Windows 8 as well.
+    // They're also necessary to have a functional sandbox before Windows 10 as well.
         need_sandbox = gfx::win::ShouldUseDirectWrite() &&
                        !command_line.HasSwitch(sandbox::policy::switches::kNoSandbox);
 	}

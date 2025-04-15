@@ -15,6 +15,10 @@
 #include "sandbox/policy/mojom/sandbox.mojom.h"
 #include "sandbox/policy/switches.h"
 
+#if BUILDFLAG(IS_WIN)
+#include "base/win/windows_version.h"
+#endif
+
 namespace sandbox {
 namespace policy {
 using sandbox::mojom::Sandbox;
@@ -142,6 +146,11 @@ sandbox::mojom::Sandbox SandboxTypeFromCommandLine(
     return Sandbox::kRenderer;
   }
   if (process_type == switches::kUtilityProcess) {
+#if BUILDFLAG(IS_WIN)
+    if (base::win::GetVersion() < base::win::Version::WIN10) {
+        return Sandbox::kNoSandbox;
+    }
+#endif
     return UtilitySandboxTypeFromString(
         command_line.GetSwitchValueASCII(switches::kServiceSandboxType));
   }
