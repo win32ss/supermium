@@ -213,13 +213,12 @@ TabStripRegionView::TabStripRegionView(std::unique_ptr<TabStrip> tab_strip)
       tab_strip_control_button->SetBackgroundFrameInactiveColorId(
           kColorNewTabButtonCRBackgroundFrameInactive);
     }
-
-    new_tab_button_ = AddChildView(std::move(tab_strip_control_button));
-
-    new_tab_button_->SetTooltipText(
-        l10n_util::GetStringUTF16(IDS_TOOLTIP_NEW_TAB));
-    new_tab_button_->GetViewAccessibility().SetName(
-        l10n_util::GetStringUTF16(IDS_ACCNAME_NEWTAB));
+    std::unique_ptr<NewTabButton> new_tab_button = std::make_unique<NewTabButton>(tab_strip_,
+                                                                                  base::BindRepeating(&TabStrip::NewTabButtonPressed,
+                                                                                  base::Unretained(tab_strip_)));
+    new_tab_button->SetImageVerticalAlignment(views::ImageButton::ALIGN_BOTTOM);
+    new_tab_button->SetEventTargeter(std::make_unique<views::ViewTargeter>(new_tab_button.get()));
+    new_tab_button_ = AddChildView(std::move(new_tab_button));
 
 #if BUILDFLAG(IS_LINUX)
     // The New Tab Button can be middle-clicked on Linux.
