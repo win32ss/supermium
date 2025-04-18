@@ -226,4 +226,8 @@
 	{"disable-chrome-labs",
 	 "Disable Chrome Labs", "Disables Chrome Labs, represented by a flask-shaped button on the toolbar.", 
 	 kOsAll, SINGLE_VALUE_TYPE("disable-chrome-labs")},
+    {"never-remove-cookies",
+     "Never Remove Cookies",
+     "Instructs that cookies are never removed from the user profile.",
+     kOsAll, SINGLE_VALUE_TYPE("never-remove-cookies")},
 #endif  // SUPERMIUM_FLAG_ENTRIES_H_

@@ -155,13 +155,22 @@ uint64_t AllOriginTypeMask() {
 }
 
 uint64_t AllRemoveMask() {
-  return content::BrowsingDataRemover::DATA_TYPE_CACHE |
-         content::BrowsingDataRemover::DATA_TYPE_DOWNLOADS |
-         chrome_browsing_data_remover::DATA_TYPE_CONTENT_SETTINGS |
-         chrome_browsing_data_remover::DATA_TYPE_FORM_DATA |
-         chrome_browsing_data_remover::DATA_TYPE_HISTORY |
-         chrome_browsing_data_remover::DATA_TYPE_PASSWORDS |
-         chrome_browsing_data_remover::DATA_TYPE_SITE_DATA;
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("never-remove-cookies")) {
+      return content::BrowsingDataRemover::DATA_TYPE_CACHE |
+             content::BrowsingDataRemover::DATA_TYPE_DOWNLOADS |
+             chrome_browsing_data_remover::DATA_TYPE_CONTENT_SETTINGS |
+             chrome_browsing_data_remover::DATA_TYPE_FORM_DATA |
+             chrome_browsing_data_remover::DATA_TYPE_HISTORY |
+             chrome_browsing_data_remover::DATA_TYPE_PASSWORDS;
+  } else {
+      return content::BrowsingDataRemover::DATA_TYPE_CACHE |
+             content::BrowsingDataRemover::DATA_TYPE_DOWNLOADS |
+             chrome_browsing_data_remover::DATA_TYPE_CONTENT_SETTINGS |
+             chrome_browsing_data_remover::DATA_TYPE_FORM_DATA |
+             chrome_browsing_data_remover::DATA_TYPE_HISTORY |
+             chrome_browsing_data_remover::DATA_TYPE_PASSWORDS |
+             chrome_browsing_data_remover::DATA_TYPE_SITE_DATA;
+  }
 }
 
 uint64_t GetOriginTypeMask(const base::Value::List& data_types) {
@@ -202,7 +211,8 @@ uint64_t GetRemoveMask(const base::Value::List& data_types) {
         result |= content::BrowsingDataRemover::DATA_TYPE_DOWNLOADS;
         break;
       case browsing_data::PolicyDataType::kCookiesAndOtherSiteData:
-        result |= chrome_browsing_data_remover::DATA_TYPE_SITE_DATA;
+        if (!base::CommandLine::ForCurrentProcess()->HasSwitch("never-remove-cookies"))
+            result |= chrome_browsing_data_remover::DATA_TYPE_SITE_DATA;
         break;
       case browsing_data::PolicyDataType::kCachedImagesAndFiles:
         result |= content::BrowsingDataRemover::DATA_TYPE_CACHE;
@@ -217,7 +227,8 @@ uint64_t GetRemoveMask(const base::Value::List& data_types) {
         result |= chrome_browsing_data_remover::DATA_TYPE_CONTENT_SETTINGS;
         break;
       case browsing_data::PolicyDataType::kHostedAppData:
-        result |= chrome_browsing_data_remover::DATA_TYPE_SITE_DATA;
+        if (!base::CommandLine::ForCurrentProcess()->HasSwitch("never-remove-cookies"))
+            result |= chrome_browsing_data_remover::DATA_TYPE_SITE_DATA;
         break;
       case browsing_data::PolicyDataType::kNumTypes:
         NOTREACHED();
@@ -345,7 +356,7 @@ void ChromeBrowsingDataLifetimeManager::ClearBrowsingDataForOnExitPolicy(
 #endif
     remover->RemoveAndReply(base::Time(), base::Time::Max(),
                             cdoe ? AllRemoveMask() : GetRemoveMask(data_types),
-+                           cdoe ? AllOriginTypeMask() : GetOriginTypeMask(data_types),
+                            cdoe ? AllOriginTypeMask() : GetOriginTypeMask(data_types),
                             BrowsingDataRemoverObserver::Create(
                                 remover, /*filterable_deletion=*/true, profile_,
                                 keep_browser_alive));
