@@ -118,7 +118,7 @@ int ChromeRefresh2023TabStyle::GetTabOverlap() const {
   const float total_separator_width = GetSeparatorMargins().left() +
                                       GetSeparatorSize().width() +
                                       GetSeparatorMargins().right();
-  return 2 * GetBottomCornerRadius() - total_separator_width;
+  return 2 * GetLayoutConstant(TAB_OVERLAP) - total_separator_width;
 }
 
 gfx::Size ChromeRefresh2023TabStyle::GetPreviewImageSize() const {
@@ -128,6 +128,7 @@ gfx::Size ChromeRefresh2023TabStyle::GetPreviewImageSize() const {
 }
 
 gfx::Size ChromeRefresh2023TabStyle::GetSeparatorSize() const {
+  kChromeRefreshSeparatorHeight = GetLayoutConstant(TAB_SEPARATOR_HEIGHT);
   return gfx::Size(kChromeRefreshSeparatorThickness,
                    kChromeRefreshSeparatorHeight);
 }

@@ -100,6 +100,8 @@ void SetLayoutConstantsFallback() {
   layout_constant_values[TAB_FAVICON_X_OFFSET] = 5;
   layout_constant_values[TAB_CLOSE_BUTTON_X_OFFSET] = 8;
   layout_constant_values[TAB_STRIP_PAD_WHEN_MAXIMIZED] = 0;
+  layout_constant_values[TAB_OVERLAP] = 16;
+  layout_constant_values[TAB_SEPARATOR_OFFSET] = 4;
 }
 
 void SetLayoutConstants() {

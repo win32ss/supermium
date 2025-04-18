@@ -42,6 +42,13 @@
 #include "ui/views/win/hwnd_util.h"
 #endif
 
+// Todo: set both non-hover and hover colours.
+// When hover mode is on, start adjusting the colour towards the hover colour, but then
+// start adjusting backward when hover is off.
+// Also add presets for v60-era and v109-era themes.
+
+// Diamond tabs and other esoteric shapes can be paid.
+
 // static
 const gfx::Size NewTabButton::kButtonSize{28, 28};
 
@@ -225,9 +232,7 @@ SkPath NewTabButton::GetBorderPath(const gfx::Point& origin,
                 -diameter, 0);
     path.close();
   } else {
-    SkPoint pts [] = {SkPoint(4.0, 8.0), SkPoint(22.0, 8.0), SkPoint(28.0, 20.0), SkPoint(10.0, 20.0)};
-    path.moveTo(origin.x() * 1.10f, SkScalar(8.0));
-    path.addPoly(pts, 4, true);
+    path.addCircle(origin.x() + radius, origin.y() + radius, radius);
   }
   return path;
 }
@@ -338,7 +343,7 @@ void NewTabButton::PaintFill(gfx::Canvas* canvas) const {
     flags.setAntiAlias(true);
     canvas->Translate(GetContentsBounds().OffsetFromOrigin());
     if (GetState() == STATE_HOVERED) {
-        flags.setColor(SkColorSetRGB(90, 90, 90));
+        flags.setColor(SkColorSetARGB(0x80, 90, 90, 90));
     } else {
         flags.setColor(GetColorProvider()->GetColor(
             GetWidget()->ShouldPaintAsActive()

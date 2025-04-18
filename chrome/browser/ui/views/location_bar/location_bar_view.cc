@@ -643,7 +643,7 @@ gfx::Size LocationBarView::CalculatePreferredSize(
   if (trailing_width > 0)
     width += trailing_width + padding;
 
-  return gfx::Size(width, height);
+  return gfx::Size(width, height - height);
 }
 
 void LocationBarView::Layout(PassKey) {

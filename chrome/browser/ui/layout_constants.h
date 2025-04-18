@@ -185,7 +185,7 @@ enum LayoutConstant {
   // Top corner radius of the tab.
   TAB_TOP_CORNER_RADIUS,
 
-  // Bottom corner radius. Used to determine tab overlap and tab insets as well.
+  // Bottom corner radius. Used to determine tab insets as well.
   TAB_BOTTOM_CORNER_RADIUS,
 
   // The padding to be subtracted from the tab strip when the window is maximized.
@@ -202,6 +202,12 @@ enum LayoutConstant {
 
   // A boolean value used to determine whether to apply padding to the tab strip when the window is maximized.
   TAB_STRIP_PAD_WHEN_MAXIMIZED,
+
+  // This determines the overlap between tabs.
+  TAB_OVERLAP,
+
+  // This can be used to define an offset for the x-position of the tab separator.
+  TAB_SEPARATOR_OFFSET,
 
   // Maximum value of the layout constants.
   LAYOUT_CONSTANTS_MAX_VALUE,

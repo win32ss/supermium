@@ -751,7 +751,7 @@ TabStyle::SeparatorBounds TabStyleViewsImpl::GetSeparatorBounds(
        separator_margin.top());
 
   separator_bounds.leading = gfx::RectF(
-      aligned_bounds.x() + corner_radius - separator_margin.right() -
+      aligned_bounds.x() + 4 + corner_radius - separator_margin.right() -
           separator_size.width(),
       aligned_bounds.y() + extra_vertical_space / 2 + separator_margin.top(),
       separator_size.width(), separator_size.height());
