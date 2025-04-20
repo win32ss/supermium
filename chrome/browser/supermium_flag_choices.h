@@ -69,4 +69,16 @@ const FeatureEntry::Choice kCloseWindowWithLastTab[] = {
      "close-window-with-last-tab",
      "never"},
 };
+const FeatureEntry::Choice kSupermiumTabOptions[] = {
+    {"v109 Tabs", "", ""},
+    {"v60 Tabs",
+     "supermium-tab-options",
+     "v60"},
+    {"CR23 Tabs",
+     "supermium-tab-options",
+     "cr23"},
+    {"Rectangular Tabs",
+     "supermium-tab-options",
+     "rectangular"},
+};
 #endif  // SUPERMIUM_FLAG_CHOICES_H_

@@ -86,6 +86,12 @@ class TabStyleViewsImpl : public TabStyleViews {
                  float scale,
                  bool force_active,
                  TabStyle::RenderUnits render_units) const override;
+  SkPath CR23InactivePath(float content_corner_radius, 
+                          float scale, 
+                          float extension_corner_radius,
+                          gfx::RectF aligned_bounds, 
+                          TabStyle::PathType path_type,
+                          TabStyle::RenderUnits render_units) const;
   gfx::Insets GetContentsInsets() const override;
   float GetZValue() const override;
   float GetTargetActiveOpacity() const override;
@@ -333,12 +339,111 @@ bool UserDefinedTabShape(SkPath& path, std::string& sectionContent, float left, 
    return true;
 }
 
+  SkPath TabStyleViewsImpl::CR23InactivePath(float content_corner_radius, 
+                                             float scale, 
+                                             float extension_corner_radius,
+                                             gfx::RectF aligned_bounds, 
+                                             TabStyle::PathType path_type,
+                                             TabStyle::RenderUnits render_units) const {
+    float top_left_corner_radius = content_corner_radius;
+    float top_right_corner_radius = content_corner_radius;
+    float bottom_left_corner_radius = content_corner_radius;
+    float bottom_right_corner_radius = content_corner_radius;
+    float tab_height = GetLayoutConstant(TAB_HEIGHT) * scale;
+
+    // The tab displays favicon animations that can emerge from the toolbar. The
+    // interior clip needs to extend the entire height of the toolbar to support
+    // this. Detached tab shapes do not need to respect this.
+    if (path_type != TabStyle::PathType::kInteriorClip &&
+        path_type != TabStyle::PathType::kHitTest) {
+      tab_height -= GetLayoutConstant(TAB_STRIP_PADDING) * scale;
+      tab_height -= GetLayoutConstant(TABSTRIP_TOOLBAR_OVERLAP) * scale;
+    }
+
+    // Don't round the bottom corners to avoid creating dead space between tabs.
+    if (path_type == TabStyle::PathType::kHitTest) {
+      bottom_left_corner_radius = 0;
+    }
+
+    int left = aligned_bounds.x() + extension_corner_radius;
+    int top = aligned_bounds.y() + GetLayoutConstant(TAB_STRIP_PADDING) * scale;
+    int right = aligned_bounds.right() - extension_corner_radius;
+    const int bottom = top + tab_height;
+
+    // For maximized and full screen windows, extend the tab hit test to the top
+    // of the tab, encompassing the top padding. This makes it easy to click on
+    // tabs by moving the mouse to the top of the screen.
+    if (path_type == TabStyle::PathType::kHitTest &&
+        tab()->controller()->IsFrameCondensed()) {
+      top -= GetLayoutConstant(TAB_STRIP_PADDING) * scale;
+      // Don't round the top corners to avoid creating dead space between tabs.
+      top_left_corner_radius = 0;
+      top_right_corner_radius = 0;
+    }
+
+    // if the size of the space for the path is smaller than the size of a
+    // favicon or if we are building a path for the hit test, expand to take the
+    // entire width of the separator margins AND the separator.
+    if ((right - left) < (gfx::kFaviconSize * scale) ||
+        path_type == TabStyle::PathType::kHitTest) {
+      // Take the entire size of the separator. in odd separator size cases, the
+      // right side will take the remaining space.
+      const int left_separator_overlap =
+          tab_style()->GetSeparatorSize().width() / 2;
+      const int right_separator_overlap =
+          tab_style()->GetSeparatorSize().width() - left_separator_overlap;
+
+      // If there is a tab before this one, then expand into its overlap.
+      const Tab* const previous_tab =
+          tab()->controller()->GetAdjacentTab(tab(), -1);
+      if (previous_tab) {
+        left -= (tab_style()->GetSeparatorMargins().right() +
+                 left_separator_overlap) *
+                scale;
+      }
+
+      // If there is a tab after this one, then expand into its overlap.
+      const Tab* const next_tab = tab()->controller()->GetAdjacentTab(tab(), 1);
+      if (next_tab) {
+        right += (tab_style()->GetSeparatorMargins().left() +
+                  right_separator_overlap) *
+                 scale;
+      }
+    }
+
+    // Radii are clockwise from top left.
+    const SkVector radii[4] = {
+        SkVector(top_left_corner_radius, top_left_corner_radius),
+        SkVector(top_right_corner_radius, top_right_corner_radius),
+        SkVector(bottom_right_corner_radius, bottom_right_corner_radius),
+        SkVector(bottom_left_corner_radius, bottom_left_corner_radius)};
+
+    SkRRect rrect;
+    rrect.setRectRadii(SkRect::MakeLTRB(left, top, right, bottom), radii);
+    SkPath path;
+    path.addRRect(rrect);
+
+    // Convert path to be relative to the tab origin.
+    gfx::PointF origin(tab()->origin());
+    origin.Scale(scale);
+    path.offset(-origin.x(), -origin.y());
+
+    // Possibly convert back to DIPs.
+    if (render_units == TabStyle::RenderUnits::kDips && scale != 1.0f) {
+      path.transform(SkMatrix::Scale(1.0f / scale, 1.0f / scale));
+    }
+
+    return path;
+}
+
 SkPath TabStyleViewsImpl::GetPath(TabStyle::PathType path_type,
                                   float scale,
                                   bool force_active,
                                   TabStyle::RenderUnits render_units) const {
   CHECK(tab());
   const int stroke_thickness = GetStrokeThickness(force_active);
+
+  const TabStyle::TabSelectionState state = GetSelectionState();
 
   if (tab_->GetWidget()->IsMaximized() || tab_->GetWidget()->IsFullscreen()) {
     SetTabStripFullscreen();
@@ -355,7 +460,7 @@ SkPath TabStyleViewsImpl::GetPath(TabStyle::PathType path_type,
   // tab width (in DIP), not our new, scaled-and-aligned bounds.
   float content_corner_radius = 0.0f;
   float extension_corner_radius = 0.0f;
-  if (!base::CommandLine::ForCurrentProcess()->HasSwitch("rectangular-tabs")) {
+  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") != "rectangular") {
     content_corner_radius =
         GetTopCornerRadiusForWidth(tab()->width()) * scale;
     extension_corner_radius = tab_style()->GetBottomCornerRadius() * scale;
@@ -459,6 +564,32 @@ SkPath TabStyleViewsImpl::GetPath(TabStyle::PathType path_type,
     }
     path.close();
     return path;
+  }
+
+  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "v60") {
+    tabstr = std::string("tab{0=0.0,36.0,6.0,18.0,12.0,0.0}{4=12.0,0.0,120.0,0.0,228.0,0.0}") +
+	                     std::string("{7=228.0,0.0,234.0,18.0,240.0,36.0}{7=240.0,36.0,120.0,36.0,0.0,36.0}endtab");
+    UserDefinedTabShape(path, tabstr, left, tab_top, tab_->width());
+    gfx::PointF origin(tab_->origin());
+    origin.Scale(scale);
+    path.offset(-origin.x(), -origin.y());
+
+    // Possibly convert back to DIPs.
+    if (render_units == TabStyle::RenderUnits::kDips && scale != 1.0f) {
+       path.transform(SkMatrix::Scale(1.0f / scale, 1.0f / scale));
+    }
+    path.close();
+    return path;
+  }
+
+  // The unique CR23 detached tab.
+  if ((base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "cr23") &&
+      ((path_type == TabStyle::PathType::kFill &&
+      state != TabStyle::TabSelectionState::kActive) ||
+      path_type == TabStyle::PathType::kHighlight ||
+      path_type == TabStyle::PathType::kInteriorClip ||
+      path_type == TabStyle::PathType::kHitTest)) {
+    return CR23InactivePath(content_corner_radius, scale, extension_corner_radius, aligned_bounds, path_type, render_units);
   }
 
   if (tab_left != left) {
