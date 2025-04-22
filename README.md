@@ -21,7 +21,7 @@
 </div>
 
 **Official Links:**
-- [supermium.e](https://supermium.e)
+- [supermiu.me](https://supermiu.me)
 - [supermium.net](https://supermium.net)
 - [win32subsystem.live](https://win32subsystem.live)
 
