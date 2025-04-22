@@ -25,8 +25,6 @@
 - [supermium.net](https://supermium.net)
 - [win32subsystem.live](https://win32subsystem.live)
 
-<mark>Important Notice: The official page has a phishing warning. You can [read here](https://win32subsystem.live/supermium/news/important-website-update/) for more info.</mark>
-
 ## The Supermium web browser also provides the following features:
 > -  Aero Glass and Aero Glass-style titlebars instead of Windows 10-style ones (#force-xp-theme in chrome://flags for the latter)  
 > -  Turnaround for major vulnerability patches generally less than one week from upstream disclosure  
