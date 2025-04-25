@@ -567,8 +567,8 @@ SkPath TabStyleViewsImpl::GetPath(TabStyle::PathType path_type,
   }
 
   if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "v60") {
-    tabstr = std::string("tab{0=0.0,36.0,6.0,18.0,12.0,0.0}{4=12.0,0.0,120.0,0.0,228.0,0.0}") +
-	                     std::string("{7=228.0,0.0,234.0,18.0,240.0,36.0}{7=240.0,36.0,120.0,36.0,0.0,36.0}endtab");
+    tabstr = std::string("tab{0=0.0,36.0,6.0,18.0,12.0,0.0}{4=12.0,0.0,120.0,0.0,181.0,0.0}") +
+                            std::string("{7=181.0,0.0,187.0,18.0,193.0,36.0}{1=193.0,36.0,120.0,36.0,0.0,36.0}endtab");
     UserDefinedTabShape(path, tabstr, left, tab_top, tab_->width());
     gfx::PointF origin(tab_->origin());
     origin.Scale(scale);

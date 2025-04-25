@@ -4,6 +4,7 @@
 
 #include "chrome/browser/ui/layout_constants.h"
 
+#include "base/command_line.h"
 #include "base/feature_list.h"
 #include "base/files/file_util.h"
 #include "base/logging.h"
@@ -74,10 +75,19 @@ void SetLayoutConstantsFallback() {
   layout_constant_values[TAB_ALERT_INDICATOR_ICON_WIDTH] = touch_ui ? 12 : 16;
   layout_constant_values[TAB_CLOSE_BUTTON_SIZE] = touch_ui ? 24 : 16;
   layout_constant_values[TABSTRIP_TOOLBAR_OVERLAP] = base::FeatureList::IsEnabled(tabs::kScrollableTabStrip) ? 0 : 1;
-  layout_constant_values[TAB_HEIGHT] = 34 + layout_constant_values[TABSTRIP_TOOLBAR_OVERLAP];
-  layout_constant_values[TAB_STRIP_PADDING] = 6;
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("compact-ui")) {
+      layout_constant_values[TAB_HEIGHT] = 22;
+      layout_constant_values[TAB_STRIP_PADDING] = 6;
+  } else {
+      layout_constant_values[TAB_HEIGHT] = 34 + layout_constant_values[TABSTRIP_TOOLBAR_OVERLAP];
+      layout_constant_values[TAB_STRIP_PADDING] = 6;
+  }
   layout_constant_values[TAB_STRIP_HEIGHT] = layout_constant_values[TAB_HEIGHT] + layout_constant_values[TAB_STRIP_PADDING];
-  layout_constant_values[TAB_SEPARATOR_HEIGHT] = touch_ui ? 24 : 20;
+  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "v60") {
+      layout_constant_values[TAB_SEPARATOR_HEIGHT] = 0;
+  } else {
+      layout_constant_values[TAB_SEPARATOR_HEIGHT] = touch_ui ? 24 : 20;
+  }
   layout_constant_values[TAB_PRE_TITLE_PADDING] = 8;
   layout_constant_values[TAB_STACK_DISTANCE] = touch_ui ? 4 : 6;
   layout_constant_values[TOOLBAR_BUTTON_HEIGHT] = touch_ui ? 48 : 34;
@@ -90,17 +100,30 @@ void SetLayoutConstantsFallback() {
   layout_constant_values[PAGE_INFO_ICON_SIZE] = 20;
   layout_constant_values[DOWNLOAD_ICON_SIZE] = 20;
   layout_constant_values[TOOLBAR_CORNER_RADIUS] = 8;
-  layout_constant_values[TAB_WIDTH] = 240;
+  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "v60") {
+      layout_constant_values[TAB_WIDTH] = 193;
+  } else {
+      layout_constant_values[TAB_WIDTH] = 240;     
+  }
   layout_constant_values[TAB_HORIZONTAL_PADDING] = 8;
   layout_constant_values[TAB_VERTICAL_PADDING] = 6;
   layout_constant_values[TAB_TOP_CORNER_RADIUS] = 10;
   layout_constant_values[TAB_BOTTOM_CORNER_RADIUS] = 12;
   layout_constant_values[TAB_STRIP_MAXIMIZED_ANTI_PADDING] = 6;
-  layout_constant_values[TAB_FAVICON_Y_OFFSET] = 12;
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("compact-ui")) {
+      layout_constant_values[TAB_FAVICON_Y_OFFSET] = 6;
+  } else {
+      layout_constant_values[TAB_FAVICON_Y_OFFSET] = 12;
+  }
   layout_constant_values[TAB_FAVICON_X_OFFSET] = 5;
   layout_constant_values[TAB_CLOSE_BUTTON_X_OFFSET] = 8;
-  layout_constant_values[TAB_STRIP_PAD_WHEN_MAXIMIZED] = 0;
-  layout_constant_values[TAB_OVERLAP] = 16;
+  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "v60") {
+      layout_constant_values[TAB_STRIP_PAD_WHEN_MAXIMIZED] = 1;
+      layout_constant_values[TAB_OVERLAP] = 11;
+  } else {
+      layout_constant_values[TAB_STRIP_PAD_WHEN_MAXIMIZED] = 0;
+      layout_constant_values[TAB_OVERLAP] = 16;
+  }
   layout_constant_values[TAB_SEPARATOR_OFFSET] = 4;
 }
 
