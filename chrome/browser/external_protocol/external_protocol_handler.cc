@@ -12,6 +12,7 @@
 #include "base/containers/fixed_flat_map.h"
 #include "base/containers/fixed_flat_set.h"
 #include "base/functional/bind.h"
+#include "base/logging.h"
 #include "base/metrics/histogram_functions.h"
 #include "base/metrics/histogram_macros.h"
 #include "base/notreached.h"
@@ -172,8 +173,10 @@ void LaunchUrlWithoutSecurityCheckWithDelegate(
     return;
   }
 
-  g_browser_process->safe_browsing_service()->ReportExternalAppRedirect(
-      web_contents, url.scheme(), url.possibly_invalid_spec());
+  if (g_browser_process->safe_browsing_service()) {
+    g_browser_process->safe_browsing_service()->ReportExternalAppRedirect(
+        web_contents, url.scheme(), url.possibly_invalid_spec());
+  }
 
   // |web_contents| is only passed in to find browser context. Do not assume
   // that the external protocol request came from the main frame.
