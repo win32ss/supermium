@@ -230,4 +230,9 @@
      "Supermium Tab Options",
      "Select one of the preset Supermium tab options: v109 tabs (default), v60 tabs, CR23 tabs or rectangular tabs.",
      kOsDesktop, MULTI_VALUE_TYPE(kSupermiumTabOptions)},
+    {"show-managed-ui", "Show managed UI for managed users",
+     "Enabled/disable showing enterprise users a 'Managed by your organization' "
+     "message in the app menu and on some chrome:// pages.",
+      kOsWin | kOsMac | kOsLinux | kOsCrOS,
+      FEATURE_VALUE_TYPE(features::kShowManagedUi)},
 #endif  // SUPERMIUM_FLAG_ENTRIES_H_

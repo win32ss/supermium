@@ -510,6 +510,12 @@ extern const base::FeatureParam<bool>
         "security-page-require-interaction", false};
 #endif  // !BUILDFLAG(IS_ANDROID)
 
+#if !BUILDFLAG(IS_ANDROID)
+BASE_FEATURE(kShowManagedUi, 
+             "ShowManagedUi",
+             base::FEATURE_ENABLED_BY_DEFAULT);
+#endif
+
 #if BUILDFLAG(IS_CHROMEOS_ASH)
 // Enables or disables the Happiness Tracking System for the General survey.
 BASE_FEATURE(kHappinessTrackingSystem,
