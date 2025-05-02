@@ -209,6 +209,9 @@ enum LayoutConstant {
   // This can be used to define an offset for the x-position of the tab separator.
   TAB_SEPARATOR_OFFSET,
 
+  // A boolean value used to determine whether a solid black border should appear around tabs.
+  TAB_HARD_BORDER,
+
   // Maximum value of the layout constants.
   LAYOUT_CONSTANTS_MAX_VALUE,
 };

@@ -8,6 +8,7 @@
 #include <string>
 
 #include "base/files/file_util.h"
+#include "base/logging.h"
 #include "base/path_service.h"
 #include "base/strings/string_number_conversions.h"
 #include "build/build_config.h"
@@ -213,7 +214,7 @@ int NewTabButton::GetCornerRadius() const {
 
 SkPath NewTabButton::GetBorderPath(const gfx::Point& origin,
                                    bool extend_to_top) const {
-  const float radius = GetCornerRadius();
+  float radius = GetCornerRadius();
 
   SkPath path;
   std::string ntbstr;
@@ -223,6 +224,25 @@ SkPath NewTabButton::GetBorderPath(const gfx::Point& origin,
   if (is_custom_str_available && !path.isEmpty()) {
       return path;
   }
+
+  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "v60") {
+    SkPoint pts [] = {SkPoint(4.0, 8.0), SkPoint(24.0, 8.0), SkPoint(28.0, 20.0), SkPoint(8.0, 20.0)};
+    path.moveTo(origin.x() * 1.10f, SkScalar(8.0));
+    path.addPoly(pts, 4, true);
+    return path;
+  }
+
+  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "rectangular") {
+    SkPoint pts [] = {SkPoint(8.0, 8.0), SkPoint(32.0, 8.0), SkPoint(32.0, 20.0), SkPoint(8.0, 20.0)};
+    path.moveTo(origin.x() * 1.10f, SkScalar(8.0));
+    path.addPoly(pts, 4, true);
+    return path;
+  }
+
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("compact-ui")) {
+    radius -= 2;
+  }
+
   if (extend_to_top) {
     path.moveTo(origin.x(), 0);
     const float diameter = radius * 2;
@@ -293,7 +313,10 @@ void NewTabButton::NotifyClick(const ui::Event& event) {
 
 void NewTabButton::PaintButtonContents(gfx::Canvas* canvas) {
   PaintFill(canvas);
-  PaintIcon(canvas);
+  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") != "v60" &&
+      base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") != "rectangular") {
+     PaintIcon(canvas);
+  }
 }
 
 gfx::Size NewTabButton::CalculatePreferredSize(
@@ -364,8 +387,11 @@ void NewTabButton::PaintIcon(gfx::Canvas* canvas) {
   constexpr int kStrokeWidth = 2;
   flags.setStrokeWidth(kStrokeWidth);
 
-  const int radius = ui::TouchUiController::Get()->touch_ui() ? 7 : 6;
+  int radius = ui::TouchUiController::Get()->touch_ui() ? 7 : 6;
   const int offset = GetCornerRadius() - radius;
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("compact-ui")) {
+    radius -= 2;
+  }
   // The cap will be added outside the end of the stroke; inset to compensate.
   constexpr int kCapRadius = kStrokeWidth / 2;
   const int start = offset + kCapRadius;

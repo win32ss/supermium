@@ -83,10 +83,14 @@ void SetLayoutConstantsFallback() {
       layout_constant_values[TAB_STRIP_PADDING] = 6;
   }
   layout_constant_values[TAB_STRIP_HEIGHT] = layout_constant_values[TAB_HEIGHT] + layout_constant_values[TAB_STRIP_PADDING];
-  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "v60") {
+  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "v60" ||
+      base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "rectangular") {
       layout_constant_values[TAB_SEPARATOR_HEIGHT] = 0;
   } else {
       layout_constant_values[TAB_SEPARATOR_HEIGHT] = touch_ui ? 24 : 20;
+      if (base::CommandLine::ForCurrentProcess()->HasSwitch("compact-ui")) {
+          layout_constant_values[TAB_SEPARATOR_HEIGHT] -= 6;
+      }
   }
   layout_constant_values[TAB_PRE_TITLE_PADDING] = 8;
   layout_constant_values[TAB_STACK_DISTANCE] = touch_ui ? 4 : 6;
@@ -100,7 +104,8 @@ void SetLayoutConstantsFallback() {
   layout_constant_values[PAGE_INFO_ICON_SIZE] = 20;
   layout_constant_values[DOWNLOAD_ICON_SIZE] = 20;
   layout_constant_values[TOOLBAR_CORNER_RADIUS] = 8;
-  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "v60") {
+  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "v60" ||
+      base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "rectangular") {
       layout_constant_values[TAB_WIDTH] = 193;
   } else {
       layout_constant_values[TAB_WIDTH] = 240;     
@@ -120,11 +125,20 @@ void SetLayoutConstantsFallback() {
   if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "v60") {
       layout_constant_values[TAB_STRIP_PAD_WHEN_MAXIMIZED] = 1;
       layout_constant_values[TAB_OVERLAP] = 11;
+  } else if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "rectangular") {
+      layout_constant_values[TAB_STRIP_PAD_WHEN_MAXIMIZED] = 0;
+      layout_constant_values[TAB_OVERLAP] = 8;
   } else {
       layout_constant_values[TAB_STRIP_PAD_WHEN_MAXIMIZED] = 0;
       layout_constant_values[TAB_OVERLAP] = 16;
   }
-  layout_constant_values[TAB_SEPARATOR_OFFSET] = 4;
+  layout_constant_values[TAB_SEPARATOR_OFFSET] = 0;
+  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "v60" ||
+      base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "rectangular") {
+      layout_constant_values[TAB_HARD_BORDER] = 1;
+  } else {
+      layout_constant_values[TAB_HARD_BORDER] = 0;
+  }
 }
 
 void SetLayoutConstants() {
