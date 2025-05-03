@@ -123,21 +123,33 @@ void SetLayoutConstantsFallback() {
   layout_constant_values[TAB_FAVICON_X_OFFSET] = 5;
   layout_constant_values[TAB_CLOSE_BUTTON_X_OFFSET] = 8;
   if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "v60") {
+      layout_constant_values[TAB_CLOSE_BUTTON_X_OFFSET] = 14;
+  } else {
+      layout_constant_values[TAB_CLOSE_BUTTON_X_OFFSET] = 8;
+  }
+  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "v60") {
       layout_constant_values[TAB_STRIP_PAD_WHEN_MAXIMIZED] = 1;
       layout_constant_values[TAB_OVERLAP] = 11;
   } else if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "rectangular") {
       layout_constant_values[TAB_STRIP_PAD_WHEN_MAXIMIZED] = 0;
       layout_constant_values[TAB_OVERLAP] = 8;
+  } else if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "cr23") {
+      layout_constant_values[TAB_STRIP_PAD_WHEN_MAXIMIZED] = 0;
+      layout_constant_values[TAB_OVERLAP] = 12;
   } else {
       layout_constant_values[TAB_STRIP_PAD_WHEN_MAXIMIZED] = 0;
       layout_constant_values[TAB_OVERLAP] = 16;
   }
   layout_constant_values[TAB_SEPARATOR_OFFSET] = 0;
-  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "v60" ||
-      base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "rectangular") {
+  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "rectangular") {
       layout_constant_values[TAB_HARD_BORDER] = 1;
   } else {
       layout_constant_values[TAB_HARD_BORDER] = 0;
+  }
+  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "cr23") {
+      layout_constant_values[DRAW_LEFT_TAB_SEPARATOR] = 0;
+  } else {
+      layout_constant_values[DRAW_LEFT_TAB_SEPARATOR] = 1;
   }
 }
 

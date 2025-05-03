@@ -567,19 +567,35 @@ SkPath TabStyleViewsImpl::GetPath(TabStyle::PathType path_type,
   }
 
   if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "v60") {
-    tabstr = std::string("tab{0=0.0,36.0,6.0,18.0,12.0,0.0}{4=12.0,0.0,120.0,0.0,181.0,0.0}") +
-                            std::string("{7=181.0,0.0,187.0,18.0,193.0,36.0}{1=193.0,36.0,120.0,36.0,0.0,36.0}endtab");
-    UserDefinedTabShape(path, tabstr, left, tab_top, tab_->width());
-    gfx::PointF origin(tab_->origin());
-    origin.Scale(scale);
-    path.offset(-origin.x(), -origin.y());
+      path.moveTo(left, extended_bottom);
+      if (extend_to_top) {
+        // Create the vertical extension by extending the side diagonals until
+        // they reach the top of the bounds.
+         path.cubicTo(left, extended_bottom, (((tab_left + 5) + left) / 2), ((tab_top + extended_bottom) / 2), tab_left + 5,
+                    tab_top);
+         path.lineTo(tab_right - 5, tab_top);
+         path.cubicTo(tab_right - 5, tab_top, (((tab_right - 5) + right) / 2), ((tab_top + extended_bottom) / 2), right,
+                 extended_bottom);
+      } else {
+         path.cubicTo(left, extended_bottom, ((tab_left + left) / 2), (((tab_top * 0.5) + extended_bottom) / 2), tab_left,
+                  (tab_top * 0.5));
+         path.cubicTo(tab_left, (tab_top * 0.5), tab_left, tab_top * 0.5, tab_right, tab_top * 0.5);
+         path.cubicTo(tab_right, (tab_top * 0.5), (((tab_right - 2) + right) / 2), (((tab_top * 0.5) + extended_bottom) / 2), right,
+                 extended_bottom);
+      }
 
-    // Possibly convert back to DIPs.
-    if (render_units == TabStyle::RenderUnits::kDips && scale != 1.0f) {
-       path.transform(SkMatrix::Scale(1.0f / scale, 1.0f / scale));
-    }
-    path.close();
-    return path;
+      path.close();
+      // Convert path to be relative to the tab origin.
+      gfx::PointF origin(tab_->origin());
+      origin.Scale(scale);
+      path.offset(-origin.x(), -origin.y());
+
+      // Possibly convert back to DIPs.
+      if (render_units == TabStyle::RenderUnits::kDips && scale != 1.0f) {
+          path.transform(SkMatrix::Scale(1.0f / scale, 1.0f / scale));
+      }
+
+      return path;
   }
 
   // The unique CR23 detached tab.
@@ -1263,9 +1279,11 @@ void TabStyleViewsImpl::PaintSeparators(gfx::Canvas* canvas) const {
 
   cc::PaintFlags flags;
   flags.setAntiAlias(true);
-  flags.setColor(separator_color(separator_opacities.left));
-  canvas->DrawRoundRect(separator_bounds.leading,
-                        tab_style()->GetSeparatorCornerRadius() * scale, flags);
+  if (GetLayoutConstant(DRAW_LEFT_TAB_SEPARATOR)) {
+    flags.setColor(separator_color(separator_opacities.left));
+    canvas->DrawRoundRect(separator_bounds.leading,
+                          tab_style()->GetSeparatorCornerRadius() * scale, flags);
+  }
   flags.setColor(separator_color(separator_opacities.right));
   canvas->DrawRoundRect(separator_bounds.trailing,
                         tab_style()->GetSeparatorCornerRadius() * scale, flags);

@@ -370,8 +370,8 @@ void NewTabButton::PaintFill(gfx::Canvas* canvas) const {
     } else {
         flags.setColor(GetColorProvider()->GetColor(
             GetWidget()->ShouldPaintAsActive()
-                ? background_frame_active_color_id_
-                : background_frame_inactive_color_id_));
+                ? background_frame_inactive_color_id_
+                : background_frame_active_color_id_));
     }
     canvas->DrawPath(GetBorderPath(gfx::Point(), false), flags);
   }
