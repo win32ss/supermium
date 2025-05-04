@@ -15,6 +15,10 @@
 #include "components/crash/core/common/crash_key.h"
 #include "load_cdm_uma_helper.h"
 
+#if BUILDFLAG(IS_WIN)
+#include <windows.h>
+#endif
+
 #if BUILDFLAG(ENABLE_CDM_HOST_VERIFICATION)
 #include "base/feature_list.h"
 #include "media/base/media_switches.h"
@@ -157,47 +161,8 @@ bool CdmModule::Initialize(const base::FilePath& cdm_path) {
 #if BUILDFLAG(IS_WIN)
   // Load DXVA before sandbox lockdown to give CDM access to Output Protection
   // Manager (OPM).
-  LoadLibraryA("dxva2.dll");
+  ::LoadLibraryA("dxva2.dll");
 #endif  // BUILDFLAG(IS_WIN)
-
-  static const char kInitVerificationFuncName[] = "VerifyCdmHost_0";
-
-  init_verification_func_ =
-      reinterpret_cast<InitVerificationFunc>(
-	  library_.GetFunctionPointer(kInitVerificationFuncName));
-													
-  if (init_verification_func_) {
-	  
-      std::vector<cdm::HostFile> cdm_host_files;
- 
-      base::File cdm_file = base::File(cdm_path, 0);
-
-      base::File cdm_file_sig = base::File(cdm_path.AddExtension(FILE_PATH_LITERAL(".sig")), 0);
-  
-      cdm_host_files.push_back(cdm::HostFile(cdm_path.value().c_str(), cdm_file.GetPlatformFile(), cdm_file_sig.GetPlatformFile()));
-
-      base::FilePath test_dll = base::FilePath(FILE_PATH_LITERAL("test.dll"));
-
-      base::File test_dll_file = base::File(test_dll, 0);
-
-      base::File test_dll_file_sig = base::File(test_dll.AddExtension(FILE_PATH_LITERAL(".sig")), 0);
-  
-      cdm_host_files.push_back(cdm::HostFile(test_dll.value().c_str(), test_dll_file.GetPlatformFile(), test_dll_file_sig.GetPlatformFile()));
-
-      base::FilePath test_exe = base::FilePath(FILE_PATH_LITERAL("test.exe"));
-
-      base::File test_exe_file= base::File(test_exe, 0);
- 
-      base::File test_exe_file_sig = base::File(test_exe.AddExtension(FILE_PATH_LITERAL(".sig")), 0);
- 
-      cdm_host_files.push_back(cdm::HostFile(test_exe.value().c_str(), test_exe_file.GetPlatformFile(), test_exe_file_sig.GetPlatformFile()));
-
-	  //LOG(0) << test_exe.value().c_str();
-      // std::vector::data() is not guaranteed to be nullptr when empty().
-  //    const cdm::HostFile* cdm_host_files_ptr =
- //     cdm_host_files.empty() ? nullptr : cdm_host_files.data();	  
-//	  init_verification_func_(cdm_host_files_ptr, cdm_host_files.size());
-  }
 
 #if BUILDFLAG(ENABLE_CDM_HOST_VERIFICATION)
   if (base::FeatureList::IsEnabled(media::kCdmHostVerification))
