@@ -1373,12 +1373,28 @@ void BookmarkBarView::OnButtonPressed(const bookmarks::BookmarkNode* node,
   // are directed to ::OnMenuButtonPressed().
   DCHECK(node->is_url());
   RecordAppLaunch(browser_->profile(), node->url());
-  chrome::OpenAllIfAllowed(
-      browser_, {node}, ui::DispositionFromEventFlags(event.flags()),
-      /*add_to_group=*/false,
-      page_load_metrics::NavigationHandleUserData::InitiatorLocation::
-          kBookmarkBar,
-      {{BookmarkLaunchLocation::kAttachedBar, base::TimeTicks::Now()}});
+  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("open-bookmark-option") == "foreground") {
+    chrome::OpenAllIfAllowed(
+        browser_, {node}, WindowOpenDisposition::NEW_FOREGROUND_TAB,
+        /*add_to_group=*/false,
+        page_load_metrics::NavigationHandleUserData::InitiatorLocation::
+            kBookmarkBar,
+        {{BookmarkLaunchLocation::kAttachedBar, base::TimeTicks::Now()}});
+  } else if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("open-bookmark-option") == "background")  {
+    chrome::OpenAllIfAllowed(
+        browser_, {node}, WindowOpenDisposition::NEW_BACKGROUND_TAB,
+        /*add_to_group=*/false,
+        page_load_metrics::NavigationHandleUserData::InitiatorLocation::
+            kBookmarkBar,
+        {{BookmarkLaunchLocation::kAttachedBar, base::TimeTicks::Now()}});
+  } else {
+    chrome::OpenAllIfAllowed(
+        browser_, {node}, ui::DispositionFromEventFlags(event.flags()),
+        /*add_to_group=*/false,
+        page_load_metrics::NavigationHandleUserData::InitiatorLocation::
+            kBookmarkBar,
+        {{BookmarkLaunchLocation::kAttachedBar, base::TimeTicks::Now()}});
+  }
   RecordBookmarkLaunch(
       BookmarkLaunchLocation::kAttachedBar,
       profile_metrics::GetBrowserProfileType(browser_->profile()));

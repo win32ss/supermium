@@ -235,4 +235,8 @@
      "message in the app menu and on some chrome:// pages.",
       kOsWin | kOsMac | kOsLinux | kOsCrOS,
       FEATURE_VALUE_TYPE(features::kShowManagedUi)},
+    {"open-bookmark-option",
+     "Bookmark Open Options",
+     "Open bookmarks in the current tab (default), a foreground tab (new tab and switching focus) or background tab (new tab without switching focus).",
+     kOsDesktop, MULTI_VALUE_TYPE(kOpenBookmarkOptions)},
 #endif  // SUPERMIUM_FLAG_ENTRIES_H_

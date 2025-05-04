@@ -81,4 +81,13 @@ const FeatureEntry::Choice kSupermiumTabOptions[] = {
      "supermium-tab-options",
      "rectangular"},
 };
+const FeatureEntry::Choice kOpenBookmarkOptions[] = {
+    {"Current Tab", "", ""},
+    {"New Foreground Tab",
+     "open-bookmark-option",
+     "foreground"},
+    {"New Background Tab",
+     "open-bookmark-option",
+     "background"},
+};
 #endif  // SUPERMIUM_FLAG_CHOICES_H_
