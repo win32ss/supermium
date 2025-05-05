@@ -366,7 +366,8 @@ void Tab::Layout(PassKey) {
     // The close button is vertically centered in the contents_rect.
     const int top =
         contents_rect.y() +
-        Center(contents_rect.height(), close_button_actual_size.height());
+        Center(contents_rect.height(), close_button_actual_size.height())
+        + GetLayoutConstant(TAB_CLOSE_BUTTON_Y_OFFSET);
 
     // The visible part of the close button should be placed against the
     // right of the contents rect unless the tab is so small that it would
@@ -437,7 +438,7 @@ void Tab::Layout(PassKey) {
     const int title_width = std::max(title_right - title_left, 0);
     // The Label will automatically center the font's cap height within the
     // provided vertical space.
-    const gfx::Rect title_bounds(title_left, contents_rect.y(), title_width,
+    const gfx::Rect title_bounds(title_left, contents_rect.y() + GetLayoutConstant(TAB_TITLE_Y_OFFSET), title_width,
                                  contents_rect.height());
     show_title = title_width > 0;
 

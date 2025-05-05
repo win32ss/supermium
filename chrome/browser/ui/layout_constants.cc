@@ -78,6 +78,9 @@ void SetLayoutConstantsFallback() {
   if (base::CommandLine::ForCurrentProcess()->HasSwitch("compact-ui")) {
       layout_constant_values[TAB_HEIGHT] = 22;
       layout_constant_values[TAB_STRIP_PADDING] = 6;
+  } else if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "") {
+      layout_constant_values[TAB_HEIGHT] = 23;
+      layout_constant_values[TAB_STRIP_PADDING] = 13;
   } else {
       layout_constant_values[TAB_HEIGHT] = 34 + layout_constant_values[TABSTRIP_TOOLBAR_OVERLAP];
       layout_constant_values[TAB_STRIP_PADDING] = 6;
@@ -117,10 +120,16 @@ void SetLayoutConstantsFallback() {
   layout_constant_values[TAB_STRIP_MAXIMIZED_ANTI_PADDING] = 6;
   if (base::CommandLine::ForCurrentProcess()->HasSwitch("compact-ui")) {
       layout_constant_values[TAB_FAVICON_Y_OFFSET] = 6;
+  } else if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "") {
+      layout_constant_values[TAB_FAVICON_Y_OFFSET] = 10;
   } else {
       layout_constant_values[TAB_FAVICON_Y_OFFSET] = 12;
   }
-  layout_constant_values[TAB_FAVICON_X_OFFSET] = 5;
+  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "") {
+      layout_constant_values[TAB_FAVICON_X_OFFSET] = 12;
+  } else {
+      layout_constant_values[TAB_FAVICON_X_OFFSET] = 5;
+  }
   layout_constant_values[TAB_CLOSE_BUTTON_X_OFFSET] = 8;
   if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "v60") {
       layout_constant_values[TAB_CLOSE_BUTTON_X_OFFSET] = 14;
@@ -151,6 +160,9 @@ void SetLayoutConstantsFallback() {
   } else {
       layout_constant_values[DRAW_LEFT_TAB_SEPARATOR] = 1;
   }
+  layout_constant_values[DRAW_RIGHT_TAB_SEPARATOR] = 1;
+  layout_constant_values[TAB_CLOSE_BUTTON_Y_OFFSET] = 0;
+  layout_constant_values[TAB_TITLE_Y_OFFSET] = 0;
 }
 
 void SetLayoutConstants() {

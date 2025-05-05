@@ -212,9 +212,19 @@ enum LayoutConstant {
   // A boolean value used to determine whether a solid black border should appear around tabs.
   TAB_HARD_BORDER,
 
-  // A boolean value used to draw the left tab separator, which may not be desireable in cases 
+  // A boolean value used to draw the left tab separator, which may not be desireable in cases
   // where there are wide gaps between tabs.
   DRAW_LEFT_TAB_SEPARATOR,
+
+  // A boolean value used to draw the right tab separator, which may not be desireable in cases 
+  // where there are wide gaps between tabs.
+  DRAW_RIGHT_TAB_SEPARATOR,
+
+  // y-offset of the tab close button.
+  TAB_CLOSE_BUTTON_Y_OFFSET,
+
+  // y-offset of the tab title.
+  TAB_TITLE_Y_OFFSET,
 
   // Maximum value of the layout constants.
   LAYOUT_CONSTANTS_MAX_VALUE,

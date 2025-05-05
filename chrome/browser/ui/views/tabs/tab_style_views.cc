@@ -1284,9 +1284,11 @@ void TabStyleViewsImpl::PaintSeparators(gfx::Canvas* canvas) const {
     canvas->DrawRoundRect(separator_bounds.leading,
                           tab_style()->GetSeparatorCornerRadius() * scale, flags);
   }
-  flags.setColor(separator_color(separator_opacities.right));
-  canvas->DrawRoundRect(separator_bounds.trailing,
-                        tab_style()->GetSeparatorCornerRadius() * scale, flags);
+  if (GetLayoutConstant(DRAW_RIGHT_TAB_SEPARATOR)) {
+    flags.setColor(separator_color(separator_opacities.right));
+    canvas->DrawRoundRect(separator_bounds.trailing,
+                          tab_style()->GetSeparatorCornerRadius() * scale, flags);
+  }
 }
 
 float TabStyleViewsImpl::GetTopCornerRadiusForWidth(int width) const {
