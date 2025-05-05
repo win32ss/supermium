@@ -47,14 +47,6 @@ ui::mojom::DragOperation DesktopDragDropClientWin::StartDragAndDrop(
     ui::mojom::DragEventSource source) {
   gfx::Point touch_screen_point;
 
-  if (base::win::GetVersion() < base::win::Version::VISTA) {
-    // Presently, drag-drop operations restore the focus to the
-    // window, but only the UI widget; clicks to the web content widget
-    // are captured by the former. Until this is resolved, drag-drop
-    // will be disabled on NT5.
-    return ui::PreferredDragOperation(
-      ui::DragDropTypes::DropEffectToDragOperation(DROPEFFECT_NONE));
-  }
   if (source == ui::mojom::DragEventSource::kTouch) {
     display::Screen* screen = display::Screen::GetScreen();
     CHECK(screen);
