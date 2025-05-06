@@ -4,6 +4,7 @@
 
 #include "chrome/browser/ui/views/frame/tab_strip_region_view.h"
 
+#include "base/command_line.h"
 #include "base/feature_list.h"
 #include "base/functional/bind.h"
 #include "base/strings/utf_string_conversions.h"
@@ -404,10 +405,8 @@ void TabStripRegionView::Layout(PassKey) {
             TabStyle::Get()->GetBottomCornerRadius() +
             GetLayoutConstant(TAB_STRIP_PADDING);
 
-    if (base::FeatureList::IsEnabled(features::kCompactMode)) {
-      if (profile_->GetPrefs()->GetBoolean(prefs::kCompactModeEnabled)) {
-        x -= GetLayoutConstant(TAB_STRIP_PADDING);
-      }
+    if (base::CommandLine::ForCurrentProcess()->HasSwitch("compact-tab-ui")) {
+      x -= GetLayoutConstant(TAB_STRIP_PADDING);
     }
     gfx::Point new_tab_button_new_position = gfx::Point(x, 0);
 

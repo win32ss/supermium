@@ -239,7 +239,7 @@ SkPath NewTabButton::GetBorderPath(const gfx::Point& origin,
     return path;
   }
 
-  if (base::CommandLine::ForCurrentProcess()->HasSwitch("compact-ui")) {
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("compact-tab-ui")) {
     radius -= 2;
   }
 
@@ -389,7 +389,7 @@ void NewTabButton::PaintIcon(gfx::Canvas* canvas) {
 
   int radius = ui::TouchUiController::Get()->touch_ui() ? 7 : 6;
   const int offset = GetCornerRadius() - radius;
-  if (base::CommandLine::ForCurrentProcess()->HasSwitch("compact-ui")) {
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("compact-tab-ui")) {
     radius -= 2;
   }
   // The cap will be added outside the end of the stroke; inset to compensate.

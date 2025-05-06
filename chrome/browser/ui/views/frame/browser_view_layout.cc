@@ -6,6 +6,7 @@
 
 #include <algorithm>
 
+#include "base/command_line.h"
 #include "base/feature_list.h"
 #include "base/i18n/rtl.h"
 #include "base/memory/raw_ptr.h"
@@ -596,7 +597,7 @@ int BrowserViewLayout::LayoutTabStripRegion(int top) {
   // anything to the left of it, like the incognito avatar.
   gfx::Rect tab_strip_region_bounds(
       delegate_->GetBoundsForTabStripRegionInBrowserView());
-  if (is_compact_mode_) {
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("compact-tab-ui")) {
     constexpr int retain_some_padding = 2;
     int height = GetLayoutConstant(TAB_STRIP_HEIGHT) -
                  GetLayoutConstant(TAB_STRIP_PADDING) + retain_some_padding;

@@ -239,4 +239,8 @@
      "Bookmark Open Options",
      "Open bookmarks in the current tab (default), a foreground tab (new tab and switching focus) or background tab (new tab without switching focus).",
      kOsDesktop, MULTI_VALUE_TYPE(kOpenBookmarkOptions)},
+    {"compact-tab-ui",
+     "Compact Tab UI",
+     "Compact tab options, compatible with all tab types, and preferred for the v60 tabs.",
+     kOsDesktop, SINGLE_VALUE_TYPE("compact-tab-ui")},
 #endif  // SUPERMIUM_FLAG_ENTRIES_H_
