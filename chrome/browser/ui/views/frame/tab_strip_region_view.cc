@@ -405,9 +405,6 @@ void TabStripRegionView::Layout(PassKey) {
             TabStyle::Get()->GetBottomCornerRadius() +
             GetLayoutConstant(TAB_STRIP_PADDING);
 
-    if (base::CommandLine::ForCurrentProcess()->HasSwitch("compact-tab-ui")) {
-      x -= GetLayoutConstant(TAB_STRIP_PADDING);
-    }
     gfx::Point new_tab_button_new_position = gfx::Point(x, 0);
 
     gfx::Rect new_tab_button_new_bounds =
