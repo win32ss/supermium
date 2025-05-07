@@ -43,7 +43,6 @@
 #include "ui/gfx/image/image_skia.h"
 #include "ui/views/controls/menu/menu_controller.h"
 #include "ui/views/drag_controller.h"
-#include "ui/views/drag_utils.h"
 #include "ui/views/event_monitor.h"
 #include "ui/views/focus/focus_manager.h"
 #include "ui/views/focus/focus_manager_factory.h"
@@ -67,10 +66,6 @@
 
 #if BUILDFLAG(IS_OZONE)
 #include "ui/ozone/public/ozone_platform.h"
-#endif
-
-#if BUILDFLAG(IS_WIN)
-#include "base/win/windows_version.h"
 #endif
 
 namespace views {
@@ -1146,13 +1141,6 @@ void Widget::RunShellDrag(View* view,
 
   if (!native_widget_)
     return;
-#if BUILDFLAG(IS_WIN)
-  if (base::win::GetVersion() < base::win::Version::VISTA) {
-    views::RunShellDrag(GetNativeView(), std::move(data), location, operation,
-                      source);
-    return;
-  }
-#endif
   dragged_view_ = view;
   OnDragWillStart();
 
