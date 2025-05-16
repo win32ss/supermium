@@ -79,8 +79,8 @@ void SetLayoutConstantsFallback() {
       layout_constant_values[TAB_HEIGHT] = 28;
       layout_constant_values[TAB_STRIP_PADDING] = 6;
   } else if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "") {
-      layout_constant_values[TAB_HEIGHT] = 23;
-      layout_constant_values[TAB_STRIP_PADDING] = 13;
+      layout_constant_values[TAB_HEIGHT] = 30;
+      layout_constant_values[TAB_STRIP_PADDING] = 6;
   } else {
       layout_constant_values[TAB_HEIGHT] = 34 + layout_constant_values[TABSTRIP_TOOLBAR_OVERLAP];
       layout_constant_values[TAB_STRIP_PADDING] = 6;
@@ -119,7 +119,7 @@ void SetLayoutConstantsFallback() {
   layout_constant_values[TAB_BOTTOM_CORNER_RADIUS] = 12;
   layout_constant_values[TAB_STRIP_MAXIMIZED_ANTI_PADDING] = 4;
   if (base::CommandLine::ForCurrentProcess()->HasSwitch("compact-tab-ui")) {
-      layout_constant_values[TAB_FAVICON_Y_OFFSET] = 4;
+      layout_constant_values[TAB_FAVICON_Y_OFFSET] = 8;
   } else if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "") {
       layout_constant_values[TAB_FAVICON_Y_OFFSET] = 10;
   } else {

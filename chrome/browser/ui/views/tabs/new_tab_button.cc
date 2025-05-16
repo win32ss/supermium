@@ -7,6 +7,7 @@
 #include <memory>
 #include <string>
 
+#include "base/command_line.h"
 #include "base/files/file_util.h"
 #include "base/logging.h"
 #include "base/path_service.h"
@@ -156,15 +157,16 @@ NewTabButton::NewTabButton(TabStrip* tab_strip, PressedCallback callback)
 
   ink_drop_container_ =
       AddChildView(std::make_unique<views::InkDropContainerView>());
+  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") != "v60" &&
+      base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") != "rectangular") {
+      views::InkDrop::Get(this)->SetMode(views::InkDropHost::InkDropMode::ON);
+      views::InkDrop::Get(this)->SetHighlightOpacity(0.16f);
+      views::InkDrop::Get(this)->SetVisibleOpacity(0.14f);
 
-  views::InkDrop::Get(this)->SetMode(views::InkDropHost::InkDropMode::ON);
-  views::InkDrop::Get(this)->SetHighlightOpacity(0.16f);
-  views::InkDrop::Get(this)->SetVisibleOpacity(0.14f);
-
-  SetInstallFocusRingOnFocus(true);
-  views::HighlightPathGenerator::Install(
-      this, std::make_unique<NewTabButton::HighlightPathGenerator>());
-
+      SetInstallFocusRingOnFocus(true);
+      views::HighlightPathGenerator::Install(
+          this, std::make_unique<NewTabButton::HighlightPathGenerator>());
+  }
   SetFocusBehavior(FocusBehavior::ACCESSIBLE_ONLY);
 
   SetProperty(views::kElementIdentifierKey, kNewTabButtonElementId);
@@ -368,10 +370,18 @@ void NewTabButton::PaintFill(gfx::Canvas* canvas) const {
     if (GetState() == STATE_HOVERED) {
         flags.setColor(SkColorSetARGB(0x80, 90, 90, 90));
     } else {
-        flags.setColor(GetColorProvider()->GetColor(
-            GetWidget()->ShouldPaintAsActive()
-                ? background_frame_inactive_color_id_
-                : background_frame_active_color_id_));
+        if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "v60" ||
+            base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "rectangular") {
+            flags.setColor(GetColorProvider()->GetColor(
+                GetWidget()->ShouldPaintAsActive()
+                   ? background_frame_inactive_color_id_
+                   : background_frame_active_color_id_));
+       } else {
+            flags.setColor(GetColorProvider()->GetColor(
+                GetWidget()->ShouldPaintAsActive()
+                   ? background_frame_active_color_id_
+                   : background_frame_inactive_color_id_));
+       }
     }
     canvas->DrawPath(GetBorderPath(gfx::Point(), false), flags);
   }
