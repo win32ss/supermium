@@ -31,6 +31,7 @@
 #include <utility>
 
 #include "base/auto_reset.h"
+#include "base/command_line.h"
 #include "base/debug/crash_logging.h"
 #include "base/feature_list.h"
 #include "base/memory/ptr_util.h"
@@ -3888,7 +3889,8 @@ void HTMLMediaElement::UpdatePlayState(bool pause_speech /* = true */) {
   if (should_be_playing && !muted_)
     was_always_muted_ = false;
 
-  if (should_be_playing) {
+  if (should_be_playing && (LocalFrame::HasTransientUserActivation(GetDocument().GetFrame()) ||
+      base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("autoplay-policy") != "document-user-activation-required")) {
     if (!is_playing) {
       // Set rate, muted before calling play in case they were set before the
       // media engine was setup.  The media engine should just stash the rate
