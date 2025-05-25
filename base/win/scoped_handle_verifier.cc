@@ -15,7 +15,6 @@
 #include "base/compiler_specific.h"
 #include "base/debug/alias.h"
 #include "base/debug/stack_trace.h"
-#include "base/logging.h"
 #include "base/memory/raw_ref.h"
 #include "base/synchronization/lock_impl.h"
 #include "base/trace_event/base_tracing.h"
@@ -116,7 +115,7 @@ ScopedHandleVerifier* ScopedHandleVerifier::Get() {
 
 bool CloseHandleWrapper(HANDLE handle) {
   if (!::CloseHandle(handle))
-    LOG(ERROR) << "CloseHandle failed";
+    CHECK(false) << "CloseHandle failed";
   return true;
 }
 
