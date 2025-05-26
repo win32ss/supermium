@@ -502,7 +502,8 @@ ui::ColorProviderKey BrowserFrame::GetColorProviderKey() const {
   // color_mode.
   [this, &key, theme_service]() {
     // Currently the incognito browser is implemented as unthemed dark mode.
-    if (IsIncognitoBrowser()) {
+    if (IsIncognitoBrowser() || 
+        base::CommandLine::ForCurrentProcess()->HasSwitch("force-dark-mode")) {
       key.color_mode = ui::ColorProviderKey::ColorMode::kDark;
       return;
     }
