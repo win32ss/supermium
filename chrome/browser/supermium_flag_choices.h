@@ -90,4 +90,10 @@ const FeatureEntry::Choice kOpenBookmarkOptions[] = {
      "open-bookmark-option",
      "background"},
 };
+const FeatureEntry::Choice kAutoplayPolicy[] = {
+    {"Autoplay Enabled", "", ""},
+    {"Autoplay Disabled",
+     "autoplay-policy",
+     "document-user-activation-required"},
+};
 #endif  // SUPERMIUM_FLAG_CHOICES_H_

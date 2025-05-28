@@ -243,4 +243,12 @@
      "Compact Tab UI",
      "Compact tab options, compatible with all tab types, and preferred for the v60 tabs.",
      kOsDesktop, SINGLE_VALUE_TYPE("compact-tab-ui")},
+    {"disable-gpu-driver-bug-workarounds",
+     "Diasble GPU Driver Bug Workarounds",
+     "Disables all workarounds for bugs experienced in certain drivers. Can increase performance, but use with caution.",
+     kOsDesktop, SINGLE_VALUE_TYPE("disable-gpu-driver-bug-workarounds")},
+    {"autoplay-policy",
+     "Autoplay Policy",
+     "Enable or disable autoplay on all videos played in Supermium.",
+     kOsAll, MULTI_VALUE_TYPE(kAutoplayPolicy)},
 #endif  // SUPERMIUM_FLAG_ENTRIES_H_
