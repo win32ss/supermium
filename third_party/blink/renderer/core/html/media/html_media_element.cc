@@ -975,7 +975,8 @@ void HTMLMediaElement::InvokeLoadAlgorithm() {
 
   // Perform the cleanup required for the resource load algorithm to run.
   StopPeriodicTimers();
-  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("autoplay-policy") != "document-user-activation-required")
+  if (GetDocument().GetFrame() &&
+      base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("autoplay-policy") != "document-user-activation-required")
       GetDocument().GetFrame()->SetHadUserInteraction(false);
   load_timer_.Stop();
   CancelDeferredLoad();
@@ -1847,7 +1848,8 @@ void HTMLMediaElement::WaitForSourceChange() {
   DVLOG(3) << "waitForSourceChange(" << *this << ")";
 
   StopPeriodicTimers();
-  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("autoplay-policy") != "document-user-activation-required")
+  if (GetDocument().GetFrame() &&
+      base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("autoplay-policy") != "document-user-activation-required")
      GetDocument().GetFrame()->SetHadUserInteraction(false);
   load_state_ = kWaitingForSource;
 

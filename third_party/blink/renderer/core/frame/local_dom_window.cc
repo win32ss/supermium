@@ -1010,7 +1010,8 @@ void LocalDOMWindow::FrameDestroyed() {
   // TODO(japhet): Can we merge this function and Reset()? At least, this
   // function should be renamed to Detach(), since in the Reset() case the frame
   // is not being destroyed.
-  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("autoplay-policy") != "document-user-activation-required")
+  if (GetFrame() &&
+      base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("autoplay-policy") != "document-user-activation-required")
     GetFrame()->SetHadUserInteraction(false);
   document()->Shutdown();
   document()->RemoveAllEventListenersRecursively();
