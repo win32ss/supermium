@@ -403,7 +403,7 @@ void TabStripRegionView::Layout(PassKey) {
     // padding and button height are removed.
     int x = tab_strip_container_->bounds().right() -
             TabStyle::Get()->GetBottomCornerRadius() +
-            GetLayoutConstant(TAB_STRIP_PADDING);
+            6;
 
     gfx::Point new_tab_button_new_position = gfx::Point(x, 0);
 
