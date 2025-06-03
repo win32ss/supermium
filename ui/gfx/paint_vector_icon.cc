@@ -9,15 +9,19 @@
 #include <tuple>
 
 #include "base/containers/span.h"
+#include "base/files/file_util.h"
 #include "base/i18n/rtl.h"
 #include "base/lazy_instance.h"
+#include "base/logging.h"
 #include "base/memory/raw_span.h"
 #include "base/numerics/safe_conversions.h"
+#include "base/path_service.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/string_split.h"
 #include "base/trace_event/trace_event.h"
 #include "cc/paint/paint_canvas.h"
 #include "cc/paint/paint_flags.h"
+#include "chrome/common/chrome_paths.h"
 #include "third_party/skia/include/core/SkPath.h"
 #include "ui/gfx/animation/tween.h"
 #include "ui/gfx/canvas.h"
@@ -519,6 +523,24 @@ IconDescription::~IconDescription() {}
 
 const VectorIcon kNoneIcon = {};
 
+bool GetCustomIconPath(std::string icon_name, std::vector<PathElement>& custompath)
+{
+    base::FilePath userdir;
+    if(!base::PathService::Get(chrome::DIR_USER_DATA, &userdir))
+        return false; // Things are seriously wrong if the user data directory cannot be located.
+    const base::FilePath userpath = userdir.Append(base::ASCIIToWide(icon_name));
+    std::string bufstr;
+    base::ReadFileToString(userpath, &bufstr);
+
+    if (bufstr.empty())
+        return false;
+    else
+    {
+        custompath = PathFromSource(bufstr);
+        return true;
+	}
+}
+
 void PaintVectorIcon(Canvas* canvas, const VectorIcon& icon, SkColor color) {
   PaintVectorIcon(canvas, icon, GetDefaultSizeOfVectorIcon(icon), color);
 }
@@ -533,13 +555,16 @@ void PaintVectorIcon(Canvas* canvas,
   }
   const int px_size = base::ClampCeil(canvas->image_scale() * dip_size);
   const VectorIconRep* rep = GetRepForPxSize(icon, px_size);
-  PaintPath(canvas, rep->path, dip_size, color);
+  std::vector<PathElement> custompath;
+  if (GetCustomIconPath(icon.name, custompath))
+      PaintPath(canvas, custompath, dip_size, color);
+  else
+      PaintPath(canvas, rep->path, dip_size, color);
 }
 
 ImageSkia CreateVectorIcon(const IconDescription& params) {
   if (params.icon->is_empty())
     return ImageSkia();
-
   return g_icon_cache.Get().GetOrCreateIcon(params);
 }
 
