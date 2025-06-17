@@ -330,6 +330,8 @@ void Tab::Layout(PassKey) {
   // indicator, but visually it will be smaller at kFaviconSize wide.
   gfx::Rect favicon_bounds(start + GetLayoutConstant(TAB_FAVICON_X_OFFSET), 
                            GetLayoutConstant(TAB_FAVICON_Y_OFFSET), 0, 0);
+  if (favicon_bounds.right() >= (contents_rect.right() - (GetLayoutConstant(TAB_FAVICON_X_OFFSET) * 4)))
+      favicon_bounds.set_x(favicon_bounds.x() - GetLayoutConstant(TAB_FAVICON_X_OFFSET));
   if (showing_icon_) {
     if (center_icon_) {
       // When centering the favicon, the favicon is allowed to escape the normal
@@ -1076,7 +1078,8 @@ void Tab::UpdateIconVisibility() {
   // In case of touch optimized UI, the close button has an extra padding on the
   // left that needs to be considered.
   const int close_button_width = GetLayoutConstant(TAB_CLOSE_BUTTON_SIZE) +
-                                 GetLayoutConstant(TAB_AFTER_TITLE_PADDING);
+                                 GetLayoutConstant(TAB_AFTER_TITLE_PADDING) +
+                                 GetLayoutConstant(TAB_CLOSE_BUTTON_X_OFFSET);
   const bool large_enough_for_close_button =
       available_width >= (touch_ui ? kTouchMinimumContentsWidthForCloseButtons
                                    : kMinimumContentsWidthForCloseButtons);
