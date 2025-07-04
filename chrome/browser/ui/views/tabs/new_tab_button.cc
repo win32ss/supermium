@@ -220,7 +220,10 @@ SkPath NewTabButton::GetBorderPath(const gfx::Point& origin,
 
   SkPath path;
   std::string ntbstr;
-  bool is_custom_str_available = GetNtbCustomStr(ntbstr);
+  bool is_custom_str_available = false; 
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("enable-advanced-customization")) {
+      is_custom_str_available = GetNtbCustomStr(ntbstr);
+  }
   UserDefinedNtbShape(path, ntbstr);
 
   if (is_custom_str_available && !path.isEmpty()) {

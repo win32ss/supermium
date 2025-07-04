@@ -548,9 +548,12 @@ SkPath TabStyleViewsImpl::GetPath(TabStyle::PathType path_type,
   bool is_active_tab = tab_->controller()->IsActiveTab(tab_);
   bool is_pinned_tab = tab_->controller()->IsTabPinned(tab_);
   bool is_first_tab = tab_->controller()->IsTabFirst(tab_);
-
-  bool is_custom_str_available = GetTabCustomStr(tabstr, is_active_tab, is_pinned_tab, is_first_tab);
-  UserDefinedTabShape(path, tabstr, left, tab_top, tab_->width());
+  bool is_custom_str_available = false;
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("enable-advanced-customization")) {
+    is_custom_str_available = GetTabCustomStr(tabstr, is_active_tab, is_pinned_tab, is_first_tab);
+  }
+  if (is_custom_str_available)
+    UserDefinedTabShape(path, tabstr, left, tab_top, tab_->width());
 
   if (is_custom_str_available && !path.isEmpty()) {
     // Convert path to be relative to the tab origin.
