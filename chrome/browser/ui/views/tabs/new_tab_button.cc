@@ -126,6 +126,12 @@ bool UserDefinedNtbShape(SkPath& path, std::string& sectionContent) {
 
                 dataItem.values.push_back(val);
             }
+         if (dataItem.datakey == 8) {
+            // bit 4 (0x8) is used to implement the directive to move the starting point of the path.
+            if (dataItem.values.size() != 2)
+               break; // Fail if there is an incorrect quantity of values in the data item.
+            path.moveTo(dataItem.values.at(0), dataItem.values.at(1));
+         }
 
          if (dataItem.values.size() != 6)
             break; // Fail if there is an incorrect quantity of values in the data item.

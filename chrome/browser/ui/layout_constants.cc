@@ -195,6 +195,7 @@ void SetLayoutConstants() {
           continue;
       layout_constant_values[i] = std::stoi(constant_val);
   }
+  layout_constant_values[TAB_STRIP_HEIGHT] = layout_constant_values[TAB_HEIGHT] + layout_constant_values[TAB_STRIP_PADDING];
 }
 
 int GetLayoutConstant(LayoutConstant constant) {
