@@ -7,7 +7,7 @@
   <mark>Latest progwrp.dll (version 1.1.0.5024) - included in Supermium 126 R7!</mark>
   <table>
     <caption>
-      <h4>This Supermium component receives enhancements and improvements from time to time, primarily for operating systems prior to Windows Vista. It is compatible with an up-to-date Chromium-based web browser for Windows XP, 2003, Vista, 7, and 8.x.</h4>
+      <h4>This Supermium component receives enhancements and improvements from time to time, primarily for operating systems prior to Windows Vista. It is compatible with an up-to-date Chromium-based web browser for Windows 95, 98, ME, 2000, XP, 2003, Vista, 7, and 8.x.</h4>
     </caption>
     <tr>
       <th scope="row">64-bits</th>
@@ -36,12 +36,6 @@
 > -  Custom tab options including trapezoidal tabs, transparent tabs, and outlined tabs  
 > -  Many flags from ungoogled-chromium  
 > -  Support for SSE2-only processors in the 32-bit build  
-
-## Future support for:
-- [ ] Windows 2000  
-- [ ] Ungoogled Chromium features (in progress)  
-- [ ] WebGPU for D3D9 renderer  
-- [ ] Manifest V2 (once removed by Google)
 
 ## Support
 If you enjoy using Supermium and want to support the development, consider donating on [Patreon](https://www.patreon.com/win32).
