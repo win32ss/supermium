@@ -150,10 +150,11 @@ void SetLayoutConstantsFallback() {
       layout_constant_values[TAB_OVERLAP] = 16;
   }
   layout_constant_values[TAB_SEPARATOR_OFFSET] = 0;
-  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "rectangular") {
+  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "rectangular" ||
+      base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "v60") {
       layout_constant_values[TAB_HARD_BORDER] = 1;
   } else {
-      layout_constant_values[TAB_HARD_BORDER] = 0;
+      layout_constant_values[TAB_HARD_BORDER] = 1;
   }
   if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "cr23") {
       layout_constant_values[DRAW_LEFT_TAB_SEPARATOR] = 0;

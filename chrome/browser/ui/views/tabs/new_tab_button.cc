@@ -376,6 +376,7 @@ void NewTabButton::PaintFill(gfx::Canvas* canvas) const {
     cc::PaintFlags flags;
     flags.setAntiAlias(true);
     canvas->Translate(GetContentsBounds().OffsetFromOrigin());
+
     if (GetState() == STATE_HOVERED) {
         flags.setColor(SkColorSetARGB(0x80, 90, 90, 90));
     } else {
@@ -393,6 +394,13 @@ void NewTabButton::PaintFill(gfx::Canvas* canvas) const {
        }
     }
     canvas->DrawPath(GetBorderPath(gfx::Point(), false), flags);
+    if (GetLayoutConstant(TAB_HARD_BORDER)) {
+        flags.setColor(SkColorSetRGB(0, 0, 0));    
+	    flags.setAlphaf(0.6f);
+        flags.setStyle(cc::PaintFlags::kStroke_Style);
+        canvas->DrawPath(GetBorderPath(gfx::Point(), false),
+                         flags);
+    }
   }
 }
 

@@ -1199,14 +1199,6 @@ void TabStyleViewsImpl::PaintTabBackgroundFill(
     canvas->DrawRect(gfx::ScaleToEnclosingRect(tab_->GetLocalBounds(), scale),
                      flags);
   }
-  if (GetLayoutConstant(TAB_HARD_BORDER)) {
-    cc::PaintFlags flags;
-    flags.setAlphaf(1.0zf);
-    flags.setColor(SkColorSetRGB(0, 0, 0));
-    flags.setStyle(cc::PaintFlags::kStroke_Style);
-    canvas->DrawPath(fill_path,
-                     flags);
-  }
   if (fill_id.has_value()) {
     gfx::ScopedCanvas scale_scoper(canvas);
     canvas->sk_canvas()->scale(scale, scale);
@@ -1220,6 +1212,15 @@ void TabStyleViewsImpl::PaintTabBackgroundFill(
 
   if (hovered) {
     PaintBackgroundHover(canvas, scale);
+  }
+
+  if (GetLayoutConstant(TAB_HARD_BORDER)) {
+    cc::PaintFlags flags;
+    flags.setAlphaf(0.6f);
+    flags.setColor(SkColorSetRGB(0, 0, 0));
+    flags.setStyle(cc::PaintFlags::kStroke_Style);
+    canvas->DrawPath(fill_path,
+                     flags);
   }
 }
 
