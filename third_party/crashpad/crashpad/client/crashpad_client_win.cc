@@ -184,11 +184,11 @@ LONG WINAPI UnhandledExceptionHandler(EXCEPTION_POINTERS* exception_pointers) {
   // ourselves in case the crash server is gone, so that we don't leave zombies
   // around. This would ideally never happen.
   Sleep(kMillisecondsUntilTerminate);
+  if (IsWindowsXPOrGreater()) {
+      LOG(ERROR) << "crash server did not respond, self-terminating";
 
-  LOG(ERROR) << "crash server did not respond, self-terminating";
-
-  SafeTerminateProcess(GetCurrentProcess(), kTerminationCodeCrashNoDump);
-
+      SafeTerminateProcess(GetCurrentProcess(), kTerminationCodeCrashNoDump);
+  }
   return EXCEPTION_CONTINUE_SEARCH;
 }
 

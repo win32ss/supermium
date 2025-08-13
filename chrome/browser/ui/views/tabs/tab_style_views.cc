@@ -1201,7 +1201,7 @@ void TabStyleViewsImpl::PaintTabBackgroundFill(
   }
   if (GetLayoutConstant(TAB_HARD_BORDER)) {
     cc::PaintFlags flags;
-    flags.setAlphaf(1.0f);
+    flags.setAlphaf(1.0zf);
     flags.setColor(SkColorSetRGB(0, 0, 0));
     flags.setStyle(cc::PaintFlags::kStroke_Style);
     canvas->DrawPath(fill_path,
