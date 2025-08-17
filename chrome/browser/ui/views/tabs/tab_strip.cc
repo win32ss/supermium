@@ -1268,6 +1268,9 @@ void TabStrip::OnGroupClosed(const tab_groups::TabGroupId& group) {
 }
 
 bool TabStrip::ShouldDrawStrokes() const {
+  if (GetLayoutConstant(TAB_HARD_BORDER)) {
+    return true;
+  }
   // If the controller says we can't draw strokes, don't.
   if (!controller_->CanDrawStrokes()) {
     return false;

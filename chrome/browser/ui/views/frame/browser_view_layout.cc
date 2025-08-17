@@ -598,7 +598,10 @@ int BrowserViewLayout::LayoutTabStripRegion(int top) {
   gfx::Rect tab_strip_region_bounds(
       delegate_->GetBoundsForTabStripRegionInBrowserView());
   if (base::CommandLine::ForCurrentProcess()->HasSwitch("compact-tab-ui")) {
-    constexpr int retain_some_padding = 2;
+    int retain_some_padding = 2;
+    // The bottom of the tab border is cut off by the toolbar if the retained padding is less than 4px.
+    if (GetLayoutConstant(TAB_HARD_BORDER))
+        retain_some_padding = 4;
     int height = GetLayoutConstant(TAB_STRIP_HEIGHT) -
                  GetLayoutConstant(TAB_STRIP_PADDING) + retain_some_padding;
     tab_strip_region_bounds.set_height(height);

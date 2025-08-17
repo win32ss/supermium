@@ -393,10 +393,13 @@ void NewTabButton::PaintFill(gfx::Canvas* canvas) const {
                    : background_frame_inactive_color_id_));
        }
     }
+    if (base::CommandLine::ForCurrentProcess()->HasSwitch("transparent-tabs")) {
+        flags.setAlphaf(0.7f);
+    }
     canvas->DrawPath(GetBorderPath(gfx::Point(), false), flags);
     if (GetLayoutConstant(TAB_HARD_BORDER)) {
         flags.setColor(SkColorSetRGB(0, 0, 0));    
-	    flags.setAlphaf(0.6f);
+        flags.setAlphaf(0.7f);
         flags.setStyle(cc::PaintFlags::kStroke_Style);
         canvas->DrawPath(GetBorderPath(gfx::Point(), false),
                          flags);
