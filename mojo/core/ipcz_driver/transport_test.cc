@@ -71,7 +71,13 @@ class MojoIpczTransportTest : public test::MojoTestBase {
   static scoped_refptr<Transport> CreateAndSendTransport(
       MojoHandle pipe,
       const base::Process& process,
-      bool untrusted = false) {
+#if BUILDFLAG(IS_WIN)
+      Transport::ProcessTrust process_trust = Transport::ProcessTrust::kTrusted
+#else
+      // Parameter is not tracked on non-Windows platforms.
+      Transport::ProcessTrust process_trust = Transport::ProcessTrust{}
+#endif
+  ) {
     PlatformChannel channel;
     MojoHandle transport_for_client =
         WrapPlatformHandle(channel.TakeRemoteEndpoint().TakePlatformHandle())
@@ -80,7 +86,7 @@ class MojoIpczTransportTest : public test::MojoTestBase {
     WriteMessageWithHandles(pipe, "", &transport_for_client, 1);
     return Transport::Create(
         {.source = Transport::kBroker, .destination = Transport::kNonBroker},
-        channel.TakeLocalEndpoint(), process.Duplicate(), untrusted);
+        channel.TakeLocalEndpoint(), process.Duplicate(), process_trust);
   }
 
   // Retrieves a PlatformChannel endpoint from `pipe` and returns a newly
@@ -422,7 +428,7 @@ class MojoIpczTransportSecurityTest
 TEST_P(MojoIpczTransportSecurityTest, TransmitFile) {
   RunTestClientWithController("TransmitFileClient", [&](ClientController& c) {
     scoped_refptr<Transport> transport =
-        CreateAndSendTransport(c.pipe(), c.process(), IsEnforcementEnabled());
+        CreateAndSendTransport(c.pipe(), c.process(), Transport::ProcessTrust{});
     base::ScopedTempDir temp_dir;
     CHECK(temp_dir.CreateUniqueTempDir());
     int32_t flags = base::File::FLAG_CREATE | base::File::FLAG_READ |
