@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 
+#include "base/command_line.h"
 #include "base/containers/contains.h"
 #include "base/functional/bind.h"
 #include "base/location.h"
@@ -59,7 +60,8 @@ ToolbarActionsModel::ToolbarActionsModel(
   extensions::ExtensionSystem::Get(profile_)->ready().Post(
       FROM_HERE, base::BindOnce(&ToolbarActionsModel::OnReady,
                                 weak_ptr_factory_.GetWeakPtr()));
-
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-extension-view"))
+      extension_prefs_->SetPinnedExtensions(extension_prefs_->GetExtensions());
   // We only care about watching toolbar-order prefs if not in incognito mode.
   pref_change_registrar_.Init(prefs_);
   pref_change_registrar_.Add(
@@ -96,8 +98,11 @@ void ToolbarActionsModel::OnExtensionLoaded(
   // We don't want to add the same extension twice. It may have already been
   // added by EXTENSION_BROWSER_ACTION_VISIBILITY_CHANGED below, if the user
   // hides the browser action and then disables and enables the extension.
-  if (!HasAction(extension->id()) && ShouldAddExtension(extension))
+  if (!HasAction(extension->id()) && ShouldAddExtension(extension)) {
     AddAction(extension->id());
+    if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-extension-view"))
+       extension_prefs_->SetPinnedExtensions(extension_prefs_->GetExtensions());
+  }
 }
 
 void ToolbarActionsModel::OnExtensionUnloaded(
@@ -475,6 +480,9 @@ void ToolbarActionsModel::SetActionVisibility(const ActionId& action_id,
   DCHECK(!IsActionForcePinned(action_id));
   DCHECK(!profile_->IsOffTheRecord())
       << "Changing action pin state is disallowed in incognito.";
+
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-extension-view"))
+      return;
 
   auto stored_pinned_action_ids = extension_prefs_->GetPinnedExtensions();
   DCHECK_NE(is_now_visible,

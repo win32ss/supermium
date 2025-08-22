@@ -251,4 +251,8 @@
      "Autoplay Policy",
      "Enable or disable autoplay on all videos played in Supermium.",
      kOsAll, MULTI_VALUE_TYPE(kAutoplayPolicy)},
+    {"classic-extension-view",
+     "Classic Extension View",
+     "Disables the puzzle icon and shows all extensions in the toolbar.",
+     kOsDesktop, SINGLE_VALUE_TYPE("classic-extension-view")},
 #endif  // SUPERMIUM_FLAG_ENTRIES_H_

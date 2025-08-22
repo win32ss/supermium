@@ -925,7 +925,8 @@ void ExtensionsToolbarContainer::SetExtensionIconVisibility(
 void ExtensionsToolbarContainer::UpdateContainerVisibility() {
   bool was_visible = GetVisible();
   SetVisible(ShouldContainerBeVisible());
-
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-extension-view"))
+    extensions_button_->SetVisible(false);
   // Layout animation does not handle host view visibility changing; requires
   // resetting.
   if (was_visible != GetVisible())
