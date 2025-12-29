@@ -109,7 +109,7 @@ TabStripRegionView::TabStripRegionView(std::unique_ptr<TabStrip> tab_strip)
 
   GetViewAccessibility().SetRole(ax::mojom::Role::kTabList);
   GetViewAccessibility().SetIsMultiselectable(true);
-
+  
   tab_strip_ = tab_strip.get();
   BrowserWindowInterface* browser = tab_strip->GetBrowserWindowInterface();
 

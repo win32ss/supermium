@@ -1023,13 +1023,7 @@ float ShapeResult::ApplySpacingImpl(
   return space;
 }
 
-void ShapeResult::DeallocRuns() 
-{
-	for(auto runs : this->runs_) {
-		delete(runs);
-		runs = nullptr;
-	}
-}
+void ShapeResult::DeallocRuns() { this->runs_.clear(); }
 
 float ShapeResult::ApplySpacing(ShapeResultSpacing<String>& spacing,
                                 int text_start_offset) {

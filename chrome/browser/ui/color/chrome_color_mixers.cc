@@ -59,6 +59,7 @@ bool ChromeColorProviderUtilsCallbacks::ColorIdName(
 
 }  // namespace
 
+#if defined(_WIN32)
 typedef struct DataItem {
 	int datakey;
 	std::vector<int> values;
@@ -133,7 +134,7 @@ void AddUserDefinedMixer(ui::ColorProvider* provider, const ui::ColorProviderKey
         pos = endPos + 1;
     }
 }
-
+#endif
 void AddChromeColorMixers(ui::ColorProvider* provider,
                           const ui::ColorProviderKey& key) {
   static base::NoDestructor<ChromeColorProviderUtilsCallbacks>
@@ -163,5 +164,7 @@ void AddChromeColorMixers(ui::ColorProvider* provider,
     key.app_controller->AddColorMixers(provider, key);
   }
 
+  #if defined(_WIN32)
   AddUserDefinedMixer(provider, key);
+  #endif
 }

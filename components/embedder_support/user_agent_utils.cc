@@ -62,7 +62,7 @@
 namespace embedder_support {
 
 namespace {
-	
+#if defined(_WIN32)
 typedef enum UACHSpoofType{
 	UA,
 	UACHCustomName,
@@ -115,6 +115,7 @@ std::string parseFile(UACHSpoofType SpoofTarget) {
        return std::string();
     }
 }
+#endif
 
 #if BUILDFLAG(IS_WIN)
 
@@ -259,30 +260,38 @@ const blink::UserAgentBrandList GetUserAgentBrandList(
   bool parse_result = base::StringToInt(major_version, &major_version_number);
   DCHECK(parse_result);
   std::optional<std::string> brand;
+
+#if defined(_WIN32)
   std::string custom_brand;
   custom_brand = parseFile(UACHCustomName);
-#if !BUILDFLAG(CHROMIUM_BRANDING)
-  brand = version_info::GetProductName();
-#else
-  if (!custom_brand.empty())
-	brand = custom_brand;
-  else
-    brand = std::string("Google Chrome");
 #endif
-  std::string custom_brand_version = parseFile(UACHCustomVersion);
-  std::string brand_version =
-      output_version_type == blink::UserAgentBrandVersionType::kFullVersion
-          ? full_version
-          : major_version;
 
-  if(!custom_brand_version.empty()){
-	  brand_version = custom_brand_version;
-  }
+#if !BUILDFLAG(CHROMIUM_BRANDING)
+brand = version_info::GetProductName();
+#elif defined(_WIN32)
+    if (!custom_brand.empty())
+	brand = custom_brand;
+#else
+    brand = std::string("Google Chrome");  
+#endif
 
-  return GenerateBrandVersionList(major_version_number, brand, brand_version,
+std::string brand_version =
+    output_version_type == blink::UserAgentBrandVersionType::kFullVersion
+        ? full_version
+        : major_version;
+
+#if defined(_WIN32)
+std::string custom_brand_version = parseFile(UACHCustomVersion);
+if (!custom_brand_version.empty()) {
+  brand_version = custom_brand_version;
+}
+#endif
+
+return GenerateBrandVersionList(major_version_number, brand, brand_version,
                                   output_version_type,
                                   additional_brand_version);
 }
+
 
 // Return UserAgentBrandList with the major version populated in the brand
 // `version` value.
@@ -557,10 +566,15 @@ std::string GetUserAgent(
   if (custom_ua.has_value()) {
     return custom_ua.value();
   }
+
+  #if defined(_WIN32)
   custom_ua = parseFile(UA);
+
   if (!custom_ua->empty()) {
     return custom_ua.value();
   }
+  #endif
+
   return GetUserAgentInternal(user_agent_reduction);
 }
 
@@ -687,21 +701,26 @@ blink::UserAgentMetadata GetUserAgentMetadata(const PrefService* pref_service,
   // Low entropy client hints.
   metadata.brand_version_list =
       GetUserAgentBrandMajorVersionListInternal(std::nullopt);
+
+#if defined(_WIN32)
   std::string is_mobile = parseFile(UACHCustomIsMobile);
   if(is_mobile == std::string("true"))
 	  metadata.mobile = true;
   else
       metadata.mobile = false;
+#endif
+
 #if BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_IOS)
   metadata.mobile =
       base::CommandLine::ForCurrentProcess()->HasSwitch(kUseMobileUserAgent);
-#endif
+#elif defined(_WIN32)
   std::string is_platform;
   is_platform = parseFile(UACHCustomPlatform);
   if(!is_platform.empty())
 	  metadata.platform = is_platform;
   else
       metadata.platform = GetPlatformForUAMetadata();
+#endif
 
   // For users providing a valid user-agent override via the command line:
   // If kUACHOverrideBlank is enabled, set user-agent metadata with the
@@ -723,6 +742,7 @@ blink::UserAgentMetadata GetUserAgentMetadata(const PrefService* pref_service,
   // High entropy client hints.
   metadata.brand_full_version_list =
       GetUserAgentBrandFullVersionListInternal(std::nullopt);
+#if BUILDFLAG(IS_WIN)
   std::string full_version_custom;
   full_version_custom = parseFile(UACHCustomFullVersion);
   if(!full_version_custom.empty())
@@ -749,6 +769,7 @@ blink::UserAgentMetadata GetUserAgentMetadata(const PrefService* pref_service,
   else
       metadata.bitness = GetCpuBitness();
   std::string wow64_custom;
+
   wow64_custom = parseFile(UACHCustomWOW64);
   if (wow64_custom == std::string("true"))
 	  metadata.wow64 = true;
@@ -757,7 +778,6 @@ blink::UserAgentMetadata GetUserAgentMetadata(const PrefService* pref_service,
   else
       metadata.wow64 = IsWoW64();
 
-#if BUILDFLAG(IS_WIN)
   std::string platform_version_custom;
   platform_version_custom = parseFile(UACHCustomPlatformVersion);
   if(!platform_version_custom.empty())

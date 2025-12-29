@@ -743,7 +743,7 @@ class BookmarkBarViewTest3 : public BookmarkBarViewEventTestBase {
  protected:
   void DoTestOnMessageLoop() override {
     // Move the mouse to the "All Bookmarks" button and press the mouse.
-    OpenMenuByClick(bb_view_->all_bookmarks_button(),
+    OpenMenuByClick(bb_view_->other_bookmarks_button(),
                     CreateEventTask(this, &BookmarkBarViewTest3::Step2));
   }
 
@@ -832,7 +832,7 @@ class BookmarkBarViewTest4 : public BookmarkBarViewEventTestBase {
  protected:
   void DoTestOnMessageLoop() override {
     // Move the mouse to the "All Bookmarks" button and press the mouse.
-    OpenMenuByClick(bb_view_->all_bookmarks_button(),
+    OpenMenuByClick(bb_view_->other_bookmarks_button(),
                     CreateEventTask(this, &BookmarkBarViewTest4::Step2));
   }
 
@@ -989,7 +989,7 @@ class BookmarkBarViewTest7 : public BookmarkBarViewDragTestBase {
   void OnWidgetDragComplete(views::Widget* widget) override {
     // The button should be in normal state now.
     EXPECT_EQ(views::Button::STATE_NORMAL,
-              bb_view_->all_bookmarks_button()->GetState());
+              bb_view_->other_bookmarks_button()->GetState());
 
     BookmarkBarViewDragTestBase::OnWidgetDragComplete(widget);
     EXPECT_FALSE(MenuIsShowing(bb_view_->GetMenu()));
@@ -1290,7 +1290,7 @@ class BookmarkBarViewTest11 : public BookmarkBarViewEventTestBase {
  protected:
   void DoTestOnMessageLoop() override {
     // Move the mouse to the "All Bookmarks" button and press the mouse.
-    OpenMenuByClick(bb_view_->all_bookmarks_button(),
+    OpenMenuByClick(bb_view_->other_bookmarks_button(),
                     CreateEventTask(this, &BookmarkBarViewTest11::Step2));
   }
 
@@ -1350,7 +1350,7 @@ class BookmarkBarViewTest12 : public BookmarkBarViewEventTestBase {
  protected:
   void DoTestOnMessageLoop() override {
     // Open up the "All Bookmarks" folder.
-    OpenMenuByClick(bb_view_->all_bookmarks_button(),
+    OpenMenuByClick(bb_view_->other_bookmarks_button(),
                     CreateEventTask(this, &BookmarkBarViewTest12::Step2));
   }
 
@@ -1433,7 +1433,7 @@ class BookmarkBarViewTest13 : public BookmarkBarViewEventTestBase {
  protected:
   void DoTestOnMessageLoop() override {
     // Move the mouse to the "All Bookmarks" button and press the mouse.
-    OpenMenuByClick(bb_view_->all_bookmarks_button(),
+    OpenMenuByClick(bb_view_->other_bookmarks_button(),
                     CreateEventTask(this, &BookmarkBarViewTest13::Step2));
   }
 
@@ -1538,7 +1538,7 @@ class BookmarkBarViewTest15 : public BookmarkBarViewEventTestBase {
  protected:
   void DoTestOnMessageLoop() override {
     // Show the "All Bookmarks" folder.
-    OpenMenuByClick(bb_view_->all_bookmarks_button(),
+    OpenMenuByClick(bb_view_->other_bookmarks_button(),
                     CreateEventTask(this, &BookmarkBarViewTest15::Step2));
   }
 
@@ -1639,7 +1639,7 @@ class BookmarkBarViewTest17 : public BookmarkBarViewEventTestBase {
   void DoTestOnMessageLoop() override {
     // Move the mouse to the "All Bookmarks" button and press the left mouse
     // button.
-    OpenMenuByClick(bb_view_->all_bookmarks_button(),
+    OpenMenuByClick(bb_view_->other_bookmarks_button(),
                     CreateEventTask(this, &BookmarkBarViewTest17::Step2));
   }
 
@@ -1708,7 +1708,7 @@ class BookmarkBarViewTest18 : public BookmarkBarViewEventTestBase {
  protected:
   void DoTestOnMessageLoop() override {
     // Move the mouse to the "All Bookmarks" button and press the mouse.
-    OpenMenuByClick(bb_view_->all_bookmarks_button(),
+    OpenMenuByClick(bb_view_->other_bookmarks_button(),
                     CreateEventTask(this, &BookmarkBarViewTest18::Step2));
   }
 
@@ -1759,7 +1759,7 @@ class BookmarkBarViewTest19 : public BookmarkBarViewEventTestBase {
  protected:
   void DoTestOnMessageLoop() override {
     // Move the mouse to the "All Bookmarks" button and press the mouse.
-    OpenMenuByClick(bb_view_->all_bookmarks_button(),
+    OpenMenuByClick(bb_view_->other_bookmarks_button(),
                     CreateEventTask(this, &BookmarkBarViewTest19::Step2));
   }
 
@@ -2042,7 +2042,7 @@ class BookmarkBarViewTest23 : public BookmarkBarViewEventTestBase {
  protected:
   void DoTestOnMessageLoop() override {
     // Move the mouse to the "All Bookmarks" button and press the mouse.
-    OpenMenuByClick(bb_view_->all_bookmarks_button(),
+    OpenMenuByClick(bb_view_->other_bookmarks_button(),
                     CreateEventTask(this, &BookmarkBarViewTest23::Step2));
   }
 
@@ -2112,7 +2112,7 @@ class BookmarkBarViewTest24 : public BookmarkBarViewEventTestBase {
  protected:
   void DoTestOnMessageLoop() override {
     // Move the mouse to the "All Bookmarks" button and press the mouse.
-    OpenMenuByClick(bb_view_->all_bookmarks_button(),
+    OpenMenuByClick(bb_view_->other_bookmarks_button(),
                     CreateEventTask(this, &BookmarkBarViewTest24::Step2));
   }
 

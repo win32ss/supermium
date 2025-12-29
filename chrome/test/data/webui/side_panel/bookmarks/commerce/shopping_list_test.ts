@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'chrome://bookmarks-side-panel.top-chrome/commerce/shopping_list.js';
-import 'chrome://bookmarks-side-panel.top-chrome/bookmarks_list.js';
+// import 'chrome://bookmarks-side-panel.top-chrome/commerce/shopping_list.js';
+// import 'chrome://bookmarks-side-panel.top-chrome/bookmarks_list.js';
 
 import {ActionSource} from 'chrome://bookmarks-side-panel.top-chrome/bookmarks.mojom-webui.js';
 import {BookmarksApiProxyImpl} from 'chrome://bookmarks-side-panel.top-chrome/bookmarks_api_proxy.js';

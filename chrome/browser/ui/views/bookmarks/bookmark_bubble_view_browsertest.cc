@@ -28,6 +28,7 @@
 #include "components/signin/public/identity_manager/identity_test_utils.h"
 #include "content/public/test/browser_test.h"
 #include "ui/views/bubble/bubble_dialog_delegate_view.h"
+#include "third_party/leveldatabase/env_chromium.cc"
 
 class BaseBookmarkBubbleViewBrowserTest : public DialogBrowserTest {
  public:
@@ -122,13 +123,13 @@ class PowerBookmarkBubbleViewBrowserTest
 
 // Ash always has sync ON
 #if !BUILDFLAG(IS_CHROMEOS_ASH)
-IN_PROC_BROWSER_TEST_F(BookmarkBubbleViewBrowserTest,
+IN_PROC_BROWSER_TEST_F(BaseBookmarkBubbleViewBrowserTest,
                        InvokeUi_bookmark_details_synced_off) {
   ShowAndVerifyUi();
 }
 #endif
 
-IN_PROC_BROWSER_TEST_F(BookmarkBubbleViewBrowserTest,
+IN_PROC_BROWSER_TEST_F(BaseBookmarkBubbleViewBrowserTest,
                        InvokeUi_bookmark_details_synced_on) {
   ShowAndVerifyUi();
 }
@@ -141,7 +142,7 @@ IN_PROC_BROWSER_TEST_F(BookmarkBubbleViewBrowserTest,
 #define MAYBE_InvokeUi_bookmark_details_on_trackable_product \
   InvokeUi_bookmark_details_on_trackable_product
 #endif
-IN_PROC_BROWSER_TEST_F(BookmarkBubbleViewBrowserTest,
+IN_PROC_BROWSER_TEST_F(BaseBookmarkBubbleViewBrowserTest,
                        MAYBE_InvokeUi_bookmark_details_on_trackable_product) {
   ShowAndVerifyUi();
 }

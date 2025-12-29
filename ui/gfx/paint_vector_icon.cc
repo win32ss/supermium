@@ -121,6 +121,7 @@ class PathParser {
 };
 
 // Translates a string such as "MOVE_TO" into a command such as MOVE_TO.
+#if defined(_WIN32)
 CommandType CommandFromString(const std::string& source) {
 #define RETURN_IF_IS(command) \
   if (source == #command)     \
@@ -179,6 +180,7 @@ std::vector<PathElement> PathFromSource(const std::string& source) {
   }
   return path;
 }
+#endif
 
 bool IsCommandTypeCurve(CommandType command) {
   return command == CUBIC_TO || command == R_CUBIC_TO ||
@@ -516,6 +518,7 @@ IconDescription::IconDescription(const VectorIcon& icon,
 
 IconDescription::~IconDescription() {}
 
+#if defined(_WIN32)
 bool GetCustomIconPath(std::string icon_name, std::vector<PathElement>& custompath)
 {
     base::FilePath userdir;
@@ -533,7 +536,7 @@ bool GetCustomIconPath(std::string icon_name, std::vector<PathElement>& custompa
         return true;
 	}
 }
-
+#endif
 
 void PaintVectorIcon(Canvas* canvas, const VectorIcon& icon, SkColor color) {
   PaintVectorIcon(canvas, icon, GetDefaultSizeOfVectorIcon(icon), color);
@@ -549,11 +552,15 @@ void PaintVectorIcon(Canvas* canvas,
   }
   const int px_size = base::ClampCeil(canvas->image_scale() * dip_size);
   const VectorIconRep* rep = GetRepForPxSize(icon, px_size);
+  #if defined(_WIN32)
   std::vector<PathElement> custompath;
   if (GetCustomIconPath(icon.name, custompath))
       PaintPath(canvas, custompath, dip_size, color);
   else
       PaintPath(canvas, rep->path, dip_size, color);
+  #else
+      PaintPath(canvas, rep->path, dip_size, color);
+  #endif
 }
 
 ImageSkia CreateVectorIcon(const IconDescription& params) {

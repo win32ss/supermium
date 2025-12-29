@@ -139,7 +139,7 @@ void SetLayoutConstantsFallback() {
       layout_constant_values[TAB_OVERLAP] = 11;
   } else if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "rectangular") {
       layout_constant_values[TAB_STRIP_PAD_WHEN_MAXIMIZED] = 0;
-      layout_constant_values[TAB_OVERLAP] = 8;
+      layout_constant_values[TAB_OVERLAP] = 4;
   } else if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("supermium-tab-options") == "cr23") {
       layout_constant_values[TAB_STRIP_PAD_WHEN_MAXIMIZED] = 1;
       layout_constant_values[TAB_OVERLAP] = 12;

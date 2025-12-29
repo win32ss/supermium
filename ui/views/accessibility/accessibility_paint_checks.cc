@@ -88,7 +88,6 @@ void RunAccessibilityPaintChecks(View* view) {
            .empty()) {
     return;
   }
-
   // Finally, a view is allowed to explicitly state that it has no name.
   DCHECK_EQ(node_data.GetNameFrom(),
             ax::mojom::NameFrom::kAttributeExplicitlyEmpty)

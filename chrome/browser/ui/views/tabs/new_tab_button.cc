@@ -25,6 +25,7 @@
 #include "chrome/common/chrome_paths.h"
 #include "chrome/grit/generated_resources.h"
 #include "components/variations/variations_associated_data.h"
+#include "new_tab_button.h"
 #include "ui/base/metadata/metadata_impl_macros.h"
 #include "ui/base/pointer/touch_ui_controller.h"
 #include "ui/base/theme_provider.h"
@@ -38,6 +39,7 @@
 #include "ui/views/controls/highlight_path_generator.h"
 #include "ui/views/view_class_properties.h"
 #include "ui/views/widget/widget.h"
+#include "ui/base/l10n/l10n_util.h"
 
 #if BUILDFLAG(IS_WIN)
 #include "ui/display/win/screen_win.h"
@@ -222,7 +224,7 @@ NewTabButton::NewTabButton(TabStrip* tab_strip, PressedCallback callback)
           this, std::make_unique<NewTabButton::HighlightPathGenerator>());
   }
   SetFocusBehavior(FocusBehavior::ACCESSIBLE_ONLY);
-
+  SetAccessibleName(l10n_util::GetStringUTF16(IDS_ACCNAME_NEWTAB));
   SetProperty(views::kElementIdentifierKey, kNewTabButtonElementId);
 }
 

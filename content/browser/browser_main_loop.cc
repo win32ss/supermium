@@ -83,7 +83,6 @@
 #include "content/browser/metrics/histogram_synchronizer.h"
 #include "content/browser/network/browser_online_state_observer.h"
 #include "content/browser/network_service_instance_impl.h"
-#include "content/browser/renderer_host/dwrite_font_lookup_table_builder_win.h"
 #include "content/browser/renderer_host/media/media_stream_manager.h"
 #include "content/browser/renderer_host/render_process_host_impl.h"
 #include "content/browser/scheduler/browser_task_executor.h"
@@ -202,6 +201,7 @@
 #include <shellapi.h>
 
 #include "net/base/winsock_init.h"
+#include "content/browser/renderer_host/dwrite_font_lookup_table_builder_win.h"
 #endif
 
 #if BUILDFLAG(IS_CHROMEOS)

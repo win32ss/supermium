@@ -85,25 +85,25 @@ class PrintPreviewUI : public ConstrainedWebDialogUI,
 
   // printing::mojo::PrintPreviewUI:
   void SetOptionsFromDocument(const mojom::OptionsFromDocumentParamsPtr params,
-                              int32_t request_id) override;
+                              int32_t request_id);
   void DidPrepareDocumentForPreview(int32_t document_cookie,
-                                    int32_t request_id) override;
+                                    int32_t request_id);
   void DidPreviewPage(mojom::DidPreviewPageParamsPtr params,
-                      int32_t request_id) override;
+                      int32_t request_id);
   void MetafileReadyForPrinting(mojom::DidPreviewDocumentParamsPtr params,
-                                int32_t request_id) override;
-  void PrintPreviewFailed(int32_t document_cookie, int32_t request_id) override;
+                                int32_t request_id);
+  void PrintPreviewFailed(int32_t document_cookie, int32_t request_id);
   void PrintPreviewCancelled(int32_t document_cookie,
-                             int32_t request_id) override;
+                             int32_t request_id);
   void PrinterSettingsInvalid(int32_t document_cookie,
-                              int32_t request_id) override;
+                              int32_t request_id);
   void DidGetDefaultPageLayout(mojom::PageSizeMarginsPtr page_layout_in_points,
                                const gfx::RectF& printable_area_in_points,
                                bool all_pages_have_custom_size,
                                bool all_pages_have_custom_orientation,
-                               int32_t request_id) override;
+                               int32_t request_id);
   void DidStartPreview(mojom::DidStartPreviewParamsPtr params,
-                       int32_t request_id) override;
+                       int32_t request_id);
 
   bool IsBound() const;
 

@@ -735,9 +735,11 @@ void FieldTrialList::CreateTrialsInChildProcess(const CommandLine& cmd_line) {
                             static_cast<int>(result));
     // Unfortunately, XP has an issue with shared memory allocations to unsandboxed processes.
     // This means that the sandbox (or in-process-gpu/single-process) are needed to propagate all feature info.
+    #if defined(_WIN32)
     if (base::win::GetVersion() >= base::win::Version::VISTA) {
       CHECK_EQ(result, SharedMemoryError::kNoError);
     }
+    #endif
   }
 #endif  // BUILDFLAG(USE_BLINK)
 }

@@ -28,7 +28,7 @@ class PrintViewManager : public PrintViewManagerBase,
   PrintViewManager(const PrintViewManager&) = delete;
   PrintViewManager& operator=(const PrintViewManager&) = delete;
 
-  ~PrintViewManager() override;
+  ~PrintViewManager() ;
 
   static void BindPrintManagerHost(
       mojo::PendingAssociatedReceiver<mojom::PrintManagerHost> receiver,
@@ -69,17 +69,15 @@ class PrintViewManager : public PrintViewManagerBase,
   void PrintPreviewDone();
 
   // mojom::PrintManagerHost:
-  void DidShowPrintDialog() override;
-  void SetupScriptedPrintPreview(
-      SetupScriptedPrintPreviewCallback callback) override;
-  void ShowScriptedPrintPreview(bool source_is_modifiable) override;
-  void RequestPrintPreview(mojom::RequestPrintPreviewParamsPtr params) override;
+  void DidShowPrintDialog() ;
+  void SetupScriptedPrintPreview() ;
+  void ShowScriptedPrintPreview(bool source_is_modifiable) ;
+  void RequestPrintPreview(mojom::DidStartPreviewParamsPtr params) ;
   void CheckForCancel(int32_t preview_ui_id,
-                      int32_t request_id,
-                      CheckForCancelCallback callback) override;
+                      int32_t request_id) ;
 
   // content::WebContentsObserver implementation.
-  void RenderFrameDeleted(content::RenderFrameHost* render_frame_host) override;
+  void RenderFrameDeleted(content::RenderFrameHost* render_frame_host) ;
 
   content::RenderFrameHost* print_preview_rfh() { return print_preview_rfh_; }
 
@@ -124,7 +122,7 @@ class PrintViewManager : public PrintViewManagerBase,
   // Helper method for RequestPrintPreview(), called from
   // RejectPrintPreviewRequestIfRestricted(). Based on value of
   // `should_proceed`, continues to show the print preview or cancels it.
-  void OnRequestPrintPreviewCallback(mojom::RequestPrintPreviewParamsPtr params,
+  void OnRequestPrintPreviewCallback(mojom::DidStartPreviewParamsPtr params,
                                      content::GlobalRenderFrameHostId rfh_id,
                                      bool should_proceed);
 
@@ -137,7 +135,7 @@ class PrintViewManager : public PrintViewManagerBase,
   // Checks whether printing is currently restricted and aborts print preview if
   // needed. Since this check is performed asynchronously, invokes `callback`
   // with an indicator whether to proceed or not.
-  // Virtual to allow tests to override.
+  // Virtual to allow tests to .
   virtual void RejectPrintPreviewRequestIfRestricted(
       content::GlobalRenderFrameHostId rfh_id,
       base::OnceCallback<void(bool should_proceed)> callback);
@@ -147,7 +145,7 @@ class PrintViewManager : public PrintViewManagerBase,
   // restrictions.
   void OnPrintPreviewRequestRejected(content::GlobalRenderFrameHostId rfh_id);
 
-  // Virtual method that tests can override, in order to avoid actually
+  // Virtual method that tests can , in order to avoid actually
   // displaying a system print dialog.
   virtual void PrintForSystemDialogImpl();
 
