@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-// TODO(crbug.com/40285824): Remove this and convert code to safer constructs.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "chrome/installer/util/shell_util.h"
 
 #include <cguid.h>
@@ -19,21 +14,29 @@
 #include "base/base_paths.h"
 #include "base/base_paths_win.h"
 #include "base/command_line.h"
+#include "base/compiler_specific.h"
 #include "base/files/file_enumerator.h"
 #include "base/files/file_path.h"
 #include "base/files/file_util.h"
 #include "base/files/scoped_temp_dir.h"
 #include "base/strings/string_util.h"
+#include "base/strings/utf_string_conversions.h"
 #include "base/synchronization/atomic_flag.h"
 #include "base/test/scoped_path_override.h"
 #include "base/test/test_reg_util_win.h"
 #include "base/test/test_shortcut_win.h"
 #include "base/win/registry.h"
 #include "base/win/shortcut.h"
+#include "build/branding_buildflags.h"
 #include "chrome/install_static/install_util.h"
 #include "chrome/installer/util/install_util.h"
 #include "chrome/installer/util/util_constants.h"
 #include "testing/gtest/include/gtest/gtest.h"
+
+#if BUILDFLAG(GOOGLE_CHROME_BRANDING)
+#include "chrome/install_static/google_chrome_install_modes.h"
+#include "chrome/install_static/test/scoped_install_details.h"
+#endif  // BUILDFLAG(GOOGLE_CHROME_BRANDING)
 
 namespace {
 
@@ -138,13 +141,6 @@ class ShellUtilShortcutTest : public testing::Test {
         expected_path = (properties.level == ShellUtil::CURRENT_USER)
                             ? fake_start_menu_.GetPath()
                             : fake_common_start_menu_.GetPath();
-        break;
-      case ShellUtil::SHORTCUT_LOCATION_START_MENU_CHROME_DIR_DEPRECATED:
-        expected_path = (properties.level == ShellUtil::CURRENT_USER)
-                            ? fake_start_menu_.GetPath()
-                            : fake_common_start_menu_.GetPath();
-        expected_path = expected_path.Append(
-            InstallUtil::GetChromeShortcutDirNameDeprecated());
         break;
       default:
         ADD_FAILURE() << "Unknown location";
@@ -254,19 +250,6 @@ TEST_F(ShellUtilShortcutTest, GetShortcutPath) {
                                  ShellUtil::CURRENT_USER, &path));
   EXPECT_EQ(fake_user_quick_launch_.GetPath(), path);
 
-  std::wstring start_menu_subfolder =
-      InstallUtil::GetChromeShortcutDirNameDeprecated();
-  ASSERT_TRUE(ShellUtil::GetShortcutPath(
-      ShellUtil::SHORTCUT_LOCATION_START_MENU_CHROME_DIR_DEPRECATED,
-      ShellUtil::CURRENT_USER, &path));
-  EXPECT_EQ(fake_start_menu_.GetPath().Append(start_menu_subfolder), path);
-
-  ASSERT_TRUE(ShellUtil::GetShortcutPath(
-      ShellUtil::SHORTCUT_LOCATION_START_MENU_CHROME_DIR_DEPRECATED,
-      ShellUtil::SYSTEM_LEVEL, &path));
-  EXPECT_EQ(fake_common_start_menu_.GetPath().Append(start_menu_subfolder),
-            path);
-
   ASSERT_TRUE(ShellUtil::GetShortcutPath(ShellUtil::SHORTCUT_LOCATION_STARTUP,
                                          ShellUtil::SYSTEM_LEVEL, &path));
   EXPECT_EQ(fake_common_startup_.GetPath(), path);
@@ -274,32 +257,6 @@ TEST_F(ShellUtilShortcutTest, GetShortcutPath) {
   ASSERT_TRUE(ShellUtil::GetShortcutPath(ShellUtil::SHORTCUT_LOCATION_STARTUP,
                                          ShellUtil::CURRENT_USER, &path));
   EXPECT_EQ(fake_user_startup_.GetPath(), path);
-}
-
-TEST_F(ShellUtilShortcutTest, MoveExistingShortcut) {
-  test_properties_.set_shortcut_name(L"Bobo le shortcut");
-  test_properties_.level = ShellUtil::SYSTEM_LEVEL;
-  base::FilePath old_shortcut_path(GetExpectedShortcutPath(
-      ShellUtil::SHORTCUT_LOCATION_START_MENU_CHROME_DIR_DEPRECATED,
-      test_properties_));
-
-  ASSERT_TRUE(ShellUtil::CreateOrUpdateShortcut(
-      ShellUtil::SHORTCUT_LOCATION_START_MENU_CHROME_DIR_DEPRECATED,
-      test_properties_, ShellUtil::SHELL_SHORTCUT_CREATE_ALWAYS));
-  ValidateChromeShortcut(
-      ShellUtil::SHORTCUT_LOCATION_START_MENU_CHROME_DIR_DEPRECATED,
-      test_properties_);
-  ASSERT_TRUE(base::PathExists(old_shortcut_path.DirName()));
-  ASSERT_TRUE(base::PathExists(old_shortcut_path));
-
-  ASSERT_TRUE(ShellUtil::MoveExistingShortcut(
-      ShellUtil::SHORTCUT_LOCATION_START_MENU_CHROME_DIR_DEPRECATED,
-      ShellUtil::SHORTCUT_LOCATION_START_MENU_ROOT, test_properties_));
-
-  ValidateChromeShortcut(ShellUtil::SHORTCUT_LOCATION_START_MENU_ROOT,
-                         test_properties_);
-  ASSERT_FALSE(base::PathExists(old_shortcut_path));
-  ASSERT_FALSE(base::PathExists(old_shortcut_path.DirName()));
 }
 
 // Test the basic mechanism of TranslateShortcutCreationOrUpdateInfo.
@@ -331,17 +288,6 @@ TEST_F(ShellUtilShortcutTest, CreateChromeExeShortcutWithDefaultProperties) {
       ShellUtil::SHORTCUT_LOCATION_DESKTOP, properties,
       ShellUtil::SHELL_SHORTCUT_CREATE_ALWAYS));
   ValidateChromeShortcut(ShellUtil::SHORTCUT_LOCATION_DESKTOP, properties);
-}
-
-TEST_F(ShellUtilShortcutTest, CreateStartMenuShortcutWithAllProperties) {
-  test_properties_.set_shortcut_name(L"Bobo le shortcut");
-  test_properties_.level = ShellUtil::SYSTEM_LEVEL;
-  ASSERT_TRUE(ShellUtil::CreateOrUpdateShortcut(
-      ShellUtil::SHORTCUT_LOCATION_START_MENU_CHROME_DIR_DEPRECATED,
-      test_properties_, ShellUtil::SHELL_SHORTCUT_CREATE_ALWAYS));
-  ValidateChromeShortcut(
-      ShellUtil::SHORTCUT_LOCATION_START_MENU_CHROME_DIR_DEPRECATED,
-      test_properties_);
 }
 
 TEST_F(ShellUtilShortcutTest, ReplaceSystemLevelDesktopShortcut) {
@@ -413,15 +359,6 @@ TEST_F(ShellUtilShortcutTest, CreateIfNoSystemLevelWithSystemLevelPresent) {
       ShellUtil::SHELL_SHORTCUT_CREATE_IF_NO_SYSTEM_LEVEL));
   ASSERT_FALSE(
       base::PathExists(fake_user_desktop_.GetPath().Append(shortcut_name)));
-}
-
-TEST_F(ShellUtilShortcutTest, CreateIfNoSystemLevelStartMenu) {
-  ASSERT_TRUE(ShellUtil::CreateOrUpdateShortcut(
-      ShellUtil::SHORTCUT_LOCATION_START_MENU_CHROME_DIR_DEPRECATED,
-      test_properties_, ShellUtil::SHELL_SHORTCUT_CREATE_IF_NO_SYSTEM_LEVEL));
-  ValidateChromeShortcut(
-      ShellUtil::SHORTCUT_LOCATION_START_MENU_CHROME_DIR_DEPRECATED,
-      test_properties_);
 }
 
 TEST_F(ShellUtilShortcutTest, CreateAlwaysUserWithSystemLevelPresent) {
@@ -996,43 +933,21 @@ TEST_F(ShellUtilShortcutTest, ShortcutsAreNotHidden) {
 
 TEST_F(ShellUtilShortcutTest, CreateMultipleStartMenuShortcutsAndRemoveFolder) {
   ASSERT_TRUE(ShellUtil::CreateOrUpdateShortcut(
-      ShellUtil::SHORTCUT_LOCATION_START_MENU_CHROME_DIR_DEPRECATED,
-      test_properties_, ShellUtil::SHELL_SHORTCUT_CREATE_ALWAYS));
-  ASSERT_TRUE(ShellUtil::CreateOrUpdateShortcut(
       ShellUtil::SHORTCUT_LOCATION_START_MENU_CHROME_APPS_DIR, test_properties_,
       ShellUtil::SHELL_SHORTCUT_CREATE_ALWAYS));
   test_properties_.set_shortcut_name(L"A second shortcut");
   ASSERT_TRUE(ShellUtil::CreateOrUpdateShortcut(
-      ShellUtil::SHORTCUT_LOCATION_START_MENU_CHROME_DIR_DEPRECATED,
-      test_properties_, ShellUtil::SHELL_SHORTCUT_CREATE_ALWAYS));
-  ASSERT_TRUE(ShellUtil::CreateOrUpdateShortcut(
       ShellUtil::SHORTCUT_LOCATION_START_MENU_CHROME_APPS_DIR, test_properties_,
       ShellUtil::SHELL_SHORTCUT_CREATE_ALWAYS));
 
-  base::FilePath chrome_shortcut_folder(fake_start_menu_.GetPath().Append(
-      InstallUtil::GetChromeShortcutDirNameDeprecated()));
   base::FilePath chrome_apps_shortcut_folder(fake_start_menu_.GetPath().Append(
       InstallUtil::GetChromeAppsShortcutDirName()));
-
-  base::FileEnumerator chrome_file_counter(chrome_shortcut_folder, false,
-                                           base::FileEnumerator::FILES);
-  int count = 0;
-  while (!chrome_file_counter.Next().empty())
-    ++count;
-  EXPECT_EQ(2, count);
-
   base::FileEnumerator chrome_apps_file_counter(
       chrome_apps_shortcut_folder, false, base::FileEnumerator::FILES);
-  count = 0;
+  int count = 0;
   while (!chrome_apps_file_counter.Next().empty())
     ++count;
   EXPECT_EQ(2, count);
-
-  ASSERT_TRUE(base::PathExists(chrome_shortcut_folder));
-  ASSERT_TRUE(ShellUtil::RemoveShortcuts(
-      ShellUtil::SHORTCUT_LOCATION_START_MENU_CHROME_DIR_DEPRECATED,
-      ShellUtil::CURRENT_USER, {chrome_exe_}));
-  ASSERT_FALSE(base::PathExists(chrome_shortcut_folder));
 
   ASSERT_TRUE(base::PathExists(chrome_apps_shortcut_folder));
   ASSERT_TRUE(ShellUtil::RemoveShortcuts(
@@ -1122,7 +1037,7 @@ class ShellUtilRegistryTest : public testing::Test {
   static const std::set<std::wstring> FileExtensions() {
     std::set<std::wstring> file_extensions;
     for (size_t i = 0; i < std::size(kTestFileExtensions); ++i)
-      file_extensions.insert(kTestFileExtensions[i]);
+      file_extensions.insert(UNSAFE_TODO(kTestFileExtensions[i]));
     return file_extensions;
   }
 
@@ -1290,8 +1205,7 @@ TEST_F(ShellUtilRegistryTest, GetAppName) {
   EXPECT_TRUE(empty_app_name.empty());
 
   // Add file associations and test that GetAppName returns the registered app
-  // name. Pass kTestApplicationName for the open command, to handle the Win 7
-  // case, which returns the open command executable name as the app_name.
+  // name.
   ASSERT_TRUE(ShellUtil::AddFileAssociations(
       kTestProgId, OpenCommand(), kTestApplicationName, kTestFileTypeName,
       base::FilePath(kTestIconPath), FileExtensions()));
@@ -1529,3 +1443,73 @@ TEST(ShellUtilTest, GetOldUserSpecificRegistrySuffix) {
   ASSERT_GE(size, 1U);
   ASSERT_STREQ(user_name, suffix.substr(1).c_str());
 }
+
+#if BUILDFLAG(GOOGLE_CHROME_BRANDING)
+
+// A test WorkItemList that exposes the emptiness of the underlying list.
+class TestWorkItemList : public WorkItemList {
+ public:
+  TestWorkItemList() = default;
+  bool IsEmpty() const { return list_.empty(); }
+};
+
+// Tests that the google-chrome:// scheme is registered on stable.
+TEST_F(ShellUtilRegistryTest, RegisterChromeUriSchemeForStable) {
+  std::unique_ptr<WorkItemList> work_item_list(WorkItem::CreateWorkItemList());
+  ShellUtil::AddChromeUriSchemeWorkItems(chrome_exe(), std::wstring(),
+                                         work_item_list.get());
+
+  ASSERT_TRUE(work_item_list->Do());
+
+  // Verify that registry entries were added for the stable channel.
+  base::win::RegKey key;
+  std::wstring value;
+  const std::wstring expected_open_command =
+      base::StrCat({L"\"", chrome_exe().value(), L"\" --single-argument %1"});
+  const std::wstring scheme_path = base::StrCat(
+      {L"Software\\Classes\\",
+       base::ASCIIToWide(
+           install_static::kInstallModes[install_static::STABLE_INDEX]
+               .direct_launch_url_scheme),
+       L"\\shell\\open\\command"});
+
+  ASSERT_EQ(ERROR_SUCCESS,
+            key.Open(HKEY_CURRENT_USER, scheme_path.c_str(), KEY_READ));
+  EXPECT_EQ(ERROR_SUCCESS, key.ReadValue(L"", &value));
+  EXPECT_EQ(expected_open_command, value);
+}
+
+// Tests that the google-chrome:// scheme is not registered on non-stable.
+TEST_F(ShellUtilRegistryTest, DoNotRegisterChromeUriSchemeForNonStable) {
+  install_static::ScopedInstallDetails install_details(
+      false, install_static::BETA_INDEX);
+  TestWorkItemList work_item_list;
+  ShellUtil::AddChromeUriSchemeWorkItems(chrome_exe(), std::wstring(),
+                                         &work_item_list);
+
+  // For non-stable channels, no work items should be added.
+  EXPECT_TRUE(work_item_list.IsEmpty());
+}
+#else
+// Tests that the chromium:// scheme is registered on Chromium builds.
+TEST_F(ShellUtilRegistryTest, RegisterChromeUriSchemeForChromium) {
+  std::unique_ptr<WorkItemList> work_item_list(WorkItem::CreateWorkItemList());
+  ShellUtil::AddChromeUriSchemeWorkItems(chrome_exe(), std::wstring(),
+                                         work_item_list.get());
+
+  ASSERT_TRUE(work_item_list->Do());
+
+  // Verify that registry entries were added for the chromium channel.
+  base::win::RegKey key;
+  std::wstring value;
+  const std::wstring expected_open_command =
+      base::StrCat({L"\"", chrome_exe().value(), L"\" --single-argument %1"});
+  const std::wstring scheme_path =
+      L"Software\\Classes\\chromium\\shell\\open\\command";
+
+  ASSERT_EQ(ERROR_SUCCESS,
+            key.Open(HKEY_CURRENT_USER, scheme_path.c_str(), KEY_READ));
+  EXPECT_EQ(ERROR_SUCCESS, key.ReadValue(L"", &value));
+  EXPECT_EQ(expected_open_command, value);
+}
+#endif  // !BUILDFLAG(GOOGLE_CHROME_BRANDING)

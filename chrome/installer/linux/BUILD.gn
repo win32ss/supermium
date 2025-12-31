@@ -4,10 +4,10 @@
 
 import("//build/config/c++/c++.gni")
 import("//build/config/chrome_build.gni")
-import("//build/config/features.gni")
 import("//build/config/sanitizers/sanitizers.gni")
 import("//build/config/sysroot.gni")
 import("//build/linux/strip_binary.gni")
+import("//build/timestamp.gni")
 import("//build/util/lastchange.gni")
 import("//build/util/process_version.gni")
 import("//chrome/version.gni")
@@ -68,6 +68,7 @@ packaging_files_binaries = packaging_files_executables + packaging_files_shlibs
 # TODO(mmoss) Any convenient way to get all the relevant build files?
 # (e.g. all locales, resources, etc.)
 packaging_files = packaging_files_binaries + [
+                    "common/installer.py",
                     "$root_out_dir/xdg-mime",
                     "$root_out_dir/xdg-settings",
                     "$root_out_dir/locales/en-US.pak",
@@ -98,6 +99,7 @@ action_foreach("calculate_deb_dependencies") {
     "debian/deb_version.py",
     "debian/dist_package_versions.json",
     "debian/package_version_interval.py",
+    "//build/action_helpers.py",
     "//third_party/dpkg-shlibdeps/dpkg-shlibdeps.pl",
   ]
   outputs = [ "$root_out_dir/deb_{{source_name_part}}.deps" ]
@@ -120,6 +122,7 @@ action("merge_deb_dependencies") {
     additional_deps,
     "debian/deb_version.py",
     "debian/package_version_interval.py",
+    "//build/action_helpers.py",
   ]
   outputs = [ "$root_out_dir/deb_common.deps" ]
   args = [
@@ -134,7 +137,10 @@ action_foreach("calculate_rpm_dependencies") {
   deps = [ ":installer_deps" ]
   script = "rpm/calculate_package_deps.py"
   sources = packaging_files_binaries
-  inputs = [ "rpm/dist_package_provides.json" ]
+  inputs = [
+    "rpm/dist_package_provides.json",
+    "//build/action_helpers.py",
+  ]
   outputs = [ "$root_out_dir/rpm_{{source_name_part}}.deps" ]
   args = [
     "{{source}}",
@@ -150,7 +156,10 @@ action("merge_rpm_dependencies") {
   deps = [ ":calculate_rpm_dependencies" ]
   script = "rpm/merge_package_deps.py"
   additional_deps = "rpm/additional_deps"
-  inputs = [ additional_deps ]
+  inputs = [
+    additional_deps,
+    "//build/action_helpers.py",
+  ]
   outputs = [ "$root_out_dir/rpm_common.deps" ]
   args = [
     "rpm_common.deps",
@@ -248,7 +257,7 @@ copy("common_packaging_files") {
     "common/default-app-block.template",
     "common/default-app.template",
     "common/desktop.template",
-    "common/installer.include",
+    "common/key.include",
     "common/postinst.include",
     "common/prerm.include",
     "common/repo.cron",
@@ -263,10 +272,8 @@ copy("common_packaging_files") {
   if (is_chrome_branded) {
     sources += [ "common/google-chrome.info" ]
   } else {
-    sources += [ "common/chromium-browser.info" ]
+    sources += [ "common/supermium.info" ]
   }
-
-  sources += [ "//buildtools/third_party/eu-strip/bin/eu-strip" ]
 
   outputs = [ "$root_out_dir/installer/common/{{source_file_part}}" ]
 }
@@ -274,10 +281,8 @@ copy("common_packaging_files") {
 copy("deb_packaging_files") {
   visibility = [ ":*" ]
   sources = [
-    "debian/build.sh",
     "debian/changelog.template",
     "debian/control.template",
-    "debian/debian.menu",
     "debian/postinst",
     "debian/postrm",
     "debian/prerm",
@@ -292,7 +297,6 @@ copy("theme_files") {
     "$branding_dir/linux/product_logo_128.png",
     "$branding_dir/linux/product_logo_24.png",
     "$branding_dir/linux/product_logo_256.png",
-    "$branding_dir/linux/product_logo_32.xpm",
     "$branding_dir/linux/product_logo_48.png",
     "$branding_dir/linux/product_logo_64.png",
     "$branding_dir_100/linux/product_logo_16.png",
@@ -309,9 +313,6 @@ copy("theme_files") {
       "$branding_dir/linux/product_logo_256_beta.png",
       "$branding_dir/linux/product_logo_256_canary.png",
       "$branding_dir/linux/product_logo_256_dev.png",
-      "$branding_dir/linux/product_logo_32_beta.xpm",
-      "$branding_dir/linux/product_logo_32_canary.xpm",
-      "$branding_dir/linux/product_logo_32_dev.xpm",
       "$branding_dir/linux/product_logo_48_beta.png",
       "$branding_dir/linux/product_logo_48_canary.png",
       "$branding_dir/linux/product_logo_48_dev.png",
@@ -332,10 +333,7 @@ copy("theme_files") {
 if (!is_chromeos) {
   copy("rpm_packaging_files") {
     visibility = [ ":*" ]
-    sources = [
-      "rpm/build.sh",
-      "rpm/chrome.spec.template",
-    ]
+    sources = [ "rpm/chrome.spec.template" ]
     outputs = [ "$root_out_dir/installer/rpm/{{source_file_part}}" ]
   }
 }
@@ -439,7 +437,7 @@ template("linux_package") {
   deb_target_name = "${target_name}_deb"
   action(deb_target_name) {
     visibility = [ ":*" ]
-    script = "//build/gn_run_binary.py"
+    script = "debian/build.py"
 
     if (current_cpu == "x86") {
       deb_arch = "i386"
@@ -465,9 +463,10 @@ template("linux_package") {
     outputs = [ "$root_out_dir/${package}-${channel}_${chrome_version_full}-1_${deb_arch}.deb" ]
 
     args = [
-      rebase_path("$root_out_dir/installer/debian/build.sh", root_build_dir),
       "-a",
       deb_arch,
+      "-b",
+      build_timestamp,
       "-c",
       invoker.channel,
       "-d",
@@ -492,7 +491,7 @@ template("linux_package") {
     rpm_target_name = "${target_name}_rpm"
     action(rpm_target_name) {
       visibility = [ ":*" ]
-      script = "//build/gn_run_binary.py"
+      script = "rpm/build.py"
 
       if (current_cpu == "x86") {
         rpm_arch = "i386"
@@ -518,9 +517,10 @@ template("linux_package") {
       outputs = [ "$root_out_dir/${package}-${channel}-${chrome_version_full}-1.${rpm_arch}.rpm" ]
 
       args = [
-        rebase_path("$root_out_dir/installer/rpm/build.sh", root_build_dir),
         "-a",
         rpm_arch,
+        "-b",
+        build_timestamp,
         "-c",
         invoker.channel,
         "-d",

@@ -1,4 +1,4 @@
- Copyright 2009 The Chromium Authors
+# Copyright 2009 The Chromium Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 #
@@ -6,7 +6,7 @@
 # chromium-browser packages for various platforms.
 
 # Base name of the package.
-PACKAGE="supermium"
+PACKAGE="chromium-browser"
 
 # Filename of the main executable (for generating launcher scripts, etc.)
 PROGNAME=chrome
@@ -21,7 +21,7 @@ ENROLLMENTDIR=/etc/supermium/policies/enrollment
 MENUNAME="Supermium"
 
 # Brief package description.
-SHORTDESC="The web browser from the Supermium Team"
+SHORTDESC="The web browser from the Supermium project"
 
 # Detailed package description.
 FULLDESC="Supermium is a browser that combines a minimal design with sophisticated technology to make the web faster, safer, and easier."
@@ -29,14 +29,14 @@ FULLDESC="Supermium is a browser that combines a minimal design with sophisticat
 # Package maintainer information.
 MAINTNAME="Shane Fournier"
 MAINTMAIL="nocontact@win32subsystem.live"
-PRODUCTURL="https://win32subsystem.live/supermium"
+PRODUCTURL="https://www.win32subsystem.live"
 
 PROJECT_LICENSE="BSD-3-Clause and LGPL-2.1+ and Apache-2.0 and IJG and MIT and GPL-2.0+ and ISC and OpenSSL and (MPL-1.1 or GPL-2.0 or LGPL-2.0)"
 
 DEVELOPER_NAME="win32"
 
-BUGTRACKERURL="https://www.chromium.org/for-testers/bug-reporting-guidelines"
+BUGTRACKERURL="https://www.github.com/win32ss/supermium"
 
 HELPURL="https://chromium.googlesource.com/chromium/src/+/main/docs/linux/debugging.md"
 
-RDN="org.win32.supermium"
+RDN="org.win32.Supermium"

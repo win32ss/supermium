@@ -66,7 +66,7 @@ class TestPrintViewManager : public PrintViewManager {
 
   // printing::mojom::PrintManagerHost:
   void UpdatePrintSettings(base::Value::Dict job_settings,
-                           PrintingContext::PrintSettingsCallback callback);
+                           PrintingContext::PrintSettingsCallback override);
 
   base::OnceClosure quit_closure_;
   mojom::PrintPagesParamsPtr snooped_params_;
