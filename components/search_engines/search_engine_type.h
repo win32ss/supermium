@@ -97,7 +97,6 @@ enum SearchEngineType {
   SEARCH_ENGINE_MCAFEE = 77,
   SEARCH_ENGINE_FREESPOKE = 78,
   SEARCH_ENGINE_KAGI = 79,
-  SEARCH_ENGINE_NO_SEARCH = 80,
   SEARCH_ENGINE_MAX  // Bounding value needed for UMA histogram macro.
 };
 // LINT.ThenChange(//tools/metrics/histograms/enums.xml:OmniboxSearchEngineType)

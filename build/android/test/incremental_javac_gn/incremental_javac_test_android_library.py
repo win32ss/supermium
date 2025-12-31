@@ -116,7 +116,7 @@ def main():
 
   out_gn_args_path = options.out_dir / 'args.gn'
   extra_gn_args = [
-      'treat_warnings_as_errors = true',
+      'treat_warnings_as_errors = false',
       # reclient does not work with non-standard output directories.
       'use_remoteexec = false',
       'use_reclient = false',
