@@ -245,10 +245,10 @@ base::Version InstallUtil::GetCriticalUpdateVersion() {
 }
 
 bool InstallUtil::IsOSSupported() {
-  // We do not support anything prior to Windows Vista.
+  // We do not support anything prior to Windows 10.
   VLOG(1) << base::SysInfo::OperatingSystemName() << ' '
           << base::SysInfo::OperatingSystemVersion();
-  return base::win::GetVersion() >= base::win::Version::VISTA;
+  return base::win::GetVersion() >= base::win::Version::WIN10;
 }
 
 void InstallUtil::AddInstallerResultItems(bool system_install,
@@ -583,11 +583,6 @@ std::wstring InstallUtil::GetShortcutName() {
   // IDS_PRODUCT_NAME is automatically mapped to the mode-specific shortcut
   // name; see MODE_SPECIFIC_STRINGS in prebuild/create_string_rc.py.
   return installer::GetLocalizedString(IDS_PRODUCT_NAME_BASE);
-}
-
-// static
-std::wstring InstallUtil::GetChromeShortcutDirNameDeprecated() {
-  return GetShortcutName();
 }
 
 // static

@@ -1,5 +1,5 @@
 <div style="display: flex; align-items: center;">
-    <a href="https://www.win32subsystem.live/supermium/"><img src="https://github.com/win32ss/supermium/assets/68521531/f34ceb1c-15b2-4818-af1f-c0251c77af2f" width="200" alt="Supermium Browser" ></a>
+    <a href="https://www.win32subsystem.live/supermium/"><img src="sBanner.svg" width="200" alt="Supermium Browser" ></a>
     <h1><a href="https://www.win32subsystem.live/supermium/">The Supermium Browser</a></h1>
 </div>
 

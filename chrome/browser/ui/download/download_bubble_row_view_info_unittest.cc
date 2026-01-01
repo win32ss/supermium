@@ -55,7 +55,7 @@ class DownloadBubbleRowViewInfoTest : public testing::Test,
   }
 
   void SetUp() override {
-    if (!download::IsDownloadBubbleEnabled(profile())) {
+    if (!download::IsDownloadBubbleEnabled()) {
       GTEST_SKIP();
     }
     item_ = std::make_unique<NiceMock<download::MockDownloadItem>>();

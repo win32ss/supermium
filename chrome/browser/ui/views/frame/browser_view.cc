@@ -1876,12 +1876,14 @@ std::vector<StatusBubble*> BrowserView::GetStatusBubbles() {
 }
 
 void BrowserView::UpdateTitleBar() {
+  #if defined(_WIN32)
   if (base::CommandLine::ForCurrentProcess()->HasSwitch("string-to-translate") &&
       base::CommandLine::ForCurrentProcess()->HasSwitch("language-to-translate")) {
     StartPartialTranslate(base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("language-to-translate"), std::string("fr"), 
                           base::WideToUTF16(base::CommandLine::ForCurrentProcess()->GetSwitchValueNative("string-to-translate")));
     return;
   }
+  #endif
   frame_->UpdateWindowTitle();
   if (web_app_window_title_) {
     DCHECK(GetIsWebAppType());

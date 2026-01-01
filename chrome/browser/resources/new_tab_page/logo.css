@@ -25,7 +25,7 @@
 #logo {
   forced-color-adjust: none;
   height: 80px;
-  width: 219px;
+  width: 340px;
 }
 
 :host([single-colored]) #logo {

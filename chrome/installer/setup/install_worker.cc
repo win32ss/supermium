@@ -85,7 +85,6 @@ void AddInstallerCopyTasks(const InstallParams& install_params,
 
   const InstallerState& installer_state = *install_params.installer_state;
   const base::FilePath& setup_path = *install_params.setup_path;
-  const base::FilePath& archive_path = *install_params.archive_path;
   const base::FilePath& temp_path = *install_params.temp_path;
   const base::Version& new_version = *install_params.new_version;
 
@@ -106,25 +105,6 @@ void AddInstallerCopyTasks(const InstallParams& install_params,
     base::FilePath active_setup_exe(installer_dir.Append(kActiveSetupExe));
     install_list->AddCopyTreeWorkItem(setup_path, active_setup_exe, temp_path,
                                       WorkItem::ALWAYS);
-  }
-
-  base::FilePath archive_dst(installer_dir.Append(archive_path.BaseName()));
-  if (archive_path != archive_dst) {
-    // In the past, we copied rather than moved for system level installs so
-    // that the permissions of %ProgramFiles% would be picked up.  Now that
-    // |temp_path| is in %ProgramFiles% for system level installs (and in
-    // %LOCALAPPDATA% otherwise), there is no need to do this for the archive.
-    // Setup.exe, on the other hand, is created elsewhere so it must always be
-    // copied.
-    if (temp_path.IsParent(archive_path)) {
-      install_list->AddMoveTreeWorkItem(archive_path, archive_dst, temp_path,
-                                        WorkItem::ALWAYS_MOVE);
-    } else {
-      // This may occur when setup is run out of an existing installation
-      // directory. We cannot remove the system-level archive.
-      install_list->AddCopyTreeWorkItem(archive_path, archive_dst, temp_path,
-                                        WorkItem::ALWAYS);
-    }
   }
 }
 
@@ -222,7 +202,6 @@ void AddDeleteUninstallEntryForMSIWorkItems(
 void AddChromeWorkItems(const InstallParams& install_params,
                         WorkItemList* install_list) {
   const InstallerState& installer_state = *install_params.installer_state;
-  const base::FilePath& archive_path = *install_params.archive_path;
   const base::FilePath& src_path = *install_params.src_path;
   const base::FilePath& temp_path = *install_params.temp_path;
   const base::Version& current_version = *install_params.current_version;
@@ -231,21 +210,17 @@ void AddChromeWorkItems(const InstallParams& install_params,
   const base::FilePath& target_path = installer_state.target_path();
 
   if (current_version.IsValid()) {
+    // TODO(crbug.com/441478433): Delete this cleanup some time in 2027.
     // Delete the archive from an existing install to save some disk space.
     base::FilePath old_installer_dir(
         installer_state.GetInstallerDirectory(current_version));
     base::FilePath old_archive(
         old_installer_dir.Append(installer::kChromeArchive));
-    // Don't delete the archive that we are actually installing from.
-    if (archive_path != old_archive) {
-      auto* delete_old_archive_work_item =
-          install_list->AddDeleteTreeWorkItem(old_archive, temp_path);
-      // Don't cause failure of |install_list| if this WorkItem fails.
-      delete_old_archive_work_item->set_best_effort(true);
-      // No need to roll this back; if installation fails we'll be moved to the
-      // "-full" channel anyway.
-      delete_old_archive_work_item->set_rollback_enabled(false);
-    }
+    auto* delete_old_archive_work_item =
+        install_list->AddDeleteTreeWorkItem(old_archive, temp_path);
+    // Don't cause failure of |install_list| if this WorkItem fails.
+    delete_old_archive_work_item->set_best_effort(true);
+    delete_old_archive_work_item->set_rollback_enabled(false);
   }
 
   // Delete any new_chrome.exe if present (we will end up creating a new one
@@ -317,7 +292,6 @@ void AddElevationServiceWorkItems(const base::FilePath& elevation_service_path,
       base::CommandLine(base::CommandLine::NO_PROGRAM),
       install_static::GetClientStateKeyPath(),
       {install_static::GetElevatorClsid()}, {install_static::GetElevatorIid()});
-  install_service_work_item->set_best_effort(true);
   list->AddWorkItem(install_service_work_item);
 }
 
@@ -482,6 +456,28 @@ void AddEnterpriseDeviceTrustWorkItems(const InstallerState& installer_state,
   // by Google Update.  Could revisit this should Google Update change the
   // way permissions are handled for commands.
   cmd.set_is_web_accessible(true);
+  cmd.AddCreateAppCommandWorkItems(installer_state.root_key(), install_list);
+}
+
+// Adds work items to add the "PEH Install" command to Chrome's version key.
+// This method is a no-op if this is anything other than system-level Chrome.
+// The command is used on first run of Chrome, and installs the Platform
+// Experience Helper.
+void AddPlatformExperienceHelperWorkItems(const InstallerState& installer_state,
+                                          const base::Version& new_version,
+                                          WorkItemList* install_list) {
+  if (!installer_state.system_install()) {
+    return;
+  }
+
+  base::CommandLine install_peh_cmd(installer_state.target_path()
+                                        .AppendASCII(new_version.GetString())
+                                        .Append(kOsUpdateHandlerExe));
+  InstallUtil::AppendModeAndChannelSwitches(&install_peh_cmd);
+  install_peh_cmd.AppendSwitch(kPEHForceInstall);
+  install_peh_cmd.AppendSwitch(installer::switches::kSystemLevel);
+
+  AppCommand cmd(kCmdInstallPEH, install_peh_cmd.GetCommandLineString());
   cmd.AddCreateAppCommandWorkItems(installer_state.root_key(), install_list);
 }
 #endif  // BUILDFLAG(GOOGLE_CHROME_BRANDING)
@@ -982,6 +978,8 @@ void AddInstallWorkItems(const InstallParams& install_params,
                                      install_list);
   AddEnterpriseDeviceTrustWorkItems(installer_state, setup_path, new_version,
                                     install_list);
+  AddPlatformExperienceHelperWorkItems(installer_state, new_version,
+                                       install_list);
 #endif  // BUILDFLAG(GOOGLE_CHROME_BRANDING
   AddFirewallRulesWorkItems(installer_state, !current_version.IsValid(),
                             install_list);
@@ -1265,6 +1263,13 @@ void AddFinalizeUpdateWorkItems(const InstallationState& original_state,
                                 const InstallerState& installer_state,
                                 const base::FilePath& setup_path,
                                 WorkItemList* list) {
+  // Add work items to register the google-chrome URI scheme.
+  ShellUtil::AddChromeUriSchemeWorkItems(
+      installer_state.target_path().Append(installer::kChromeExe),
+      ShellUtil::GetCurrentInstallationSuffix(
+          installer_state.target_path().Append(installer::kChromeExe)),
+      list);
+
   // Cleanup for breaking downgrade first in the post install to avoid
   // overwriting any of the following post-install tasks.
   AddDowngradeCleanupItems(new_version, list);

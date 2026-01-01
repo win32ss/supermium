@@ -154,7 +154,7 @@ def main():
   out_gn_args_path = os.path.join(options.out_dir, 'args.gn')
   extra_gn_args = [
       'enable_android_nocompile_tests = true',
-      'treat_warnings_as_errors = true',
+      'treat_warnings_as_errors = false',
       # RBE does not work with non-standard output directories.
       'use_remoteexec = false',
       'use_reclient = false',
