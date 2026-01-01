@@ -441,7 +441,7 @@ void WriteToFd(int fd, const char* data, size_t length) {
 }
 
 #if !BUILDFLAG(SUPERMIUM_DEBUG)
-void SetLogFatalCrashKey(LogMessage* log_message) {
+void SetLogFatalCrashKey(LogMessage::LogMessage* log_message) {
 #if !BUILDFLAG(IS_NACL)
   // In case of an out-of-memory condition, this code could be reentered when
   // constructing and storing the key. Using a static is not thread-safe, but if
@@ -770,9 +770,11 @@ void LogMessage::Flush() {
     }
   };
 
+  #if !BUILDFLAG(SUPERMIUM_DEBUG)
   if (severity_ == LOGGING_FATAL) {
     SetLogFatalCrashKey(this);
   }
+  #endif
 
   // Give any log message handler first dibs on the message.
   if (g_log_message_handler &&
