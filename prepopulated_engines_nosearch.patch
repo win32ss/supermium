@@ -1,0 +1,31 @@
+diff --git a/third_party/search_engines_data/resources/definitions/prepopulated_engines.json b/third_party/search_engines_data/resources/definitions/prepopulated_engines.json
+index afee8d0..21f8883 100644
+--- a/third_party/search_engines_data/resources/definitions/prepopulated_engines.json
++++ b/third_party/search_engines_data/resources/definitions/prepopulated_engines.json
+@@ -22,7 +22,7 @@
+     // use a lower number. This number is used by UMA stats and must be updated
+     // to include the full range or else not all engines will be counted in
+     // stats.
+-    "kMaxPrepopulatedEngineID": 115,
++    "kMaxPrepopulatedEngineID": 116,
+ 
+     // Increment this if you change the data in ways that mean users with
+     // existing data should get a new version. Otherwise, existing data may
+@@ -1019,6 +1019,17 @@
+       "suggest_url": "https://you.com/api/ac?domain=default&q={searchTerms}",
+       "type": "SEARCH_ENGINE_YOU",
+       "id": 112
++    },
++    "nosearch": {
++       "name": "No Search",
++       "keyword": "nosearch",
++       "favicon_url": "about:blank",
++       "search_url": "http://{searchTerms}",
++       "new_tab_url": "about:blank",
++       "type": "SEARCH_ENGINE_NOSEARCH",
++       "preconnect_to_search_url" : "ALLOWED",
++       "prefetch_likely_navigations" : "ALLOWED",
++       "id": 116
+     }
+   },
+ 
