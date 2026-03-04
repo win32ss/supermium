@@ -4,6 +4,7 @@
 
 #include "chrome/browser/ui/singleton_tabs.h"
 
+#include "base/command_line.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/search/search.h"
 #include "chrome/browser/search_engines/template_url_service_factory.h"
@@ -140,7 +141,8 @@ int GetIndexOfExistingTab(BrowserWindowInterface* browser,
     // RewriteURLIfNecessary removes the "view-source:" scheme which could lead
     // to incorrect matching, so ensure that the target and the candidate are
     // either both view-source:, or neither is.
-    if (tab_url.SchemeIs(content::kViewSourceScheme) != target_is_view_source) {
+    if (tab_url.SchemeIs(content::kViewSourceScheme) != target_is_view_source ||
+	   (base::CommandLine::ForCurrentProcess()->HasSwitch("ungoogled-supermium") && tab_url.SchemeIs(url::kTraceScheme))) {
       continue;
     }
 

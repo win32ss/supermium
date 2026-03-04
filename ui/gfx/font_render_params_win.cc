@@ -9,6 +9,7 @@
 #include <memory>
 #include <optional>
 
+#include "base/command_line.h"
 #include "base/callback_list.h"
 #include "base/feature_list.h"
 #include "base/features.h"
@@ -22,6 +23,7 @@
 #include "ui/base/ui_base_features.h"
 #include "ui/gfx/animation/animation.h"
 #include "ui/gfx/font_util_win.h"
+#include "ui/gfx/win/direct_write.h"
 #include "ui/gfx/win/singleton_hwnd.h"
 
 namespace gfx {
@@ -75,8 +77,9 @@ class CachedFontRenderParams {
       return *params_;
 
     params_ = std::make_unique<FontRenderParams>();
-    params_->antialiasing = false;
-    params_->subpixel_positioning = false;
+    params_->antialiasing = true;
+	// GDI does not support subpixel positioning.
+    params_->subpixel_positioning = win::IsDirectWriteEnabled();
     params_->autohinter = false;
     params_->use_bitmaps = false;
     params_->hinting = FontRenderParams::HINTING_MEDIUM;
@@ -85,14 +88,17 @@ class CachedFontRenderParams {
     BOOL enabled = false;
     if (SystemParametersInfo(SPI_GETFONTSMOOTHING, 0, &enabled, 0) && enabled) {
       params_->antialiasing = true;
-      params_->subpixel_positioning = true;
-
       UINT type = 0;
       if (SystemParametersInfo(SPI_GETFONTSMOOTHINGTYPE, 0, &type, 0) &&
           type == FE_FONTSMOOTHINGCLEARTYPE) {
         params_->subpixel_rendering = GetSubpixelRenderingGeometry();
       }
     }
+	
+	if (base::CommandLine::ForCurrentProcess()->HasSwitch("disable-browser-font-smoothing-win")) {
+       params_->antialiasing = false;
+       params_->subpixel_positioning = false;	
+	}
 
     if (base::FeatureList::IsEnabled(
             features::kUseGammaContrastRegistrySettings)) {

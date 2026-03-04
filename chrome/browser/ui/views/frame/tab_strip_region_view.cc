@@ -4,6 +4,7 @@
 
 #include "chrome/browser/ui/views/frame/tab_strip_region_view.h"
 
+#include "base/command_line.h"
 #include "base/functional/bind.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/task/single_thread_task_runner.h"
@@ -82,6 +83,7 @@ class FrameGrabHandle : public views::View {
     // Reserve some space for the frame to be grabbed by, even if the tabstrip
     // is full.
     // TODO(tbergquist): Define this relative to the NTB insets again.
+    if (base::CommandLine::ForCurrentProcess()->HasSwitch("remove-grab-handle")) return gfx::Size(0, 0);
     return gfx::Size(42, 0);
   }
 };
@@ -222,7 +224,7 @@ TabStripRegionView::TabStripRegionView(std::unique_ptr<TabStrip> tab_strip)
 
       tab_strip_action_container->SetProperty(views::kCrossAxisAlignmentKey,
                                               views::LayoutAlignment::kStart);
-    } else {
+    } else if (!base::CommandLine::ForCurrentProcess()->HasSwitch("remove-tabsearch-button")) {
       tab_search_container = std::make_unique<TabSearchContainer>(
           tab_strip_->controller(), browser->GetTabStripModel(),
           render_tab_search_before_tab_strip_, this, browser,
@@ -276,19 +278,12 @@ TabStripRegionView::TabStripRegionView(std::unique_ptr<TabStrip> tab_strip)
                                     tab_strip_container_flex_spec);
 
   if (ShouldShowNewTabButton(browser)) {
-    std::unique_ptr<TabStripControlButton> tab_strip_control_button =
-        std::make_unique<NewTabButton>(
-            tab_strip_->controller(),
-            base::BindRepeating(&TabStrip::NewTabButtonPressed,
-                                base::Unretained(tab_strip_)),
-            vector_icons::kAddIcon, Edge::kNone, Edge::kNone, browser);
-
-    new_tab_button_ = AddChildView(std::move(tab_strip_control_button));
-
-    new_tab_button_->SetTooltipText(
-        l10n_util::GetStringUTF16(IDS_TOOLTIP_NEW_TAB));
-    new_tab_button_->GetViewAccessibility().SetName(
-        l10n_util::GetStringUTF16(IDS_ACCNAME_NEWTAB));
+    std::unique_ptr<NewTabButton> new_tab_button = std::make_unique<NewTabButton>(tab_strip_,
+                                                                                  base::BindRepeating(&TabStrip::NewTabButtonPressed,
+                                                                                  base::Unretained(tab_strip_)));
+    new_tab_button->SetImageVerticalAlignment(views::ImageButton::ALIGN_BOTTOM);
+    new_tab_button->SetEventTargeter(std::make_unique<views::ViewTargeter>(new_tab_button.get()));
+    new_tab_button_ = AddChildView(std::move(new_tab_button));
   }
 
   reserved_grab_handle_space_ =

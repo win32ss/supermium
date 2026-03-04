@@ -1649,6 +1649,9 @@ BASE_FEATURE(kSupportToolScreenshot, base::FEATURE_DISABLED_BY_DEFAULT);
 // from a secure page. As of M89, mixed downloads are blocked on all platforms.
 BASE_FEATURE(kTreatUnsafeDownloadsAsActive, base::FEATURE_ENABLED_BY_DEFAULT);
 
+// Show warnings on downloads not delivered over HTTPS.
+BASE_FEATURE(kInsecureDownloadWarnings, base::FEATURE_DISABLED_BY_DEFAULT);
+
 // TrustSafetySentimentSurvey
 #if !BUILDFLAG(IS_ANDROID)
 // Enables surveying of users of Trust & Safety features with HaTS.
@@ -1913,6 +1916,10 @@ BASE_FEATURE(kUnicornChromeActivityReporting,
 // A feature to disable shortcut creation from the Chrome UI, and instead use
 // that to create DIY apps.
 BASE_FEATURE(kDisableShortcutsEnableDiy, base::FEATURE_ENABLED_BY_DEFAULT);
+
+#if !BUILDFLAG(IS_ANDROID)
+BASE_FEATURE(kShowManagedUi, base::FEATURE_ENABLED_BY_DEFAULT);
+#endif
 
 // A feature to enabled updating policy and default management installed PWAs to
 // happen silently without prompting an updating dialog.

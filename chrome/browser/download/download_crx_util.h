@@ -35,6 +35,10 @@ scoped_refptr<extensions::CrxInstaller> CreateCrxInstaller(
     Profile* profile,
     const download::DownloadItem& download_item);
 
+// Returns true if the user wants all extensions to be downloaded as regular
+// files.
+bool ShouldDownloadAsRegularFile();
+
 // Returns true if this is an extension download. This also considers user
 // scripts to be extension downloads, since we convert those automatically.
 bool IsExtensionDownload(const download::DownloadItem& download_item);

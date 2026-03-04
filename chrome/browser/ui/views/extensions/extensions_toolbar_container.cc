@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <memory>
 
+#include "base/command_line.h"
 #include "base/feature_list.h"
 #include "base/functional/bind.h"
 #include "base/functional/callback_helpers.h"
@@ -36,6 +37,7 @@
 #include "chrome/browser/ui/views/side_panel/extensions/extension_side_panel_coordinator.h"
 #include "chrome/browser/ui/views/side_panel/side_panel_ui.h"
 #include "chrome/browser/ui/views/toolbar/toolbar_action_hover_card_controller.h"
+#include "chrome/browser/ui/views/toolbar/toolbar_view.h"
 #include "chrome/common/pref_names.h"
 #include "chrome/grit/generated_resources.h"
 #include "components/feature_engagement/public/event_constants.h"
@@ -50,6 +52,7 @@
 #include "ui/base/l10n/l10n_util.h"
 #include "ui/base/metadata/metadata_impl_macros.h"
 #include "ui/base/models/image_model.h"
+#include "ui/base/ui_base_features.h"
 #include "ui/views/layout/animating_layout_manager.h"
 #include "ui/views/layout/flex_layout.h"
 #include "ui/views/layout/flex_layout_types.h"
@@ -545,10 +548,20 @@ void ExtensionsToolbarContainer::AnchorAndShowWidgetImmediately(
   // * AnchorAndShowWidgetImmediately runs.
   // Revisit how to handle that, likely the Widget should Close on removal which
   // would remove the AnchoredWidget entry.
-  views::View* const anchor_view = GetViewForId(iter->extension_id);
+  views::View* anchor_view = GetViewForId(iter->extension_id);
   widget->widget_delegate()->AsBubbleDialogDelegate()->SetAnchorView(
       anchor_view && anchor_view->GetVisible() ? anchor_view
                                                : GetExtensionsButton());
+
+  // Fix the position of widgets. Without this fix, extension-installed-bubble
+  // and extension-uninstall-dialog may be out of the window border on Linux.
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("hide-extensions-menu"))
+  {
+    anchor_view = BrowserView::GetBrowserViewForBrowser(browser_)
+      ->toolbar_button_provider()->GetAppMenuButton();
+    widget->widget_delegate()->AsBubbleDialogDelegate()
+      ->SetAnchorView(anchor_view);
+  }
   widget->Show();
 }
 
@@ -947,6 +960,9 @@ void ExtensionsToolbarContainer::UpdateContainerVisibility() {
   bool was_visible = GetVisible();
   SetVisible(ShouldContainerBeVisible());
 
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("classic-extension-view"))
+    extensions_button_->SetVisible(false);
+
   // Layout animation does not handle host view visibility changing; requires
   // resetting.
   if (was_visible != GetVisible()) {
@@ -959,6 +975,8 @@ void ExtensionsToolbarContainer::UpdateContainerVisibility() {
 }
 
 bool ExtensionsToolbarContainer::ShouldContainerBeVisible() const {
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("hide-extensions-menu"))
+    return false;
   // The container (and extensions-menu button) should not be visible if we have
   // no extensions.
   if (!HasAnyExtensions()) {

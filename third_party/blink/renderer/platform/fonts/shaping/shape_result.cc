@@ -1299,6 +1299,14 @@ const ShapeResult* ShapeResult::UnapplyAutoSpacing(
   return sub_range;
 }
 
+void ShapeResult::DeallocRuns() 
+{
+	for(auto runs : this->runs_) {
+		delete(runs);
+		runs = nullptr;
+	}
+}
+
 unsigned ShapeResult::AdjustOffsetForAutoSpacing(float spacing_width,
                                                  unsigned offset,
                                                  float position) const {

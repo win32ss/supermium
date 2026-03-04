@@ -834,7 +834,7 @@ void WebTestControlHost::OverrideWebPreferences(
     ApplyWebTestDefaultPreferences(prefs);
   }
   if (base::CommandLine::ForCurrentProcess()->HasSwitch(
-          switches::kForceDarkMode)) {
+          switches::kForceDarkMode) || base::FeatureList::IsEnabled(base::features::kForceDarkModeFlag)) {
     prefs->preferred_color_scheme = blink::mojom::PreferredColorScheme::kDark;
   } else {
     prefs->preferred_color_scheme = blink::mojom::PreferredColorScheme::kLight;

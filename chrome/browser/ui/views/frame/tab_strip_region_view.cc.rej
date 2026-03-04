@@ -1,0 +1,38 @@
+diff a/chrome/browser/ui/views/frame/tab_strip_region_view.cc b/chrome/browser/ui/views/frame/tab_strip_region_view.cc	(rejected hunks)
+@@ -74,6 +74,7 @@ class FrameGrabHandle : public views::View {
+     // Reserve some space for the frame to be grabbed by, even if the tabstrip
+     // is full.
+     // TODO(tbergquist): Define this relative to the NTB insets again.
++    if (base::CommandLine::ForCurrentProcess()->HasSwitch("remove-grab-handle")) return gfx::Size(0, 0);
+     return gfx::Size(42, 0);
+   }
+ };
+@@ -125,7 +126,8 @@ TabStripRegionView::TabStripRegionView(std::unique_ptr<TabStrip> tab_strip)
+         ShouldShowNewTabButton(browser)) {
+       tab_strip_combo_button =
+           std::make_unique<TabStripComboButton>(browser, tab_strip_);
+-    } else if (!features::IsTabSearchMoving()) {
++    } else if (!features::IsTabSearchMoving()  &&
++      !base::CommandLine::ForCurrentProcess()->HasSwitch("remove-tabsearch-button")) {
+       tab_search_container = std::make_unique<TabSearchContainer>(
+           tab_strip_->controller(), browser->GetTabStripModel(),
+           render_tab_search_before_tab_strip_, this, browser,
+@@ -215,12 +217,12 @@ TabStripRegionView::TabStripRegionView(std::unique_ptr<TabStrip> tab_strip)
+       tab_strip_control_button->SetProperty(views::kElementIdentifierKey,
+                                             kNewTabButtonElementId);
+ 
+-      new_tab_button_ = AddChildView(std::move(tab_strip_control_button));
+-
+-      new_tab_button_->SetTooltipText(
+-          l10n_util::GetStringUTF16(IDS_TOOLTIP_NEW_TAB));
+-      new_tab_button_->GetViewAccessibility().SetName(
+-          l10n_util::GetStringUTF16(IDS_ACCNAME_NEWTAB));
++    std::unique_ptr<NewTabButton> new_tab_button = std::make_unique<NewTabButton>(tab_strip_,
++                                                                                  base::BindRepeating(&TabStrip::NewTabButtonPressed,
++                                                                                  base::Unretained(tab_strip_)));
++    new_tab_button->SetImageVerticalAlignment(views::ImageButton::ALIGN_BOTTOM);
++    new_tab_button->SetEventTargeter(std::make_unique<views::ViewTargeter>(new_tab_button.get()));
++    new_tab_button_ = AddChildView(std::move(new_tab_button));
+ 
+ #if BUILDFLAG(IS_LINUX)
+       // The New Tab Button can be middle-clicked on Linux.

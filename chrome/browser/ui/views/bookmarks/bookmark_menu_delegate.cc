@@ -7,6 +7,7 @@
 #include <memory>
 #include <optional>
 
+#include "base/command_line.h"
 #include "base/containers/to_vector.h"
 #include "base/debug/dump_without_crashing.h"
 #include "base/feature_list.h"
@@ -440,26 +441,22 @@ void BookmarkMenuDelegate::ExecuteCommand(int id, int mouse_event_flags) {
 
   DCHECK(menu_id_to_node_map_.find(id) != menu_id_to_node_map_.end());
 
-  bookmarks::OpenAllBookmarksContext context =
-      bookmarks::OpenAllBookmarksContext::kNone;
-  WindowOpenDisposition initial_disposition =
-      ui::DispositionFromEventFlags(mouse_event_flags);
-
-  if (id == IDC_BOOKMARK_BAR_OPEN_ALL) {
-    initial_disposition = WindowOpenDisposition::NEW_BACKGROUND_TAB;
-  } else if (id == IDC_BOOKMARK_BAR_OPEN_ALL_NEW_TAB_GROUP) {
-    context = bookmarks::OpenAllBookmarksContext::kInGroup;
-    initial_disposition = WindowOpenDisposition::NEW_BACKGROUND_TAB;
-  }
-
   RecordBookmarkLaunch(location_,
                        profile_metrics::GetBrowserProfileType(profile_));
 
   std::vector<raw_ptr<const BookmarkNode, VectorExperimental>> selection =
       menu_id_to_node_map_.find(id)->second.GetUnderlyingNodes(
           GetBookmarkMergedSurfaceService());
-  bookmarks::OpenAllIfAllowed(browser_, selection, initial_disposition,
-                              context);
+  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("open-bookmark-option") == "foreground") {
+    bookmarks::OpenAllIfAllowed(browser_, selection,
+                             WindowOpenDisposition::NEW_FOREGROUND_TAB);
+  } else if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("open-bookmark-option") == "background")  {
+    bookmarks::OpenAllIfAllowed(browser_, selection,
+                             WindowOpenDisposition::NEW_BACKGROUND_TAB);
+  } else {
+    bookmarks::OpenAllIfAllowed(browser_, selection,
+                             ui::DispositionFromEventFlags(mouse_event_flags));
+  }
 }
 
 bool BookmarkMenuDelegate::ShouldExecuteCommandWithoutClosingMenu(
@@ -1291,6 +1288,9 @@ void BookmarkMenuDelegate::BuildOtherNodeMenuHeader(MenuItemView* menu) {
   other_node_menu_separator_ = nullptr;
   if (menu->HasSubmenu()) {
     menu->RemoveAllMenuItems();
+  }
+  if (!base::FeatureList::IsEnabled(features::kPowerBookmarksSidePanel)) {
+      return;
   }
   ui::ImageModel bookmarks_side_panel_icon = ui::ImageModel::FromVectorIcon(
       kBookmarksSidePanelIcon, ui::kColorMenuIcon,

@@ -71,19 +71,19 @@ BASE_FEATURE(kExtensionLocalizationGuid, base::FEATURE_ENABLED_BY_DEFAULT);
 
 BASE_FEATURE(kExtensionIconVariants, base::FEATURE_DISABLED_BY_DEFAULT);
 
-BASE_FEATURE(kExtensionManifestV2Unsupported, base::FEATURE_ENABLED_BY_DEFAULT);
+BASE_FEATURE(kExtensionManifestV2Unsupported, base::FEATURE_DISABLED_BY_DEFAULT);
 
 BASE_FEATURE(kExtensionManifestV2ExceptionList,
              base::FEATURE_DISABLED_BY_DEFAULT);
 
-BASE_FEATURE(kExtensionManifestV2Disabled, base::FEATURE_ENABLED_BY_DEFAULT);
+BASE_FEATURE(kExtensionManifestV2Disabled, base::FEATURE_DISABLED_BY_DEFAULT);
 
 const base::FeatureParam<std::string> kExtensionManifestV2ExceptionListParam(
     &kExtensionManifestV2ExceptionList,
     /*name=*/"mv2_exception_list",
     /*default_value=*/"");
 
-BASE_FEATURE(kAllowLegacyMV2Extensions, base::FEATURE_DISABLED_BY_DEFAULT);
+BASE_FEATURE(kAllowLegacyMV2Extensions, base::FEATURE_ENABLED_BY_DEFAULT);
 
 BASE_FEATURE(kExtensionProtocolHandlers, base::FEATURE_DISABLED_BY_DEFAULT);
 

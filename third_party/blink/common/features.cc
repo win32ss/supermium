@@ -2575,6 +2575,9 @@ BASE_FEATURE(kWorkerThreadRespectTermRequest, base::FEATURE_ENABLED_BY_DEFAULT);
 // Enables certain features which are not needed on other platforms.
 BASE_FEATURE(kXrDevice, base::FEATURE_DISABLED_BY_DEFAULT);
 
+// Disable user agent client hints at the renderer level.
+BASE_FEATURE(kRemoveClientHints, base::FEATURE_DISABLED_BY_DEFAULT);
+
 // When adding new features or constants for features, please keep the features
 // sorted by identifier name (e.g. `kAwesomeFeature`), and the constants for
 // that feature grouped with the associated feature.

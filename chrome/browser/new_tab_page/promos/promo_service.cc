@@ -8,6 +8,7 @@
 #include <string>
 #include <utility>
 
+#include "base/command_line.h"
 #include "base/feature_list.h"
 #include "base/functional/bind.h"
 #include "base/functional/callback.h"
@@ -172,6 +173,9 @@ PromoService::PromoService(
 PromoService::~PromoService() = default;
 
 void PromoService::Refresh() {
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("ungoogled-supermium")) {
+	  return;
+  }
   std::string command_id;
   // Replace the promo URL with "command:<id>" if such a command ID is set
   // via the feature params.

@@ -330,6 +330,7 @@
 #if BUILDFLAG(IS_WIN)
 #include "chrome/browser/tracing/tracing_features.h"
 #include "chrome/browser/win/mica_titlebar.h"
+#include "chrome/browser/win/titlebar_config.h"
 #include "components/stylus_handwriting/win/features.h"
 #endif
 
@@ -5314,9 +5315,11 @@ const FeatureEntry::Choice kOmniboxAutofocusOnIncognitoNtpChoices[] = {
 // calculate and verify checksum.
 //
 // When adding a new choice, add it to the end of the list.
+#include "chrome/browser/supermium_flag_choices.h"
 const FeatureEntry kFeatureEntries[] = {
 // Include generated flags for flag unexpiry; see //docs/flag_expiry.md and
 // //tools/flags/generate_unexpire_flags.py.
+#include "chrome/browser/supermium_flag_entries.h"
 #include "build/chromeos_buildflags.h"
 #include "chrome/browser/unexpire_flags_gen.inc"
     {variations::switches::kEnableBenchmarking,

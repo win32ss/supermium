@@ -14,6 +14,7 @@
 
 #include "base/process/memory.h"
 #include "base/trace_event/trace_event.h"
+#include "base/win/windows_version.h"
 #else
 #include "third_party/boringssl/src/include/openssl/mem.h"
 #endif  // BUILDFLAG(IS_WIN)
@@ -42,7 +43,8 @@ size_t MaybeRoundUp(size_t size) {
 bool MaybeEncryptBuffer(base::span<uint8_t> buffer) {
 #if BUILDFLAG(IS_WIN)
   TRACE_EVENT0(kTraceCategory, "ProcessBoundString::EncryptBuffer");
-  if (::CryptProtectMemory(buffer.data(), buffer.size(),
+  if (base::win::GetVersion() > base::win::Version::XP &&
+      ::CryptProtectMemory(buffer.data(), buffer.size(),
                            CRYPTPROTECTMEMORY_SAME_PROCESS)) {
     return true;
   }
@@ -53,7 +55,8 @@ bool MaybeEncryptBuffer(base::span<uint8_t> buffer) {
 bool MaybeDecryptBuffer(base::span<uint8_t> buffer) {
 #if BUILDFLAG(IS_WIN)
   TRACE_EVENT0(kTraceCategory, "ProcessBoundString::DecryptBuffer");
-  if (::CryptUnprotectMemory(buffer.data(), buffer.size(),
+  if (base::win::GetVersion() > base::win::Version::XP &&
+      ::CryptUnprotectMemory(buffer.data(), buffer.size(),
                              CRYPTPROTECTMEMORY_SAME_PROCESS)) {
     return true;
   }

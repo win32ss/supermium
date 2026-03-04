@@ -125,7 +125,9 @@ bool PredictionModelFetcherImpl::FetchOptimizationGuideServiceModels(
       // not enabled on incognito sessions and is rechecked before each fetch.
       variations::InIncognito::kNo, variations::SignedIn::kNo,
       traffic_annotation);
-
+  if (!url_loader_) {
+    return false;
+  }
   url_loader_->AttachStringForUpload(serialized_request,
                                      "application/x-protobuf");
 

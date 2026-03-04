@@ -66,6 +66,20 @@ BASE_FEATURE(kFeatureParamWithCache, FEATURE_ENABLED_BY_DEFAULT);
 // issues are found with it.
 BASE_FEATURE(kFastFilePathIsParent, FEATURE_ENABLED_BY_DEFAULT);
 
+BASE_FEATURE(kForceDarkModeFlag,
+             "ForceDarkModeFlag",
+             base::FEATURE_DISABLED_BY_DEFAULT);
+
+BASE_FEATURE(kIncognitoBrandConsistencyForDesktop,
+             "IncognitoBrandConsistencyForDesktop",
+             base::FEATURE_DISABLED_BY_DEFAULT);	
+
+#if BUILDFLAG(IS_WIN)
+BASE_FEATURE(kForceGdi,
+             "ForceGdi",
+             base::FEATURE_DISABLED_BY_DEFAULT);
+#endif
+
 // Use non default low memory device threshold.
 // Value should be given via |LowMemoryDeviceThresholdMB|.
 #if BUILDFLAG(IS_ANDROID)

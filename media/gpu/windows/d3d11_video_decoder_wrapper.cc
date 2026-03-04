@@ -100,6 +100,10 @@ class D3D11VideoDecoderWrapperImpl : public D3D11VideoDecoderWrapper {
       return false;
     }
     ID3D11VideoDecoderOutputView* output_view = std::move(result).value();
+    // Supermium #573: extra verification of the video context interface due to some presumptive GPU driver issues.
+    if (!video_context_) {
+      return false;
+    }
     HRESULT hr;
     do {
       hr = video_context_->DecoderBeginFrame(video_decoder_.Get(), output_view,

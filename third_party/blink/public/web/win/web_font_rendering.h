@@ -16,6 +16,7 @@ class WebFontRenderingClient;
 
 class BLINK_EXPORT WebFontRendering {
  public:
+  static void setUseDirectWrite(bool);
   // Set an instance of |WebFontPrewarmer|. The instance must be kept alive
   // until the process exits.
   static void SetFontPrewarmer(WebFontPrewarmer*);
@@ -31,6 +32,7 @@ class BLINK_EXPORT WebFontRendering {
                                    int32_t font_height);
   static void SetAntialiasedTextEnabled(bool);
   static void SetLCDTextEnabled(bool);
+  static void SetUseSkiaFontFallback(bool);
 };
 
 }  // namespace blink

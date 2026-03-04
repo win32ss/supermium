@@ -32,6 +32,7 @@
 #include <variant>
 
 #include "base/auto_reset.h"
+#include "base/command_line.h"
 #include "base/feature_list.h"
 #include "base/memory/ptr_util.h"
 #include "base/metrics/histogram_functions.h"
@@ -1019,6 +1020,9 @@ void HTMLMediaElement::InvokeLoadAlgorithm() {
 
   // Perform the cleanup required for the resource load algorithm to run.
   StopPeriodicTimers();
+  if (GetDocument().GetFrame() &&
+      base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("autoplay-policy") != "document-user-activation-required")
+      GetDocument().GetFrame()->SetHadUserInteraction(false);
   load_timer_.Stop();
   CancelDeferredLoad();
   // FIXME: Figure out appropriate place to reset LoadTextTrackResource if
@@ -1907,6 +1911,9 @@ void HTMLMediaElement::WaitForSourceChange() {
   DVLOG(3) << "waitForSourceChange(" << *this << ")";
 
   StopPeriodicTimers();
+  if (GetDocument().GetFrame() &&
+      base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("autoplay-policy") != "document-user-activation-required")
+     GetDocument().GetFrame()->SetHadUserInteraction(false);
   load_state_ = kWaitingForSource;
 
   // 17 - Waiting: Set the element's networkState attribute to the
@@ -2895,7 +2902,12 @@ ScriptPromise<IDLUndefined> HTMLMediaElement::playForBindings(
   auto promise = resolver->Promise();
   play_promise_resolvers_.push_back(resolver);
 
-  std::optional<DOMExceptionCode> code = Play();
+  std::optional<DOMExceptionCode> code = DOMExceptionCode::kNotAllowedError;
+  // Todo: split this into a separate option that flushes the history when the page is refreshed.
+  if (GetDocument().GetFrame()->IsHistoryUserActivationActive() ||
+      base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("autoplay-policy") != "document-user-activation-required") {
+    code = Play();
+  }
   if (code) {
     DCHECK(!play_promise_resolvers_.empty());
     play_promise_resolvers_.pop_back();

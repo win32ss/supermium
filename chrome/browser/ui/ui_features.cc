@@ -364,6 +364,9 @@ BASE_FEATURE(kTabModalUsesDesktopWidget, base::FEATURE_DISABLED_BY_DEFAULT);
 
 BASE_FEATURE(kTabOrganization, base::FEATURE_DISABLED_BY_DEFAULT);
 
+// Enables Bookmarks++ Side Panel UI.
+BASE_FEATURE(kPowerBookmarksSidePanel, base::FEATURE_ENABLED_BY_DEFAULT);
+
 bool IsTabOrganization() {
   return base::FeatureList::IsEnabled(features::kTabOrganization);
 }

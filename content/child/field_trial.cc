@@ -17,14 +17,23 @@
 #include "content/public/common/content_switch_dependent_feature_overrides.h"
 #include "content/public/common/content_switches.h"
 
+#if BUILDFLAG(IS_WIN)
+#include <windows.h>
+#include "base/win/windows_version.h"
+#endif
+
 namespace content {
 
 void InitializeFieldTrialAndFeatureList() {
   const base::CommandLine& command_line =
       *base::CommandLine::ForCurrentProcess();
-
-  base::HistogramSharedMemory::InitFromLaunchParameters(command_line);
-
+#if BUILDFLAG(IS_WIN)
+  if (base::win::GetVersion() >= base::win::Version::VISTA) {
+      base::HistogramSharedMemory::InitFromLaunchParameters(command_line);
+  }
+#else
+    base::HistogramSharedMemory::InitFromLaunchParameters(command_line);
+#endif
   // Initialize statistical testing infrastructure.
   //
   // This is intentionally leaked since it needs to live for the duration of the

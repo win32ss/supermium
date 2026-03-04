@@ -217,7 +217,10 @@ void AssertMemoryPriority(HANDLE thread, int memory_priority) {
       reinterpret_cast<decltype(&::GetThreadInformation)>(::GetProcAddress(
           ::GetModuleHandle(L"Kernel32.dll"), "GetThreadInformation"));
 
-  DCHECK(get_thread_information_fn);
+  if (!get_thread_information_fn) {
+    DCHECK_EQ(win::GetVersion(), win::Version::WIN7);
+    return;
+  }
 
   MEMORY_PRIORITY_INFORMATION memory_priority_information = {};
   DCHECK(get_thread_information_fn(thread, ::ThreadMemoryPriority,
@@ -404,8 +407,12 @@ void SetThreadPriority(PlatformThreadHandle thread_handle,
     // Override the memory priority.
     MEMORY_PRIORITY_INFORMATION memory_priority{.MemoryPriority =
                                                     MEMORY_PRIORITY_NORMAL};
+     static const auto set_thread_information_fn =
+      reinterpret_cast<decltype(&::SetThreadInformation)>(::GetProcAddress(
+          ::GetModuleHandle(L"kernel32.dll"), "SetThreadInformation"));
+      DCHECK(set_thread_information_fn);
     [[maybe_unused]] const BOOL memory_priority_success =
-        SetThreadInformation(platform_handle, ::ThreadMemoryPriority,
+        set_thread_information_fn(platform_handle, ::ThreadMemoryPriority,
                              &memory_priority, sizeof(memory_priority));
     DPLOG_IF(ERROR, !memory_priority_success)
         << "Set thread memory priority failed.";
@@ -426,6 +433,9 @@ void SetThreadPriority(PlatformThreadHandle thread_handle,
 void SetThreadQualityOfService(PlatformThreadHandle thread_handle,
                                ThreadType thread_type) {
   // QoS and power throttling were introduced in Win10 1709.
+  if (win::GetVersion() < win::Version::WIN10_RS3) {
+    return;
+  }
   bool desire_ecoqos = false;
   switch (thread_type) {
     case ThreadType::kBackground:
@@ -541,7 +551,7 @@ ThreadType PlatformThread::GetCurrentEffectiveThreadTypeForTest() {
       DPCHECK(false) << "::GetThreadPriority error";
   }
 
-  NOTREACHED() << "::GetThreadPriority returned " << priority << ".";
+  return ThreadType::kDefault;
 }
 
 // static

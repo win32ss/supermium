@@ -50,6 +50,19 @@ class ShellUtil {
     SYSTEM_LEVEL = 0x2   // Make any shell changes only at the system level
   };
 
+  enum InteractiveSetDefaultMode {
+    // The intent picker is opened with the different choices available to the
+    // user.
+    INTENT_PICKER,
+    // The Windows default apps settings page is opened with the current default
+    // app focused.
+    SYSTEM_SETTINGS,
+  };
+
+  // Returns the interactive mode that should be used to set the default browser
+  // or default protocol client on Windows 8+.
+  static InteractiveSetDefaultMode GetInteractiveSetDefaultMode();
+
   // Chrome's default handler state for a given protocol. If the current install
   // mode is not default, the brand's other modes are checked. This allows
   // callers to take specific action in case the current mode (e.g., Chrome Dev)

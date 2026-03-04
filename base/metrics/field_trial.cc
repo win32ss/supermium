@@ -58,6 +58,7 @@
 
 #if BUILDFLAG(IS_WIN)
 #include <windows.h>
+#include "base/win/windows_version.h"
 #endif
 
 #if BUILDFLAG(IS_FUCHSIA)
@@ -676,7 +677,15 @@ void FieldTrialList::CreateTrialsInChildProcess(const CommandLine& cmd_line) {
     SharedMemoryError result = CreateTrialsFromSwitchValue(switch_value);
     SCOPED_CRASH_KEY_NUMBER("FieldTrialList", "SharedMemoryError",
                             static_cast<int>(result));
+    // Unfortunately, XP has an issue with shared memory allocations to unsandboxed processes.
+    // This means that the sandbox (or in-process-gpu/single-process) are needed to propagate all feature info.
+#if BUILDFLAG(IS_WIN)
+    if (base::win::GetVersion() >= base::win::Version::VISTA) {
+      CHECK_EQ(result, SharedMemoryError::kNoError);
+    }
+#else
     CHECK_EQ(result, SharedMemoryError::kNoError);
+#endif
   }
 #endif  // BUILDFLAG(USE_BLINK)
 }

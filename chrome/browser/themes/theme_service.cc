@@ -13,6 +13,7 @@
 #include "base/auto_reset.h"
 #include "base/command_line.h"
 #include "base/containers/fixed_flat_map.h"
+#include "base/features.h"
 #include "base/functional/bind.h"
 #include "base/location.h"
 #include "base/memory/raw_ptr.h"
@@ -237,7 +238,10 @@ base::RefCountedMemory* ThemeService::BrowserThemeProvider::GetRawData(
 
 CustomThemeSupplier* ThemeService::BrowserThemeProvider::GetThemeSupplier()
     const {
-  return incognito_ ? nullptr : delegate_->GetThemeSupplier();
+    bool should_ignore_theme_supplier =
+      incognito_ && base::FeatureList::IsEnabled(
+                        base::features::kIncognitoBrandConsistencyForDesktop);
+  return should_ignore_theme_supplier ? nullptr : delegate_->GetThemeSupplier();
 }
 
 // ThemeService ---------------------------------------------------------------

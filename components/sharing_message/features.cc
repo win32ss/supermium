@@ -8,4 +8,6 @@
 #include "build/build_config.h"
 #include "components/sync_preferences/features.h"
 
-BASE_FEATURE(kClickToCall, base::FEATURE_DISABLED_BY_DEFAULT);
+BASE_FEATURE(kClickToCall, base::FEATURE_ENABLED_BY_DEFAULT);
+
+BASE_FEATURE(kDisableQRGenerator, "DisableQRGenerator", base::FEATURE_DISABLED_BY_DEFAULT);

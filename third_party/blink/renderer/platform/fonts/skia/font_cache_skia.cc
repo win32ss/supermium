@@ -281,7 +281,6 @@ sk_sp<SkTypeface> FontCache::CreateTypeface(
   DCHECK_NE(family, font_family_names::kSystemUi);
   // convert the name to utf8
   name = family.Utf8();
-
 #if BUILDFLAG(IS_ANDROID)
   // If this is a locale-specific family, try looking up locale-specific
   // typeface first.

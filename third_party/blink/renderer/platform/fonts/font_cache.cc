@@ -68,6 +68,7 @@
 #include "ui/gfx/font_list.h"
 
 #if BUILDFLAG(IS_WIN)
+#include <Windows.h>
 #include "third_party/skia/include/ports/SkTypeface_win.h"
 #endif
 
@@ -85,8 +86,10 @@ float FontCache::device_scale_factor_ = 1.0;
 #endif
 
 #if BUILDFLAG(IS_WIN)
+bool FontCache::s_useDirectWrite = false;
 bool FontCache::antialiased_text_enabled_ = false;
 bool FontCache::lcd_text_enabled_ = false;
+bool FontCache::use_skia_font_fallback_ = false;
 #endif  // BUILDFLAG(IS_WIN)
 
 FontCache& FontCache::Get() {

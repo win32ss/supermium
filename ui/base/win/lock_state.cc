@@ -10,6 +10,7 @@
 
 #include "base/functional/bind.h"
 #include "base/no_destructor.h"
+#include "base/win/windows_version.h"
 #include "third_party/abseil-cpp/absl/cleanup/cleanup.h"
 #include "ui/base/win/session_change_observer.h"
 
@@ -30,7 +31,12 @@ bool IsSessionLocked() {
 
   absl::Cleanup wts_deleter = [buffer] { ::WTSFreeMemory(buffer); };
   auto* info = reinterpret_cast<WTSINFOEXW*>(buffer);
-  return info->Data.WTSInfoExLevel1.SessionFlags == WTS_SESSIONSTATE_LOCK;
+  // For Windows 7 SessionFlags has inverted logic:
+  // https://msdn.microsoft.com/en-us/library/windows/desktop/ee621019.
+  if (base::win::GetVersion() == base::win::Version::WIN7)
+    return info->Data.WTSInfoExLevel1.SessionFlags == WTS_SESSIONSTATE_UNLOCK;
+  else
+    return info->Data.WTSInfoExLevel1.SessionFlags == WTS_SESSIONSTATE_LOCK;
 }
 
 // Observes the screen lock state of Windows and caches the current state. This

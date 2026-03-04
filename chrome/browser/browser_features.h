@@ -97,6 +97,8 @@ BASE_DECLARE_FEATURE(kTabCaptureBlueBorderCrOS);
 
 BASE_DECLARE_FEATURE(kWebUsbDeviceDetection);
 
+BASE_DECLARE_FEATURE(kClearDataOnExit);
+
 #if BUILDFLAG(IS_WIN)
 BASE_DECLARE_FEATURE(kBrowserDynamicCodeDisabled);
 

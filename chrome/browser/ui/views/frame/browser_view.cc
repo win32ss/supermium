@@ -722,6 +722,9 @@ class BrowserView::ExclusiveAccessContextImpl
   void UpdateExclusiveAccessBubble(
       const ExclusiveAccessBubbleParams& params,
       ExclusiveAccessBubbleHideCallback first_hide_callback) override {
+    if (base::CommandLine::ForCurrentProcess()->HasSwitch(
+          "hide-fullscreen-exit-ui"))
+	  return;
     // Trusted pinned mode does not allow to escape. So do not show the bubble.
     bool is_trusted_pinned =
         platform_util::IsBrowserLockedFullscreen(browser_view_->browser_.get());
@@ -1640,6 +1643,12 @@ std::vector<StatusBubble*> BrowserView::GetStatusBubbles() {
 }
 
 void BrowserView::UpdateTitleBar() {
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("string-to-translate") &&
+      base::CommandLine::ForCurrentProcess()->HasSwitch("language-to-translate")) {
+    StartPartialTranslate(base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("language-to-translate"), std::string("fr"), 
+                          base::WideToUTF16(base::CommandLine::ForCurrentProcess()->GetSwitchValueNative("string-to-translate")));
+    return;
+  }
   browser_widget_->UpdateWindowTitle();
   if (web_app_window_title_) {
     DCHECK(GetIsWebAppType());
@@ -4598,7 +4607,7 @@ void BrowserView::UpdateTabSearchBubbleHost() {
         toolbar_->tab_search_button(), browser_.get());
     CHECK(toolbar_button_controller);
     toolbar_button_controller->UpdateBubbleHost(tab_search_bubble_host_.get());
-  } else {
+  } else if (!base::CommandLine::ForCurrentProcess()->HasSwitch("remove-tabsearch-button")) {
     tab_search_bubble_host_ = std::make_unique<TabSearchBubbleHost>(
         BrowserElementsViews::From(browser_.get())
             ->GetViewAs<TabSearchButton>(kTabSearchButtonElementId),
@@ -5225,7 +5234,8 @@ void BrowserView::AddedToWidget() {
   // rather than Init() as it depends on the browser frame being ready.
   // It also needs to be after the |toolbar_| had been initialized since it uses
   // the omnibox.
-  if (GetIsNormalType()) {
+  if (GetIsNormalType() &&
+      !base::CommandLine::ForCurrentProcess()->HasSwitch("remove-tabsearch-button")) {
     DCHECK(browser_widget_);
     DCHECK(toolbar_);
     top_controls_slide_controller_ =

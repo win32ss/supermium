@@ -368,6 +368,8 @@ BASE_FEATURE(kThreatDomDetailsTagAndAttributeFeature,
 
 BASE_FEATURE(kVisualFeaturesSizes, base::FEATURE_DISABLED_BY_DEFAULT);
 
+BASE_FEATURE(kDownloadsPageReferrerUrl, base::FEATURE_DISABLED_BY_DEFAULT);
+
 // keep-sorted end
 
 // Returns the list of the experimental features that are enabled or disabled,

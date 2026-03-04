@@ -14,6 +14,7 @@
 #include "ui/base/mojom/ui_base_types.mojom-shared.h"
 #include "ui/base/mojom/window_show_state.mojom-forward.h"
 #include "ui/display/display.h"
+#include "ui/views/corewm/tooltip_win.h"
 #include "ui/views/views_export.h"
 #include "ui/views/widget/desktop_aura/desktop_window_tree_host.h"
 #include "ui/views/win/hwnd_message_handler_delegate.h"
@@ -43,6 +44,10 @@ class FrameView;
 
 namespace test {
 class DesktopWindowTreeHostWinTestApi;
+}
+
+namespace corewm {
+class TooltipWin;
 }
 
 class VIEWS_EXPORT DesktopWindowTreeHostWin
@@ -260,6 +265,9 @@ class VIEWS_EXPORT DesktopWindowTreeHostWin
   void HandleInputLanguageChange(DWORD character_set,
                                  HKL input_language_id) override;
   void HandlePaintAccelerated(const gfx::Rect& invalid_rect) override;
+  bool HandleTooltipNotify(int w_param,
+                           NMHDR* l_param,
+                           LRESULT* l_result) override;
   void HandleMenuLoop(bool in_menu_loop) override;
   bool PreHandleMSG(UINT message,
                     WPARAM w_param,
@@ -342,6 +350,10 @@ class VIEWS_EXPORT DesktopWindowTreeHostWin
   // rather than asking the Widget for the non_client_view so that we know at
   // Init time, before the Widget has created the NonClientView.
   bool has_non_client_view_;
+
+  // Owned by TooltipController, but we need to forward events to it so we keep
+  // a reference.
+  raw_ptr<corewm::TooltipWin> tooltip_;
 
   // True if the window should have the frame removed.
   bool remove_standard_frame_;

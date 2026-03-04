@@ -161,26 +161,26 @@ TEST(ServiceResolverTest, PatchesPatchedServices) {
 TEST(ServiceResolverTest, MultiplePatchedServices) {
 // We don't support "relaxed mode" for Win64 apps.
 #if !defined(_WIN64)
-  ServiceResolverTest thunk_test(true);
-  NTSTATUS ret = PatchNtdllWithResolver("NtClose", true, thunk_test);
+  std::unique_ptr<ResolverThunkTest> thunk_test = GetTestResolver(true);
+  NTSTATUS ret = PatchNtdllWithResolver("NtClose", true, thunk_test.get());
   EXPECT_EQ(STATUS_SUCCESS, ret) << "NtClose, last error: " << ::GetLastError();
 
-  ret = PatchNtdllWithResolver("NtCreateFile", true, thunk_test);
+  ret = PatchNtdllWithResolver("NtCreateFile", true, thunk_test.get());
   EXPECT_EQ(STATUS_SUCCESS, ret)
       << "NtCreateFile, last error: " << ::GetLastError();
 
-  ret = PatchNtdllWithResolver("NtCreateMutant", true, thunk_test);
+  ret = PatchNtdllWithResolver("NtCreateMutant", true, thunk_test.get());
   EXPECT_EQ(STATUS_SUCCESS, ret)
       << "NtCreateMutant, last error: " << ::GetLastError();
 
-  ret = PatchNtdllWithResolver("NtMapViewOfSection", true, thunk_test);
+  ret = PatchNtdllWithResolver("NtMapViewOfSection", true, thunk_test.get());
   EXPECT_EQ(STATUS_SUCCESS, ret)
       << "NtMapViewOfSection, last error: " << ::GetLastError();
 #endif
 }
 
 TEST(ServiceResolverTest, LocalPatchesAllowed) {
-  ServiceResolverTest resolver(true);
+  std::unique_ptr<ResolverThunkTest> thunk_test = GetTestResolver(true);
 
   HMODULE ntdll_base = ::GetModuleHandle(L"ntdll.dll");
   ASSERT_TRUE(ntdll_base);

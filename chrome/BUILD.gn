@@ -443,6 +443,10 @@ if (is_win) {
     if (use_aura) {
       deps += [ "//ui/compositor" ]
     }
+    if (current_cpu == "x86") {
+      # Don"t set an x64 base address (to avoid breaking HE-ASLR).
+      ldflags = [ "/BASE:0x12000000" ]
+    }
   }
 
   copy("copy_first_run") {

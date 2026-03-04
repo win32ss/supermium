@@ -363,6 +363,9 @@ base::expected<std::vector<uint8_t>, SECURITY_STATUS> SignRSA(
 ScopedNCryptKey LoadWrappedKey(base::span<const uint8_t> wrapped,
                                ProviderType provider_type) {
   SCOPED_MAY_LOAD_LIBRARY_AT_BACKGROUND_PRIORITY();
+  if(!::LoadLibraryW(L"ncrypt.dll")) {
+      return ScopedNCryptKey();
+  }
   ScopedNCryptProvider provider;
   SECURITY_STATUS status =
       NCryptOpenStorageProvider(ScopedNCryptProvider::Receiver(provider).get(),
@@ -509,6 +512,11 @@ class UnexportableKeyProviderWin : public UnexportableKeyProvider {
     ScopedNCryptProvider provider;
     {
       SCOPED_MAY_LOAD_LIBRARY_AT_BACKGROUND_PRIORITY();
+
+	  if(!::LoadLibraryW(L"ncrypt.dll")) {
+		  return std::nullopt;
+	  }
+
       if (FAILED(NCryptOpenStorageProvider(
               ScopedNCryptProvider::Receiver(provider).get(),
               GetWindowsIdentifierForProvider(provider_type_), /*flags=*/0))) {
@@ -788,6 +796,11 @@ class VirtualUnexportableKeyProviderWin
     ScopedNCryptProvider provider;
     {
       SCOPED_MAY_LOAD_LIBRARY_AT_BACKGROUND_PRIORITY();
+	  
+	  if(!::LoadLibraryW(L"ncrypt.dll")) {
+		  return std::nullopt;
+	  }
+	  
       SECURITY_STATUS status = NCryptOpenStorageProvider(
           ScopedNCryptProvider::Receiver(provider).get(),
           MS_KEY_STORAGE_PROVIDER, /*dwFlags=*/0);
@@ -810,6 +823,11 @@ class VirtualUnexportableKeyProviderWin
     ScopedNCryptProvider provider;
     {
       SCOPED_MAY_LOAD_LIBRARY_AT_BACKGROUND_PRIORITY();
+
+	  if(!::LoadLibraryW(L"ncrypt.dll")) {
+		  return nullptr;
+	  }
+	  
       SECURITY_STATUS status = NCryptOpenStorageProvider(
           ScopedNCryptProvider::Receiver(provider).get(),
           MS_KEY_STORAGE_PROVIDER, /*dwFlags=*/0);

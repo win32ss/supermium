@@ -7,6 +7,7 @@
 #include "base/command_line.h"
 #include "build/branding_buildflags.h"
 #include "build/buildflag.h"
+#include "chrome/browser/about_flags.h"
 #include "chrome/browser/browser_process.h"
 #include "chrome/browser/obsolete_system/obsolete_system.h"
 #include "chrome/browser/profiles/profile.h"
@@ -14,6 +15,7 @@
 #include "chrome/browser/ui/browser_window/public/browser_window_features.h"
 #include "chrome/browser/ui/browser_window/public/browser_window_interface.h"
 #include "chrome/browser/ui/session_crashed_bubble.h"
+#include "chrome/browser/ui/simple_message_box.h"
 #include "chrome/browser/ui/startup/automation_infobar_delegate.h"
 #include "chrome/browser/ui/startup/bad_flags_prompt.h"
 #include "chrome/browser/ui/startup/bidding_and_auction_consented_debugging_infobar_delegate.h"
@@ -26,6 +28,8 @@
 #include "chrome/common/pref_names.h"
 #include "components/infobars/content/content_infobar_manager.h"
 #include "components/prefs/pref_service.h"
+#include "components/webui/flags/flags_storage.h"
+#include "components/webui/flags/pref_service_flags_storage.h"
 #include "content/public/common/content_switches.h"
 #include "google_apis/google_api_keys.h"
 
@@ -59,19 +63,19 @@ bool ShouldShowBadFlagsSecurityWarnings() {
 #if !BUILDFLAG(IS_CHROMEOS)
   PrefService* local_state = g_browser_process->local_state();
   if (!local_state) {
-    return true;
+    return false;
   }
 
   const auto* pref = local_state->FindPreference(
       prefs::kCommandLineFlagSecurityWarningsEnabled);
   DCHECK(pref);
 
-  // The warnings can only be disabled by policy. Default to show warnings.
+  // The warnings can only be enabled by policy. Default to not showing warnings.
   if (pref->IsManaged()) {
     return pref->GetValue()->GetBool();
   }
 #endif
-  return true;
+  return false;
 }
 
 // This is a separate function to avoid accidentally reading the switch from
@@ -140,7 +144,8 @@ void AddInfoBarsIfNecessary(BrowserWindowInterface* browser,
   }
 
   // Web apps should not display the session restore bubble (crbug.com/1264121)
-  if (!is_web_app && HasPendingUncleanExit(browser->GetProfile())) {
+  if (!is_web_app && HasPendingUncleanExit(browser->GetProfile()) &&
+      !startup_command_line.HasSwitch("hide-crashed-bubble")) {
     SessionCrashedBubble::ShowIfNotOffTheRecordProfile(
         browser,
         /*skip_tab_checking=*/false);
@@ -171,6 +176,17 @@ void AddInfoBarsIfNecessary(BrowserWindowInterface* browser,
 
   if (show_bad_flags_security_warnings) {
     ShowBadFlagsPrompt(web_contents);
+  }
+
+  if (startup_command_line.HasSwitch("revert-from-portable")) {
+        chrome::MessageBoxResult mbr = chrome::ShowQuestionMessageBoxSync(nullptr, u"Profile Warning", u"--revert-from-portable is in use."
+                              u" If the profile has already been moved, press Yes. If not, press No. Security may suffer if the "
+                              u"profile's encryption remains bypassed.");
+
+        if (mbr == chrome::MESSAGE_BOX_RESULT_YES) {
+            std::unique_ptr<flags_ui::FlagsStorage> flags_storage = std::make_unique<flags_ui::PrefServiceFlagsStorage>(g_browser_process->local_state());
+            about_flags::SetFeatureEntryEnabled(flags_storage.get(), "revert-from-portable", false);
+        }
   }
 
   infobars::ContentInfoBarManager* infobar_manager =

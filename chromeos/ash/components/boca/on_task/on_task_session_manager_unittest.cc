@@ -912,6 +912,11 @@ TEST_F(OnTaskSessionManagerTest, LockWindowOnAppReload) {
       *system_web_app_manager_ptr_,
       SetWindowTrackerForSystemWebAppWindow(kWindowId, kWindowObservers))
       .Times(AtLeast(1));
+  EXPECT_CALL(
+      *system_web_app_manager_ptr_,
+      SetParentTabsRestriction(
+          kWindowId, ::boca::LockedNavigationOptions::DOMAIN_NAVIGATION))
+      .Times(AtLeast(1));
   EXPECT_CALL(*system_web_app_manager_ptr_,
               PrepareSystemWebAppWindowForOnTask(kWindowId, _))
       .Times(AtLeast(1))

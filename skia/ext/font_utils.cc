@@ -40,6 +40,7 @@
 #endif
 
 #if BUILDFLAG(IS_WIN)
+#include "base/command_line.h"
 #include "third_party/skia/include/ports/SkTypeface_win.h"
 #endif
 
@@ -93,7 +94,9 @@ static sk_sp<SkFontMgr> fontmgr_factory() {
   return SkFontMgr_New_Fuchsia(std::move(provider),
                                SkFontScanner_Make_Fontations());
 #elif BUILDFLAG(IS_WIN)
-  return SkFontMgr_New_DirectWrite();
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("disable-direct-write"))
+	  return SkFontMgr_New_GDI();
+  return SkFontMgr_New_DirectWrite() ? SkFontMgr_New_DirectWrite() : SkFontMgr_New_GDI();
 #elif defined(SK_FONTMGR_FREETYPE_EMPTY_AVAILABLE)
   return SkFontMgr_New_Custom_Empty();
 #else

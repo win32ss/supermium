@@ -152,7 +152,7 @@ class BrowserFrameViewWin : public BrowserFrameView, public TabIconViewModel {
   void TabletModeChanged();
 
   // Sets DWM attributes for rendering the system-drawn Mica titlebar.
-  void SetSystemMicaTitlebarAttributes();
+  void SetSystemTitlebarAttributes();
 
   // Paint various sub-components of this view.
   void PaintTitlebar(gfx::Canvas* canvas) const;

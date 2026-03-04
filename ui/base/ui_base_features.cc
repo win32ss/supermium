@@ -41,6 +41,9 @@ BASE_FEATURE_PARAM(bool,
 // If enabled, calculate native window occlusion - Windows-only.
 BASE_FEATURE(kCalculateNativeWinOcclusion, base::FEATURE_ENABLED_BY_DEFAULT);
 
+// Enables using TSF (over IMM32) for IME.
+BASE_FEATURE(kTSFImeSupport, base::FEATURE_ENABLED_BY_DEFAULT);
+
 // Once enabled, the exact behavior is dictated by the field trial param
 // name `kApplyNativeOcclusionToCompositorType`.
 BASE_FEATURE(kApplyNativeOcclusionToCompositor,

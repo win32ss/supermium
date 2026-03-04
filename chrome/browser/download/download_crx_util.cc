@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "base/auto_reset.h"
+#include "base/command_line.h"
 #include "base/notimplemented.h"
 #include "build/build_config.h"
 #include "chrome/browser/extensions/crx_installer.h"
@@ -114,6 +115,14 @@ scoped_refptr<extensions::CrxInstaller> CreateCrxInstaller(
   return installer;
 }
 
+bool ShouldDownloadAsRegularFile() {
+    const base::CommandLine& command_line =
+        *base::CommandLine::ForCurrentProcess();
+    return command_line.HasSwitch("extension-mime-request-handling") &&
+        command_line.GetSwitchValueASCII("extension-mime-request-handling") ==
+        "download-as-regular-file";
+}
+
 bool IsExtensionDownload(const DownloadItem& download_item) {
   if (download_item.GetTargetDisposition() ==
       DownloadItem::TARGET_DISPOSITION_PROMPT)
@@ -122,7 +131,7 @@ bool IsExtensionDownload(const DownloadItem& download_item) {
   if (download_item.GetMimeType() == extensions::Extension::kMimeType ||
       extensions::UserScript::IsURLUserScript(download_item.GetURL(),
                                               download_item.GetMimeType())) {
-    return true;
+    return !ShouldDownloadAsRegularFile();
   } else {
     return false;
   }

@@ -125,6 +125,7 @@ class DownloadBubbleRowViewInfoTest : public testing::Test,
     }
   }
 
+  base::test::ScopedFeatureList scoped_feature_list_;
   content::BrowserTaskEnvironment task_environment_;
   TestingProfile profile_;
   std::unique_ptr<NiceMock<download::MockDownloadItem>> item_;

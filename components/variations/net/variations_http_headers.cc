@@ -6,6 +6,7 @@
 
 #include <utility>
 
+#include "base/command_line.h"
 #include "base/functional/bind.h"
 #include "base/memory/raw_ptr.h"
 #include "base/metrics/histogram_functions.h"
@@ -24,7 +25,6 @@
 #include "url/gurl.h"
 
 #if BUILDFLAG(IS_IOS)
-#include "base/command_line.h"
 #include "components/variations/net/variations_flags.h"
 #include "net/base/url_util.h"
 #endif  // BUILDFLAG(IS_IOS)
@@ -354,6 +354,8 @@ CreateSimpleURLLoaderWithVariationsHeader(
     const net::NetworkTrafficAnnotationTag& annotation_tag) {
   bool variations_headers_added =
       AppendVariationsHeader(request->url, incognito, signed_in, request.get());
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("ungoogled-supermium"))
+	return nullptr;
   std::unique_ptr<network::SimpleURLLoader> simple_url_loader =
       network::SimpleURLLoader::Create(std::move(request), annotation_tag);
   if (variations_headers_added) {

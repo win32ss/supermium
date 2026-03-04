@@ -404,6 +404,10 @@ BASE_DECLARE_FEATURE(kThreatDomDetailsTagAndAttributeFeature);
 // the screen.
 BASE_DECLARE_FEATURE(kVisualFeaturesSizes);
 
+ // Show referrer URL on download item on chrome://downloads page. This will
+ // replace the downloads url.
+ BASE_DECLARE_FEATURE(kDownloadsPageReferrerUrl);
+
 // keep-sorted end
 
 base::Value::List GetFeatureStatusList();

@@ -1608,6 +1608,8 @@ ExtensionFunction::ResponseAction DownloadsSetShelfEnabledFunction::Run() {
 
   MaybeSetUiEnabled(service, incognito_service, extension(), params->enabled);
 
+  // bool is_bubble_enabled = download::IsDownloadBubbleEnabled();
+
   for (WindowController* window : *WindowControllerList::GetInstance()) {
     DownloadCoreService* current_service =
         DownloadCoreServiceFactory::GetForBrowserContext(window->profile());

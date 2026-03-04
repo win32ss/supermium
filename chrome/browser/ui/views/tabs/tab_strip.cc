@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "base/check.h"
+#include "base/command_line.h"
 #include "base/compiler_specific.h"
 #include "base/containers/adapters.h"
 #include "base/containers/contains.h"
@@ -1390,7 +1391,9 @@ bool TabStrip::ShouldDrawStrokes() const {
 #if BUILDFLAG(IS_CHROMEOS)
   return false;
 #else   // BUILDFLAG(IS_CHROMEOS)
-
+  if (GetLayoutConstant(TAB_HARD_BORDER)) {
+    return true;
+  }
   // If the controller says we can't draw strokes, don't.
   if (!controller_->CanDrawStrokes()) {
     return false;
@@ -1997,6 +2000,8 @@ void TabStrip::OnMouseEventInTab(views::View* source,
 }
 
 void TabStrip::UpdateHoverCard(Tab* tab, HoverCardUpdateType update_type) {
+  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("tab-hover-cards") == "tooltip" ||
+      base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("tab-hover-cards") == "none") return;
   tab_container_->UpdateHoverCard(tab, update_type);
 }
 
@@ -2200,6 +2205,7 @@ void TabStrip::SetTabStripNotEditableForTesting() {
 
 void TabStrip::Init() {
   SetID(VIEW_ID_TAB_STRIP);
+  SetLayoutConstants();
   // So we only get enter/exit messages when the mouse enters/exits the whole
   // tabstrip, even if it is entering/exiting a specific Tab, too.
   SetNotifyEnterExitOnChild(true);

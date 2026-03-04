@@ -391,6 +391,8 @@ class PLATFORM_EXPORT ShapeResult : public GarbageCollected<ShapeResult> {
   void CheckConsistency() const;
 #endif
 
+  void DeallocRuns();
+
  protected:
   friend class ShapeResultCursor;
 

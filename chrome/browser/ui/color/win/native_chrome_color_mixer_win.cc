@@ -11,9 +11,11 @@
 #include "base/logging.h"
 #include "base/no_destructor.h"
 #include "base/win/windows_version.h"
+#include "chrome/browser/themes/browser_theme_pack.h"
 #include "chrome/browser/themes/theme_properties.h"
 #include "chrome/browser/ui/color/chrome_color_id.h"
 #include "chrome/browser/win/mica_titlebar.h"
+#include "chrome/browser/win/titlebar_config.h"
 #include "chrome/grit/theme_resources.h"
 #include "ui/color/color_id.h"
 #include "ui/color/color_mixer.h"
@@ -238,14 +240,22 @@ void AddNativeNonHighContrastColors(ui::ColorMixer& mixer,
     mixer[ui::kColorSysHeaderContainerInactive] = {ui::kColorSysBase};
   }
 
-  if (ShouldDefaultThemeUseMicaTitlebar() && !key.app_controller) {
-    mixer[kColorNewTabButtonBackgroundFrameActive] = {SK_ColorTRANSPARENT};
-    mixer[kColorNewTabButtonBackgroundFrameInactive] = {SK_ColorTRANSPARENT};
-    mixer[kColorNewTabButtonInkDropFrameActive] =
-        ui::GetColorWithMaxContrast(ui::kColorFrameActive);
-    mixer[kColorNewTabButtonInkDropFrameInactive] =
+    if (auto color = GetThemeColor(key, ThemeProperties::COLOR_FRAME_INACTIVE)) {
+      mixer[ui::kColorFrameInactive] = {color.value()};
+    }/* else if (!ShouldCustomDrawSystemTitlebar()) {
+      mixer[ui::kColorFrameInactive] = {key.color_mode == ColorMode::kDark
+                                            ? kSystemSolidDarkInactiveFrameColor
+                                            : GetDefaultInactiveFrameColor()};
+    }*/
+
+    if (ShouldDefaultThemeUseMicaTitlebar() && !key.app_controller) {
+      mixer[kColorNewTabButtonBackgroundFrameActive] = {SK_ColorTRANSPARENT};
+      mixer[kColorNewTabButtonBackgroundFrameInactive] = {SK_ColorTRANSPARENT};
+      mixer[kColorNewTabButtonInkDropFrameInactive] =
         ui::GetColorWithMaxContrast(ui::kColorFrameInactive);
-  }
+      mixer[kColorNewTabButtonInkDropFrameActive] =
+          ui::GetColorWithMaxContrast(ui::kColorFrameActive);
+    }
 }
 
 }  // namespace

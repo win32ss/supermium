@@ -467,6 +467,17 @@ void ToolbarView::Init() {
                                browser_->profile()->IsGuestSession() ||
                                browser_->profile()->IsRegularProfile();
 #endif
+
+  const std::string sab_value = base::CommandLine::ForCurrentProcess()->
+                                GetSwitchValueASCII("show-avatar-button");
+  if (sab_value == "always")
+    show_avatar_toolbar_button = true;
+  else if (sab_value == "incognito-and-guest")
+    show_avatar_toolbar_button = browser_->profile()->IsIncognitoProfile() ||
+                                 browser_->profile()->IsGuestSession();
+  else if (sab_value == "never")
+    show_avatar_toolbar_button = false;
+
   avatar_->SetVisible(show_avatar_toolbar_button);
 
 #if BUILDFLAG(ENABLE_WEBUI_TAB_STRIP)
@@ -976,10 +987,11 @@ void ToolbarView::InitLayout() {
             .WithOrder(kToolbarActionsFlexOrder));
   }
 
-  if (toolbar_divider_) {
-    toolbar_divider_->SetProperty(
-        views::kMarginsKey,
-        gfx::Insets::VH(0, GetLayoutConstant(TOOLBAR_DIVIDER_SPACING)));
+  if (toolbar_divider_ && base::CommandLine::ForCurrentProcess()->HasSwitch("compact-ui")) {
+    toolbar_divider_->SetProperty(views::kMarginsKey, gfx::Insets::VH(0, 2));
+  } else if (toolbar_divider_)  {
+    toolbar_divider_->SetProperty(views::kMarginsKey,
+                      gfx::Insets::VH(0, GetLayoutConstant(TOOLBAR_DIVIDER_SPACING)));
   }
 
   constexpr int kToolbarFlexOrderStart = 1;
@@ -1030,8 +1042,11 @@ void ToolbarView::LayoutCommon() {
     }
   }
 
-  layout_manager_->SetInteriorMargin(interior_margin);
-
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch("compact-ui")) {
+    layout_manager_->SetInteriorMargin(gfx::Insets::VH(3, 0));
+  } else {
+    layout_manager_->SetInteriorMargin(interior_margin);
+  }
   // Extend buttons to the window edge if we're either in a maximized or
   // fullscreen window. This makes the buttons easier to hit, see Fitts' law.
   const bool extend_buttons_to_edge =

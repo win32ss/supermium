@@ -49,6 +49,9 @@ BLINK_COMMON_EXPORT BASE_DECLARE_FEATURE(kAdAuctionSignals);
 BLINK_COMMON_EXPORT BASE_DECLARE_FEATURE_PARAM(int,
                                                kAdAuctionSignalsMaxSizeBytes);
 
+// Disable User Agent Client Hints.
+BLINK_COMMON_EXPORT BASE_DECLARE_FEATURE(kRemoveClientHints);
+
 // Avoids copying ResourceRequest::TrustedParams when possible.
 BLINK_COMMON_EXPORT BASE_DECLARE_FEATURE(kAvoidTrustedParamsCopies);
 
@@ -1582,6 +1585,9 @@ BLINK_COMMON_EXPORT BASE_DECLARE_FEATURE(
     kReleaseResourceStrongReferencesOnMemoryPressure);
 
 BLINK_COMMON_EXPORT BASE_DECLARE_FEATURE(kRemoveCommitRedirectUrlsArray);
+
+// Disable User Agent Client Hints.
+BLINK_COMMON_EXPORT BASE_DECLARE_FEATURE(kRemoveClientHints);
 
 // If enabled, prefetches and prerenders will not include a Purpose: prefetch
 // header.

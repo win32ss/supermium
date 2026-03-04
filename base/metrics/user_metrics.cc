@@ -33,16 +33,16 @@ void DispatchAction(const std::string& action, TimeTicks action_time) {
 }  // namespace
 
 void RecordAction(const UserMetricsAction& action) {
-  RecordComputedAction(action.str_);
+  // RecordComputedAction(action.str_);
 }
 
 void RecordComputedAction(const std::string& action) {
-  RecordComputedActionAt(action, TimeTicks::Now());
+  // RecordComputedActionAt(action, TimeTicks::Now());
 }
 
 void RecordComputedActionSince(const std::string& action,
                                TimeDelta time_since) {
-  RecordComputedActionAt(action, TimeTicks::Now() - time_since);
+  // RecordComputedActionAt(action, TimeTicks::Now() - time_since);
 }
 
 void RecordComputedActionAt(const std::string& action, TimeTicks action_time) {
