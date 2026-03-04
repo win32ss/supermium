@@ -329,7 +329,9 @@ bool HintsFetcher::FetchOptimizationGuideServiceHints(
       // fetch.
       variations::InIncognito::kNo, variations::SignedIn::kNo,
       traffic_annotation);
-
+  if (!active_url_loader_) {
+    return false;
+  }
   active_url_loader_->AttachStringForUpload(serialized_request,
                                             "application/x-protobuf");
 
