@@ -789,7 +789,7 @@ blink::UserAgentMetadata GetUserAgentMetadata(bool only_low_entropy_ch) {
   if(!full_version_custom.empty())
 	  metadata.full_version = full_version_custom;
   else
-      metadata.full_version = std::string("141.0.6478.261");
+      metadata.full_version = std::string("144.0.7559.189");
   std::string model_custom;
   model_custom = parseStr(uachstr, UACHCustomModel);
   if(!model_custom.empty())
