@@ -205,6 +205,7 @@
 #include <commctrl.h>
 #include <shellapi.h>
 
+#include "base/win/win_util.h"
 #include "net/base/winsock_init.h"
 #endif
 
@@ -1179,8 +1180,9 @@ void BrowserMainLoop::ShutdownThreadsAndCleanUp() {
       FROM_HERE,
       base::BindOnce(base::IgnoreResult(
           &base::PermanentThreadAllowance::AllowBaseSyncPrimitives)));
+  bool is_single_process = RenderProcessHost::run_renderer_in_process();
 
-  if (RenderProcessHost::run_renderer_in_process())
+  if (is_single_process)
     RenderProcessHostImpl::ShutDownInProcessRenderer();
 
   if (parts_) {
@@ -1302,6 +1304,13 @@ void BrowserMainLoop::ShutdownThreadsAndCleanUp() {
     // connection in there is bound to IO thread.
     std::ignore = audio_system_.release();
   }
+
+#if BUILDFLAG(IS_WIN)
+  if (is_single_process) {
+      base::win::SetShouldCrashOnProcessDetach(false);
+      ::ExitProcess(0);
+  }
+#endif
 
   if (parts_) {
     TRACE_EVENT0("shutdown", "BrowserMainLoop::Subsystem:PostDestroyThreads");

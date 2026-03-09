@@ -461,13 +461,16 @@ ProfileManager::ProfileManager(const base::FilePath& user_data_dir)
 
 ProfileManager::~ProfileManager() {
   DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
-  for (auto& observer : observers_) {
-    observer.OnProfileManagerDestroying();
+  if (!content::RenderProcessHost::run_renderer_in_process()) {
+    for (auto& observer : observers_) {
+      observer.OnProfileManagerDestroying();
+    }
   }
-
   base::UmaHistogramBoolean("Profile.DidDestroyProfileBeforeShutdown",
                             could_have_destroyed_profile_);
-  if (base::FeatureList::IsEnabled(features::kDestroyProfileOnBrowserClose)) {
+  if (!content::RenderProcessHost::run_renderer_in_process()
+           && base::FeatureList::IsEnabled(
+              features::kDestroyProfileOnBrowserClose)) {
     // Ideally, all the keepalives should've been cleared already. Report
     // metrics for incorrect usage of ScopedProfileKeepAlive.
     for (const auto& path_and_profile_info : profiles_info_) {
@@ -488,7 +491,9 @@ ProfileManager::~ProfileManager() {
   }
 
   profiles_info_.clear();
-  ProfileDestroyer::DestroyPendingProfilesForShutdown();
+  if (!content::RenderProcessHost::run_renderer_in_process()) {
+    ProfileDestroyer::DestroyPendingProfilesForShutdown();
+  }
 }
 
 #if BUILDFLAG(ENABLE_SESSION_SERVICE)

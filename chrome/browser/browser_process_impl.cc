@@ -583,6 +583,7 @@ void BrowserProcessImpl::StartTearDown() {
 #endif  // BUILDFLAG(ENABLE_EXTENSIONS_CORE)
 
   // Need to clear profiles (download managers) before the IO thread.
+  if (!content::RenderProcessHost::run_renderer_in_process())
   {
     TRACE_EVENT0("shutdown",
                  "BrowserProcessImpl::StartTearDown:ProfileManager");

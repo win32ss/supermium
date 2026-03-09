@@ -359,11 +359,13 @@ ProfileDestroyer::~ProfileDestroyer() {
                                 : ProfileDestructionType::kDelayed);
   // If this is crashing, a renderer process host is not destroyed fast enough
   // during shutdown of the browser and deletion of the profile.
-  CHECK(!observations_.IsObservingAnySource())
-      << "Some render process hosts were not destroyed early enough!";
-  auto iter = PendingDestroyers().find(this);
-  CHECK(iter != PendingDestroyers().end());
-  PendingDestroyers().erase(iter);
+  if (!content::RenderProcessHost::run_renderer_in_process()) {
+    CHECK(!observations_.IsObservingAnySource())
+        << "Some render process hosts were not destroyed early enough!";
+    auto iter = PendingDestroyers().find(this);
+    CHECK(iter != PendingDestroyers().end());
+    PendingDestroyers().erase(iter);
+  }
 }
 
 void ProfileDestroyer::RenderProcessHostDestroyed(

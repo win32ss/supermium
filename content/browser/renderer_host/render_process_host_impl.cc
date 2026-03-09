@@ -1697,13 +1697,15 @@ void RenderProcessHostImpl::ShutDownInProcessRenderer() {
       for (auto& observer : host->observers_) {
         observer.InProcessRendererExiting(host);
       }
-      for (auto& observer : host->observers_) {
-        observer.RenderProcessHostDestroyed(host);
-      }
+      if (!base::CommandLine::ForCurrentProcess()->HasSwitch("single-process")) {
+        for (auto& observer : host->observers_) {
+          observer.RenderProcessHostDestroyed(host);
+        }
 #ifndef NDEBUG
-      host->is_self_deleted_ = true;
+        host->is_self_deleted_ = true;
 #endif
-      delete host;
+        delete host;
+      }
       return;
     }
     default:
