@@ -1252,23 +1252,23 @@ void BrowserActions::InitializeBrowserActions() {
           .SetText(BrowserActions::GetCleanTitleAndTooltipText(
               l10n_util::GetStringUTF16(IDS_SHOW_CUSTOMIZE_CHROME_TOOLBAR)))
           .Build());
-
-  root_action_item_->AddChild(
-      actions::ActionItem::Builder(
-          base::BindRepeating(
-              [](BrowserWindowInterface* bwi, actions::ActionItem* item,
-                 actions::ActionInvocationContext context) {
-                web_app::ShowPwaInstallDialog(bwi);
-              },
-              bwi))
-          .SetActionId(kActionInstallPwa)
-          .SetImage(ui::ImageModel::FromVectorIcon(
-              kInstallDesktopChromeRefreshIcon, ui::kColorIcon))
-          .SetProperty(actions::kActionItemPinnableKey, false)
-          // Text and TooltipText are not populated yet because they are
-          // dynamic. They depend on the current tab WebContents.
-          .Build());
-
+  if (!base::CommandLine::ForCurrentProcess()->HasSwitch("disable-pwa-install-prompt")) {
+    root_action_item_->AddChild(
+        actions::ActionItem::Builder(
+            base::BindRepeating(
+                [](BrowserWindowInterface* bwi, actions::ActionItem* item,
+                   actions::ActionInvocationContext context) {
+                  web_app::ShowPwaInstallDialog(bwi);
+                },
+                bwi))
+            .SetActionId(kActionInstallPwa)
+            .SetImage(ui::ImageModel::FromVectorIcon(
+                kInstallDesktopChromeRefreshIcon, ui::kColorIcon))
+            .SetProperty(actions::kActionItemPinnableKey, false)
+            // Text and TooltipText are not populated yet because they are
+            // dynamic. They depend on the current tab WebContents.
+            .Build());
+  }
   // Actions that do not directly show up in chrome UI.
   root_action_item_->AddChild(
       actions::ActionItem::Builder(
