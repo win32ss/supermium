@@ -302,17 +302,8 @@ SkPath NewTabButton::GetBorderPath(const gfx::Point& origin,
     radius -= 2;
   }
 
-  if (extend_to_top) {
-    path.moveTo(origin.x(), 0);
-    const float diameter = radius * 2;
-    path.rLineTo(diameter, 0);
-    path.rLineTo(0, origin.y() + radius);
-    path.rArcTo(SkPoint(radius, 0), 0, SkPathBuilder::kSmall_ArcSize, SkPathDirection::kCW,
-                SkPoint(-diameter, 0));
-    path.close();
-  } else {
-    path.addCircle(origin.x() + radius, origin.y() + radius, radius);
-  }
+  path.addCircle(origin.x() + radius, origin.y() + radius, radius);
+
   return path.detach();
 }
 
@@ -408,9 +399,10 @@ void NewTabButton::PaintFill(gfx::Canvas* canvas) const {
     // The shape and location of the background texture is defined by a clip
     // path. This needs to be translated to center it in the view.
     auto path = GetBorderPath(gfx::Point(), false);
-    // auto offset = GetContentsBounds().OffsetFromOrigin();
-    // path.offset(offset.x(), offset.y());
-    canvas->ClipPath(path, /*do_anti_alias=*/true);
+    auto offset = GetContentsBounds().OffsetFromOrigin();
+    SkPathBuilder path_builder = SkPathBuilder(path);
+    path_builder.offset(offset.x(), offset.y());
+    canvas->ClipPath(path_builder.detach(), /*do_anti_alias=*/true);
     if (base::CommandLine::ForCurrentProcess()->HasSwitch("enable-advanced-customization")) {
       std::string tab_str;
       gfx::Rect visible_rect;

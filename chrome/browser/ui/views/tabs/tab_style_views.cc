@@ -1316,7 +1316,8 @@ void TabStyleViewsImpl::PaintSeparators(gfx::Canvas* canvas) const {
     canvas->DrawRoundRect(separator_bounds.leading,
                           tab_style()->GetSeparatorCornerRadius() * scale, flags);
   }
-  if (GetLayoutConstant(DRAW_RIGHT_TAB_SEPARATOR)) {
+  if (GetLayoutConstant(DRAW_RIGHT_TAB_SEPARATOR)
+      && tab()->controller()->GetAdjacentTab(tab(), 1)) {
     flags.setColor(separator_color(separator_opacities.right));
     canvas->DrawRoundRect(separator_bounds.trailing,
                           tab_style()->GetSeparatorCornerRadius() * scale, flags);
