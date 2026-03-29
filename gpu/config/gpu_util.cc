@@ -13,6 +13,7 @@
 #include <windows.h>
 // Must be included after windows.h.
 #include <psapi.h>
+#include "base/win/windows_version.h"
 #endif  // BUILDFLAG(IS_WIN)
 
 #include <vulkan/vulkan.h>
@@ -143,6 +144,11 @@ GpuFeatureStatus GetGpuRasterizationFeatureStatus(
     const std::set<int>& blocklisted_features,
     const base::CommandLine& command_line,
     bool use_swift_shader) {
+#if BUILDFLAG(IS_WIN)
+  if (base::win::GetVersion() < base::win::Version::VISTA &&
+      !command_line.HasSwitch(switches::kEnableGpuRasterization))
+    return kGpuFeatureStatusDisabled;
+#endif
   if (command_line.HasSwitch(switches::kDisableGpuRasterization))
     return kGpuFeatureStatusDisabled;
   else if (command_line.HasSwitch(switches::kEnableGpuRasterization))

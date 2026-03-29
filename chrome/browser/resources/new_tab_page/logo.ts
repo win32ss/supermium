@@ -202,6 +202,10 @@ export class LogoElement extends CrLitElement {
   }
 
   private computeShowLogo_(): boolean {
+    if (this.theme) {
+        if (this.theme.isDark)
+            return false;
+    }
     return !!this.loaded_ && !this.showDoodle_;
   }
 

@@ -286,7 +286,8 @@ bool IsSwiftShaderAllowed(const base::CommandLine* command_line) {
 BASE_FEATURE(kAllowD3D11WarpFallback, base::FEATURE_ENABLED_BY_DEFAULT);
 
 bool IsWARPAllowed(const base::CommandLine* command_line) {
-  if (command_line->HasSwitch(switches::kDisableD3D11Warp)) {
+  if (command_line->HasSwitch(switches::kDisableD3D11Warp) ||
+      base::win::GetVersion() < base::win::Version::WIN8) {
     return false;
   }
   return base::FeatureList::IsEnabled(kAllowD3D11WarpFallback);
