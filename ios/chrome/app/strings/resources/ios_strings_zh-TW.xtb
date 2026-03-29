@@ -1065,7 +1065,7 @@
 <translation id="5079950360618752063">使用建議的密碼</translation>
 <translation id="5083464117946352670">無法確定檔案大小。</translation>
 <translation id="5085558938118581974">搜尋所有已同步裝置的分頁</translation>
-<translation id="508645147179720015">記事超過 1000 個半形字元</translation>
+<translation id="508645147179720015">附註內容超過 1000 個半形字元</translation>
 <translation id="5087098519049306025">價格追蹤</translation>
 <translation id="5090832849094901128">刪除這組密碼並不會刪除你的 <ph name="WEBSITE" /> 帳戶。</translation>
 <translation id="5113960131843706315">正在取得你的資料…</translation>
@@ -1263,7 +1263,7 @@
 <translation id="5791632441210678828">用於排序已追蹤動態消息的按鈕。</translation>
 <translation id="5803566855766646066">確定要捨棄這張新的信用卡嗎？</translation>
 <translation id="5804241973901381774">權限</translation>
-<translation id="58081802114142635">你的活動記錄有助於提升 Google AI 服務品質</translation>
+<translation id="58081802114142635">活動記錄有助於提升 Google AI 服務品質</translation>
 <translation id="5813223718099710537">使用這項功能時，頁面內容和網址會傳送到 Google。你可以隨時前往設定關閉這項功能。</translation>
 <translation id="5817176759448082654">密碼安全檢查</translation>
 <translation id="5818161931099046557">前往 Google 帳戶編輯</translation>
@@ -1660,7 +1660,7 @@
 <translation id="7223102419539744003">關閉分頁</translation>
 <translation id="7223134495231529579">儲存到下載項目</translation>
 <translation id="722339453342442311">立即檢查</translation>
-<translation id="7227235818314667565">管理分享的群組</translation>
+<translation id="7227235818314667565">管理共用設定</translation>
 <translation id="7233006041370588369">請選取要填入的密碼。</translation>
 <translation id="7241135764990439166">無法使用無痕模式</translation>
 <translation id="7248046129087111453"><ph name="BEGIN_LINK" />搜尋記錄<ph name="END_LINK" />和<ph name="BEGIN_LINK" />其他形式的活動<ph name="END_LINK" />可能會儲存至你的 Google 帳戶。</translation>

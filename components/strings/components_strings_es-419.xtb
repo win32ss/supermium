@@ -244,7 +244,7 @@ De lo contrario, la configuración de privacidad bloqueará esta acción. Esto p
 <translation id="1382194467192730611">El dispositivo USB que permite tu administrador</translation>
 <translation id="1384725838384960382">Hoja de autenticación de credenciales de pago seguro</translation>
 <translation id="1386623374109090026">Anotaciones</translation>
-<translation id="138810468159004008">Permitir mientras visitas el sitio</translation>
+<translation id="138810468159004008">Permitir mientras visito el sitio</translation>
 <translation id="1391145880481608015">Más información sobre esta advertencia</translation>
 <translation id="139161720020179799">Gris oscuro 1</translation>
 <translation id="1391625539203220400">¿Quieres guardar el IBAN en este dispositivo?</translation>
@@ -2544,7 +2544,7 @@ De lo contrario, la configuración de privacidad bloqueará esta acción. Esto p
 <translation id="5097099694988056070">Estadísticas del dispositivo, como el uso de CPU/RAM</translation>
 <translation id="5097468150760963273">68.58 × 99.06 cm</translation>
 <translation id="5097501891273180634">A2</translation>
-<translation id="5102512728737175215">Presionar Tab y, luego, Intro para preguntar al Modo IA</translation>
+<translation id="5102512728737175215">Presionar Tab y luego Intro para preguntar al Modo IA</translation>
 <translation id="510644072453496781">Cartón (terminación)</translation>
 <translation id="5106648964679263509">Se completó la tarjeta virtual para <ph name="BNPL_ISSUER_NAME" /></translation>
 <translation id="5108567515277121477">Tarjeta de lealtad</translation>
@@ -4476,7 +4476,7 @@ Detalles adicionales:
 <translation id="822925450938886901">Para obtener información adicional y conocer las políticas que pueden aplicarse, abre chrome://management en tu navegador.</translation>
 <translation id="8229288958566709448"><ph name="WIDTH" /> × <ph name="HEIGHT" /> mm</translation>
 <translation id="822964464349305906"><ph name="TYPE_1" />, <ph name="TYPE_2" /></translation>
-<translation id="8230528737876789478">VIN (número de identificación del vehículo)</translation>
+<translation id="8230528737876789478">VIN (número de identificación vehicular)</translation>
 <translation id="8232343881378637145">Temperatura de la plataforma</translation>
 <translation id="8233773197406738106">Preparando archivo</translation>
 <translation id="823490921909113114">Para habilitar estos parámetros de configuración y usar la información de pago de tu Cuenta de Google, visita la configuración de los servicios de autocompletado.</translation>

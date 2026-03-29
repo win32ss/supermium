@@ -487,7 +487,7 @@ Diese Funktion ist unter <ph name="MAC_OS_NAME" /> 10.15 und höher verfügbar.
       Wenn diese Richtlinie aktiviert ist, werden verbesserte internationale Tastenkürzel aktiviert.
       Ist die Richtlinie nicht konfiguriert, wird sie für verwaltete und nutzereigene Geräte aktiviert.
       Beachte, dass es sich hierbei um eine vorübergehende Richtlinie handelt, die dafür sorgt, dass alte Tastenkürzel weiterhin von verwalteten Nutzern verwendet werden können. Diese Richtlinie wird verworfen, sobald benutzerdefinierte Tastenkürzel verfügbar sind.</translation>
-<translation id="1361661842732478894">„Home“-Schaltfläche in der Symbolleiste anzeigen</translation>
+<translation id="1361661842732478894">„Home“-Button in der Symbolleiste anzeigen</translation>
 <translation id="1363275621236827384">Abfragen an Quirks-Server für Hardwareprofile aktivieren</translation>
 <translation id="1363839375295535439">Wenn die Richtlinie aktiviert oder nicht konfiguriert ist, wird die LPAC-Sandbox für Druckdienste aktiviert, sofern dies von der Systemkonfiguration unterstützt wird.
 
@@ -1872,9 +1872,9 @@ Isolierte Web-Apps werden mit ihrer Web-Paket-ID angegeben, z. B. „<ph name="
 
 Ist diese Richtlinie nicht konfiguriert, können Nutzer die im Launcher angepinnten Apps ändern.</translation>
 <translation id="229322770310505679">Gruppen aus Einzelrichtlinien aktivieren</translation>
-<translation id="22941467117331786">Wenn die Richtlinie auf "True" gesetzt ist, wird während aktiver Sitzungen in der Taskleiste eine große rote Schaltfläche zum Abmelden angezeigt, solange das Display nicht gesperrt ist.
+<translation id="22941467117331786">Wenn die Richtlinie auf „True“ gesetzt ist, wird während aktiver Sitzungen in der Taskleiste ein großer roter Button zum Abmelden angezeigt, solange das Display nicht gesperrt ist.
 
-      Ist sie auf "False" gesetzt oder nicht konfiguriert, wird keine Schaltfläche angezeigt.</translation>
+      Ist sie auf „False“ gesetzt oder nicht konfiguriert, wird kein Button angezeigt.</translation>
 <translation id="2294382669900758280">Das Abspielen von Videos in Android-Apps wird nicht berücksichtigt, auch wenn diese Richtlinie auf <ph name="TRUE" /> gesetzt ist.</translation>
 <translation id="2299220924812062390">Liste der aktivierten Plug-ins angeben</translation>
 <translation id="2299815818824242485">Keine weitergeleiteten Suchen mit erhöhter Sicherheit zulassen</translation>
@@ -2242,7 +2242,7 @@ Hinweis: Wenn du ein Feld auslässt, gelten alle Werte für dieses Feld als übe
 
       Nutzer können nicht ändern, in welchem Ordner die Lesezeichen abgelegt werden. Aber sie haben die Möglichkeit, den Ordner in der Lesezeichenleiste auszublenden. Der Standardname des Ordners für verwaltete Lesezeichen lautet "Verwaltete Lesezeichen", kann jedoch angepasst werden. Dazu muss der Richtlinie ein neues untergeordnetes Wörterbuch mit einem einfachen Schlüssel namens "<ph name="TOPLEVEL_NAME" />" hinzugefügt werden, wobei der gewünschte Ordnername der Wert ist. Verwaltete Lesezeichen werden nicht mit dem Nutzerkonto synchronisiert und können nicht von Erweiterungen geändert werden.</translation>
 <translation id="2552966063069741410">Zeitzone</translation>
-<translation id="2555244983262829274">„Home“-Schaltfläche in der Symbolleiste ausblenden</translation>
+<translation id="2555244983262829274">„Home“-Button in der Symbolleiste ausblenden</translation>
 <translation id="2558154810835597313">Ermöglicht die Bereitstellung von Clientzertifikaten für verwaltete Nutzer und Profile</translation>
 <translation id="2559274305158103883">Post-Quanten-Algorithmus für Schlüsselvereinbarungen mit WebRTC deaktivieren</translation>
 <translation id="2562213287271514629">Zulassen, dass veraltete <ph name="FLASH_PLUGIN_NAME" />-Plug-ins als normale <ph name="FLASH_PLUGIN_NAME" />-Plug-ins verwendet werden</translation>
@@ -7663,7 +7663,7 @@ Das Zeitlimit bei Inaktivität bis zum Start des Bildschirmschoners und das Inte
 <translation id="617829127527171373">Einstellungen zum Teilen von Tabgruppen</translation>
 <translation id="6181304954168534748">SHA-256-Hash der Desktopvorlage.</translation>
 <translation id="6181618732396778048">Websites nicht erlauben, um Schreibzugriff auf Dateien und Verzeichnisse zu bitten</translation>
-<translation id="6181783961196084973">Wert der Schaltfläche zum Umschalten der App-Aktivitätserfassung. Wenn diese Option auf „true“ gesetzt ist, werden die App-Aktivitäten von Nutzern an den Server gesendet, damit sie in der <ph name="PRODUCT_NAME" />-App des Kindes und des Elternteils angezeigt werden können. Ist sie auf „false“ gesetzt, funktionieren App-spezifische Zeitlimits zwar weiterhin, es werden jedoch keine Daten an den Server gesendet, sodass sie nicht in <ph name="PRODUCT_NAME" /> angezeigt werden können.</translation>
+<translation id="6181783961196084973">Wert des Buttons zum Umschalten der App-Aktivitätserfassung. Wenn diese Option auf „true“ gesetzt ist, werden die App-Aktivitäten von Nutzern an den Server gesendet, damit sie in der <ph name="PRODUCT_NAME" />-App des Kindes und des Elternteils angezeigt werden können. Ist sie auf „false“ gesetzt, funktionieren App-spezifische Zeitlimits zwar weiterhin, es werden jedoch keine Daten an den Server gesendet, sodass sie nicht in <ph name="PRODUCT_NAME" /> angezeigt werden können.</translation>
 <translation id="6182206125906000651">HTTPS-Upgrades deaktivieren.</translation>
 <translation id="6182563940865917569">Automatische Wiedergabe von Medien in Chrome zulassen</translation>
 <translation id="618635925649844912">Mit dieser Richtlinie wird festgelegt, ob dem Nutzer beim ersten Anmeldungsvorgang der Einführungsbildschirm für KI-Funktionen während der Sitzung angezeigt wird.
@@ -7902,9 +7902,8 @@ Unter <ph name="MAC_OS_NAME" /> steht diese Richtlinie nur bei Instanzen zur Ver
         Sie kann den Nutzer vor dem Zugriff auf eingeschränkte Inhalte schützen, die sich auf Web-Properties von Google befinden.
         Wenn diese Richtlinie auf "true" gesetzt wird, wird der Nutzer abgemeldet, sobald sein Authentifizierungstoken ungültig wird und das Token nicht wiederhergestellt werden kann.
         Wird sie auf "false" gesetzt oder nicht konfiguriert, kann der Nutzer in einem nicht authentifizierten Zustand fortfahren.</translation>
-<translation id="631183702829488873">Wenn diese Funktion aktiviert ist, erscheint auf dem Start- und Sperrbildschirm eine Schaltfläche zum Anzeigen des Passworts.
-          Sie wird im Textfeld für das Passwort als Augensymbol dargestellt. Die Schaltfläche wird nicht angezeigt, wenn die Funktion deaktiviert ist.
-      </translation>
+<translation id="631183702829488873">Wenn diese Funktion aktiviert ist, erscheint auf dem Start- und Sperrbildschirm ein Button zum Anzeigen des Passworts.
+          Sie wird im Textfeld für das Passwort als Augensymbol dargestellt. Der Button wird nicht angezeigt, wenn die Funktion deaktiviert ist.</translation>
 <translation id="6313108604615108577">Über diese Richtlinie wird festgelegt, ob die Hauptversion im User-Agent-String als „99“ festgeschrieben wird.
 
       Anhand des User-Agent-Anfrageheaders können Websites die Anwendung, das Betriebssystem, den Anbieter und/oder die Version des anfragenden User-Agents identifizieren.
@@ -8533,7 +8532,7 @@ Unter <ph name="MS_WIN_NAME" /> wird die KDC-Richtlinie immer umgesetzt.</transl
 <translation id="6661178198729301029">Cloud-Berichterstellung über verwaltete Profile aktivieren</translation>
 <translation id="666203515318060501">Erweitertes Autofill zulassen, ohne KI‑Modelle zu verbessern.</translation>
 <translation id="6665670272107384733">Festlegen, wie oft der Nutzer das Passwort eingeben muss, um das schnelle Entsperren zu verwenden</translation>
-<translation id="6667586534922258705">Schaltfläche zum Anzeigen des Passworts auf dem Start- oder Sperrbildschirm anzeigen</translation>
+<translation id="6667586534922258705">Button zum Anzeigen des Passworts auf dem Start- oder Sperrbildschirm anzeigen</translation>
 <translation id="6668559639284945695">Mit dieser Richtlinie kann das alte Verhalten für den Cookie-Bereich wiederhergestellt werden.
 
 Das bedeutet, dass auf Cookies, die über ein bestimmtes Protokoll (z. B. HTTPS) oder einen bestimmten Port festgelegt wurden, über ein anderes Protokoll oder einen anderen Port zugegriffen werden kann.
@@ -12061,7 +12060,7 @@ Hinweis: Durch einen Neustart des Geräts wird der Cache geleert. Auch für Nutz
       Wenn die Richtlinie auf „false“ gesetzt oder nicht konfiguriert ist, werden keine Informationen ausgegeben.
       Wenn sie auf „true“ gesetzt wird, werden die Anmelde-/Abmeldeereignisse auf den Geräten gemeldet.</translation>
 <translation id="9087652369391570821">Konfigurationsrichtlinie für den Chrome Enterprise Connector „OnFileTransfer”</translation>
-<translation id="9088191250434406767">Wenn diese Richtlinie nicht konfiguriert oder auf „Enabled“ gesetzt wird, können Nutzer mit <ph name="GOOGLE_LENS_PRODUCT_NAME" /> ihre Kamera für die Suche verwenden. Ist die Richtlinie auf „Disabled“ gesetzt, wird Nutzern die Schaltfläche „<ph name="GOOGLE_LENS_PRODUCT_NAME" />“ im Suchfeld nicht angezeigt, wenn die kameragestützte Suche mit <ph name="GOOGLE_LENS_PRODUCT_NAME" /> verfügbar ist.</translation>
+<translation id="9088191250434406767">Wenn diese Richtlinie nicht konfiguriert oder auf „Enabled“ gesetzt wird, können Nutzer mit <ph name="GOOGLE_LENS_PRODUCT_NAME" /> ihre Kamera für die Suche verwenden. Ist die Richtlinie auf „Disabled“ gesetzt, wird Nutzern der Button „<ph name="GOOGLE_LENS_PRODUCT_NAME" />“ im Suchfeld nicht angezeigt, wenn die kameragestützte Suche mit <ph name="GOOGLE_LENS_PRODUCT_NAME" /> verfügbar ist.</translation>
 <translation id="9088433379343318874">Contentanbieter für betreute Nutzer aktivieren</translation>
 <translation id="9088444059179765143">Methode für die automatische Erkennung der Zeitzone konfigurieren</translation>
 <translation id="9095599826504830315">Tab Compare nicht zulassen.</translation>

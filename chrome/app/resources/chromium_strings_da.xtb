@@ -294,7 +294,7 @@
 <translation id="4281844954008187215">Servicevilkår</translation>
 <translation id="4285930937574705105">Installationen mislykkedes på grund af en ikke-specificeret fejl. Hvis Chromium kører, skal du lukke programmet og prøve igen.</translation>
 <translation id="4298125729853015961">Eksportér adgangskoder fra Chromium</translation>
-<translation id="4304713468139749426">Adgangs­kode­admin­istrator</translation>
+<translation id="4304713468139749426">Adgangskode­administrator</translation>
 <translation id="4334241893986177674">Søg i dette screenshot</translation>
 <translation id="4334294535648607276">Download fuldført.</translation>
 <translation id="439358628917130594"><ph name="MANAGER" /> kræver, at du læser og accepterer følgende servicevilkår, inden du bruger denne enhed. Disse vilkår udvider, ændrer eller begrænser på ingen måde vilkårene for Chromium OS.</translation>
@@ -696,7 +696,7 @@ Chromium kan ikke gendanne dine præferencer.</translation>
 <translation id="9106236359747881194">Markér den tekst, du vil søge efter</translation>
 <translation id="9106612006984859720">Hvis du vil have fremtidige Chromium-opdateringer, skal du have Windows 10 eller nyere. Denne computer anvender Windows 8.1.</translation>
 <translation id="91086099826398415">Åbn linket på en ny Chromium-&amp;fane</translation>
-<translation id="911206726377975832">Slet også dine browserdata?</translation>
+<translation id="911206726377975832">Slet også dine browserdata</translation>
 <translation id="9134482777260927479">Lektiehjælp</translation>
 <translation id="9148058034647219655">Afslut</translation>
 <translation id="9155105544013854680">Fortsæt, hvor du slap: Chromium kan gendanne dine faner, hver gang du genstarter. For at aktivere dette skal du gå til</translation>

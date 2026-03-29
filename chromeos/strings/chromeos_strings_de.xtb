@@ -174,7 +174,7 @@
 <translation id="1644574205037202324">Verlauf</translation>
 <translation id="1651925268237749928">Du hast ein geteiltes Album ausgewählt. Andere Personen können Fotos hinzufügen oder ändern. Für deinen Hintergrund können Fotos verwendet werden, die sich derzeit nicht in diesem Album befinden.</translation>
 <translation id="1661512400125589646">Pausieren</translation>
-<translation id="1661865805917886535">Einige Konto- und Systeminformationen werden möglicherweise an Google gesendet. Wir verwenden diese Daten unter Einhaltung unserer Datenschutzerklärung (<ph name="PRIVACYPOLICYURL" />) und Nutzungsbedingungen (<ph name="TERMSOFSERVICEURL" />) dazu, technische Probleme zu beheben und unsere Dienste zu optimieren. Inhaltsänderungen kannst du in der Rechtliche Hinweise-Hilfe (<ph name="LEGALHELPPAGEURL" />) anfragen.</translation>
+<translation id="1661865805917886535">Einige Konto- und Systeminformationen werden möglicherweise an Google gesendet. Wir verwenden diese Daten unter Einhaltung unserer Datenschutzerklärung (<ph name="PRIVACYPOLICYURL" />) und Nutzungsbedingungen (<ph name="TERMSOFSERVICEURL" />) dazu, technische Probleme zu beheben und unsere Dienste zu optimieren. Inhaltsänderungen kannst du in der Rechtsthemen-Hilfe (<ph name="LEGALHELPPAGEURL" />) anfragen.</translation>
 <translation id="1662699081856352167">Zusammenfassung erfolgreich generiert</translation>
 <translation id="1662989795263954667">Angehalten – Keine Tinte</translation>
 <translation id="1664796644829245314">Vorschau anzeigen für „<ph name="PREVIEW_OBJECT" />“</translation>
@@ -1036,7 +1036,7 @@
 <translation id="554517032089923082">GTC</translation>
 <translation id="5554741914132564590">Dieses Update wird vom Hersteller des externen Geräts bereitgestellt und wurde nicht von Google überprüft.</translation>
 <translation id="5559898619118303662">Dunkles Design bei Sonnenuntergang automatisch aktivieren</translation>
-<translation id="556042886152191864">Schaltfläche</translation>
+<translation id="556042886152191864">Button</translation>
 <translation id="5562551811867441927"><ph name="TERRAIN_FEATURE" /> in den Farbtönen <ph name="TERRAIN_COLOR" /></translation>
 <translation id="5572169899491758844">Scannen</translation>
 <translation id="5578477003638479617">UMTS</translation>
@@ -1274,7 +1274,7 @@
 <translation id="6595046262780525922">Transkriptfunktion aktivieren und Transkriptmodell herunterladen?</translation>
 <translation id="6596816719288285829">IP-Adresse</translation>
 <translation id="6599673642868607614">Vielen Dank für das Feedback! Dein Feedback wird von unserem Team gelesen und hilft uns dabei, Chromebooks noch weiter zu verbessern. Da wir sehr viele Rückmeldungen erhalten, können wir dir nicht persönlich antworten.</translation>
-<translation id="6608043585557830684">Sprache-zu-Text ist deaktiviert. Aktiviere die Funktion in den Einstellungen oder im Dreipunkt-Menü <ph name="THREE_DOTS_MENU_ICON" />.</translation>
+<translation id="6608043585557830684">Transkription ist deaktiviert. Aktiviere die Funktion in den Einstellungen oder im Dreipunkt-Menü <ph name="THREE_DOTS_MENU_ICON" />.</translation>
 <translation id="660846213831377756">Tastaturmaus</translation>
 <translation id="6618744767048954150">Läuft</translation>
 <translation id="6620487321149975369">Druckaufträge erscheinen im Verlauf, solange sie nicht manuell gelöscht werden</translation>
@@ -1528,7 +1528,7 @@ Wenn du das möchtest, lade das Transkriptmodell (bis zu 100 MB) herunter.</tra
 <translation id="7705524343798198388">VPN</translation>
 <translation id="7716280709122323042">WPA3</translation>
 <translation id="7718231387947923843">Tastaturbeleuchtung</translation>
-<translation id="7730077286107534951">Einige Konto- und Systeminformationen werden möglicherweise an Google gesendet. Wir verwenden diese Daten unter Einhaltung unserer <ph name="BEGIN_LINK2" />Datenschutzerklärung<ph name="END_LINK2" /> und <ph name="BEGIN_LINK3" />Nutzungsbedingungen<ph name="END_LINK3" /> dazu, technische Probleme zu beheben und unsere Dienste zu optimieren. Inhaltsänderungen kannst du in der <ph name="BEGIN_LINK1" />Rechtliche Hinweise-Hilfe<ph name="END_LINK1" /> anfragen.</translation>
+<translation id="7730077286107534951">Einige Konto- und Systeminformationen werden möglicherweise an Google gesendet. Wir verwenden diese Daten unter Einhaltung unserer <ph name="BEGIN_LINK2" />Datenschutzerklärung<ph name="END_LINK2" /> und <ph name="BEGIN_LINK3" />Nutzungsbedingungen<ph name="END_LINK3" /> dazu, technische Probleme zu beheben und unsere Dienste zu optimieren. Inhaltsänderungen kannst du in der <ph name="BEGIN_LINK1" />Rechtsthemen-Hilfe<ph name="END_LINK1" /> anfragen.</translation>
 <translation id="773153675489693198">Ladezyklen</translation>
 <translation id="7746357909584236306">bearbeitbar</translation>
 <translation id="7747039790905080783">Vorinstallierter Schlüssel</translation>
@@ -1823,7 +1823,7 @@ Wenn du das möchtest, lade das Transkriptmodell (bis zu 100 MB) herunter.</tra
 <translation id="9024331582947483881">Vollbild</translation>
 <translation id="9025198690966128418">Als persönliches Gerät nutzen</translation>
 <translation id="902638246363752736">Tastatureinstellungen</translation>
-<translation id="9028832514430399253">Aktiviere die Ein-/Aus-Schaltfläche, um die Bildschirmschoner-Optionen auszuwählen</translation>
+<translation id="9028832514430399253">Aktiviere den Ein/Aus-Button, um die Bildschirmschoner-Optionen auszuwählen</translation>
 <translation id="9030883440316693822">Aufnahme löschen?</translation>
 <translation id="9036971622563146214">Ergebnisse</translation>
 <translation id="9039663905644212491">PEAP</translation>

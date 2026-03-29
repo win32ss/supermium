@@ -107,6 +107,9 @@ IN_PROC_BROWSER_TEST_F(ZoomViewInteractiveUiTest, ZoomStateUpdates) {
       CheckViewProperty(kActionItemZoomElementId,
                         &page_actions::PageActionView::GetTooltipText,
                         u"Zoom: 110%"),
+      CheckViewProperty(kActionItemZoomElementId,
+                        &page_actions::PageActionView::GetAccessibleName,
+                        u"Zoom: 110%"),
       CheckResult([&]() { return GetZoomPercent(); }, testing::Eq(110)),
       WithView(kActionItemZoomElementId,
                [&](page_actions::PageActionView* page_action_view) {
@@ -120,6 +123,9 @@ IN_PROC_BROWSER_TEST_F(ZoomViewInteractiveUiTest, ZoomStateUpdates) {
       DoZoomOut(), WaitForShow(kActionItemZoomElementId),
       CheckViewProperty(kActionItemZoomElementId,
                         &page_actions::PageActionView::GetTooltipText,
+                        u"Zoom: 90%"),
+      CheckViewProperty(kActionItemZoomElementId,
+                        &page_actions::PageActionView::GetAccessibleName,
                         u"Zoom: 90%"),
       CheckResult([&]() { return GetZoomPercent(); }, testing::Eq(90)),
       CheckView(kActionItemZoomElementId,
@@ -189,6 +195,23 @@ IN_PROC_BROWSER_TEST_F(ZoomViewInteractiveUiTest,
                   CheckResult([&] { return GetZoomPercent(); }, 100),
                   WaitForZoomBubbleHide(),
                   WaitForHide(kActionItemZoomElementId));
+}
+
+IN_PROC_BROWSER_TEST_F(ZoomViewInteractiveUiTest,
+                       AccessibleNameUpdatesWhileBubbleVisible) {
+  RunTestSequence(
+      WaitForZoomBubbleHide(), DoZoomIn(),
+      WaitForShow(kActionItemZoomElementId),
+      CheckResult([&]() { return GetZoomPercent(); }, testing::Eq(110)),
+      CheckViewProperty(kActionItemZoomElementId,
+                        &page_actions::PageActionView::GetAccessibleName,
+                        u"Zoom: 110%"),
+      MoveMouseTo(kActionItemZoomElementId), ClickMouse(),
+      WaitForZoomBubbleShow(), DoZoomIn(),
+      CheckViewProperty(kActionItemZoomElementId,
+                        &page_actions::PageActionView::GetAccessibleName,
+                        u"Zoom: 125%"),
+      WaitForZoomBubbleShow());
 }
 
 }  // namespace

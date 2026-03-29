@@ -994,7 +994,7 @@
 <translation id="1653958716132599769">関連するタブをグループ化</translation>
 <translation id="1654580009054503925">リクエストの表示を許可しないウェブサイト</translation>
 <translation id="1654713139320245449">キャスト先が見つかりません。サポートが必要ですか？</translation>
-<translation id="1656528038316521561">背景の透明度</translation>
+<translation id="1656528038316521561">背景の不透明度</translation>
 <translation id="1657406563541664238">使用統計データや障害レポートを Google に自動送信して <ph name="PRODUCT_NAME" /> の機能向上に役立てる</translation>
 <translation id="1657937299377480641">教育リソースにアクセスするために再度ログインするには、保護者の方に許可してもらってください</translation>
 <translation id="1658424621194652532">このページはマイクにアクセスしています。</translation>
@@ -8491,7 +8491,7 @@
 <translation id="6841186874966388268">エラー</translation>
 <translation id="6842135459748401207"><ph name="USER_EMAIL" /> にログインしているデバイスのみ</translation>
 <translation id="6842136130964845393">保存したパスワードに常にアクセスできるようにするには、本人確認を行ってください</translation>
-<translation id="6842670680297285750">現在のタブで新しい分割表示</translation>
+<translation id="6842670680297285750">現在のタブで新しい分割ビュー</translation>
 <translation id="6842749380892715807">XML サイトリストの前回のダウンロードは <ph name="LAST_DATE_DOWNLOAD" /> に行われました。</translation>
 <translation id="6842868554183332230">チャットアプリのステータスを設定するため、サイトでデバイスのアクティブ状態を検出する場合があります。</translation>
 <translation id="6843264316370513305">ネットワークのデバッグ</translation>
@@ -9547,7 +9547,7 @@
 <translation id="7586498138629385861">Chrome アプリが開いている間 Chrome は実行され続けます。</translation>
 <translation id="7587297195142686341">Gemini によるログイン</translation>
 <translation id="7587806318633605613">候補の履歴</translation>
-<translation id="7589448773774086276">現在のタブで新しい分割表示</translation>
+<translation id="7589448773774086276">現在のタブで新しい分割ビュー</translation>
 <translation id="7589461650300748890">データが失われる危険があります。</translation>
 <translation id="7590883480672980941">入力設定</translation>
 <translation id="7592060599656252486">一部</translation>
@@ -10243,7 +10243,7 @@
 <translation id="8041089156583427627">フィードバックを送信</translation>
 <translation id="8041093619605951337">幸せ</translation>
 <translation id="8041267120753677077">スマートフォンのアプリをストリーミングします</translation>
-<translation id="8042142357103597104">テキストの透明度</translation>
+<translation id="8042142357103597104">テキストの不透明度</translation>
 <translation id="8042331986490021244">Google パスワード マネージャーに保存する前にデバイス上でパスワードを暗号化します</translation>
 <translation id="8044262338717486897"><ph name="LINUX_APP_NAME" /> から応答がありません。</translation>
 <translation id="8044899503464538266">遅い</translation>

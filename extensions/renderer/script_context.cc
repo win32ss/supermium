@@ -212,6 +212,9 @@ void ScriptContext::Invalidate() {
 
 void ScriptContext::AddInvalidationObserver(base::OnceClosure observer) {
   DCHECK(thread_checker_.CalledOnValidThread());
+  // `Invalidate()` assumes that an `observer` is not added while it's notifying
+  // observers so let's be sure of that.
+  DCHECK(is_valid_);
   invalidate_observers_.push_back(std::move(observer));
 }
 

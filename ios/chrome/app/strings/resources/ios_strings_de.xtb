@@ -1185,7 +1185,7 @@ Handoff muss auch im Abschnitt „Allgemein“ deiner Einstellungen aktiviert se
 <translation id="5556459405103347317">Neu laden</translation>
 <translation id="555749644339804659">Passwörter werden geprüft…</translation>
 <translation id="5559567453458728487">Im Web gefundene Maßeinheiten umrechnen</translation>
-<translation id="556042886152191864">Schaltfläche</translation>
+<translation id="556042886152191864">Button</translation>
 <translation id="5565871407246142825">Kreditkarten</translation>
 <translation id="5567439033041178034">Weitere Informationen</translation>
 <translation id="5572648434713976849">Du erhältst bessere Vorschläge in der Adressleiste</translation>
@@ -1260,7 +1260,7 @@ Handoff muss auch im Abschnitt „Allgemein“ deiner Einstellungen aktiviert se
 <translation id="5767099457279594162">Passwort wurde nicht geteilt</translation>
 <translation id="5768870767339201169">Dort weitermachen, wo du aufgehört hast</translation>
 <translation id="5779117921996157216">{count,plural, =1{Du nutzt {count} kompromittiertes Passwort, das deine Sicherheit gefährden könnte. Ändere es jetzt, um dich bestmöglich zu schützen.}other{Du nutzt {count} kompromittierte Passwörter, die deine Sicherheit gefährden könnten. Ändere sie jetzt, um dich bestmöglich zu schützen.}}</translation>
-<translation id="5791632441210678828">Schaltfläche zum Sortieren für den „Folge ich“-Feed.</translation>
+<translation id="5791632441210678828">Button zum Sortieren für den „Folge ich“-Feed.</translation>
 <translation id="5803566855766646066">Möchtest du diese neue Karte wirklich verwerfen?</translation>
 <translation id="5804241973901381774">Berechtigungen</translation>
 <translation id="58081802114142635">Google AI lernt von deinen Aktivitäten</translation>

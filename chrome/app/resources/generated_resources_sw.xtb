@@ -2481,7 +2481,7 @@ Unaweza kudhibiti mipangilio ya akaunti hii kwa kusakinisha programu ya Family L
 <translation id="2665394472441560184">Ongeza neno jipya</translation>
 <translation id="2665647207431876759">Muda wake umekwisha</translation>
 <translation id="2665919335226618153">Lo! Kulikuwa na hitilafu wakati wa uumbizaji.</translation>
-<translation id="2666092431469916601">Ya Juu</translation>
+<translation id="2666092431469916601">Juu</translation>
 <translation id="2666247341166669829">Kiwango cha betri ya upande wa kushoto <ph name="PERCENTAGE" />%.</translation>
 <translation id="2667144577800272420">Programu zingine zimeruhusiwa kufungua viungo vinavyofunguliwa na <ph name="APP_NAME" />. Hatua hii itazuia <ph name="APP_NAME_2" /> na <ph name="APP_NAME_3" /> zisifungue viungo vinavyoweza kutumika.</translation>
 <translation id="2667463864537187133">Dhibiti kikagua maendelezo</translation>
@@ -7485,7 +7485,7 @@ Unaweza kukabidhi kitendo hiki swichi nyingi.</translation>
 <translation id="6130807998512240230">Kituo cha Kudhibiti Simu, Uhamishaji wa Karibu</translation>
 <translation id="6130887916931372608">Kitufe cha kibodi</translation>
 <translation id="6131511889181741773">Kinyunyiza</translation>
-<translation id="6132188132833716741">⇥ Bonyeza kichupo kisha Enter ili uulize Matumizi ya AI</translation>
+<translation id="6132188132833716741">⇥ Bonyeza tab kisha Enter ili uanze Matumizi ya AI</translation>
 <translation id="6132251717264923430">Umebandika kitufe</translation>
 <translation id="6132714462430777655">Je, ungependa kuruka uandikishaji wa kifaa cha shuleni?</translation>
 <translation id="6134418895482326458">Ficha kijachini kwenye ukurasa wa Kichupo Kipya</translation>
@@ -9586,7 +9586,7 @@ Una manenosiri # zaidi yaliyoathiriwa. Kidhibiti cha Manenosiri cha Google kinap
 <translation id="760197030861754408">Nenda kwenye <ph name="LANDING_PAGE" /> ili uunganishe.</translation>
 <translation id="7602079150116086782">Hakuna vichupo kutoka vifaa vingine</translation>
 <translation id="7602173054665172958">Udhibiti wa kuchapisha</translation>
-<translation id="7602868996817972616">Ulize Google kuhusu ukurasa huu</translation>
+<translation id="7602868996817972616">Uliza Google kuhusu ukurasa huu</translation>
 <translation id="7603785829538808504">Tovuti zilizoorodheshwa hapo chini hufuata mipangilio maalum</translation>
 <translation id="7604543761927773395">{NUM_PASSWORDS,plural, =1{Nenosiri 1 halijapakiwa}other{Manenosiri {NUM_PASSWORDS} hayajapakiwa}}</translation>
 <translation id="7605163396341021431">Zipe Programu za Android udhibiti wa vifaa vya USB kwenye Chromebook hii</translation>

@@ -834,7 +834,7 @@ As permissões que você já concedeu a apps podem ser aplicadas a essa conta. V
 <translation id="1561331397460162942">Permite que apps, sites com essa permissão e serviços do sistema acessem a localização</translation>
 <translation id="1562119309884184621">Essa ação fará com que o contato seja lembrado no próximo compartilhamento</translation>
 <translation id="1562585387501039294">Sua organização, <ph name="ACCOUNT_MANAGER" />, exige um perfil gerenciado e poderá ver algumas informações, incluindo</translation>
-<translation id="156345786953026804">O conteúdo da página e os URLs que o Gemini usa durante uma tarefa são compartilhados com o Google.</translation>
+<translation id="156345786953026804">O conteúdo da página e os URLs que o Gemini usa durante uma atividade são compartilhados com o Google.</translation>
 <translation id="1566049601598938765">Website</translation>
 <translation id="15662109988763471">A impressora selecionada não está disponível ou não foi instalada corretamente. Verifique a impressora ou selecione outra.</translation>
 <translation id="1566329594234563241">Enquanto o dispositivo estiver inativo e conectado à energia</translation>
@@ -2722,7 +2722,7 @@ Para gerenciar as configurações dessa conta, instale o app Family Link no seu 
 <translation id="2814489978934728345">Parar de carregar esta página</translation>
 <translation id="2815693974042551705">Pasta de favoritos</translation>
 <translation id="2816319641769218778">Para salvar senhas na Conta do Google, ative a sincronização.</translation>
-<translation id="2817435998497102771">Definir Estilo e fundo de tela</translation>
+<translation id="2817435998497102771">Definir plano de fundo e estilo</translation>
 <translation id="2817861546829549432">Ativar a opção "Não rastrear" significa que uma solicitação será incluída no tráfego de navegação. Qualquer efeito depende de o website responder ou não à solicitação e de como ela é interpretada. Por exemplo, alguns websites podem reagir a esse pedido mostrando anúncios que não têm qualquer relação com os sites que você costuma visitar. Mesmo assim, alguns websites ainda vão coletar e usar seus dados de navegação para, por exemplo, melhorar a segurança, gerar conteúdo, anúncios, recomendações e relatórios de estatística.</translation>
 <translation id="2818476747334107629">Detalhes da impressora</translation>
 <translation id="2819167288942847344">Usar os tamanhos predefinidos para evitar problemas em smartphones, tablets ou janelas redimensionáveis</translation>
@@ -4932,7 +4932,7 @@ Para gerenciar as configurações dessa conta, instale o app Family Link no seu 
 <translation id="4327380114687339519">Menu de extensões</translation>
 <translation id="4330191372652740264">Água com gelo</translation>
 <translation id="4330387663455830245">Nunca traduzir <ph name="LANGUAGE" /></translation>
-<translation id="4332976768901252016">Configurar o controle dos pais</translation>
+<translation id="4332976768901252016">Configurar os controles da família</translation>
 <translation id="4333854382783149454">PKCS #1 SHA-1 com criptografia RSA</translation>
 <translation id="4334768748331667190"><ph name="MODULE_NAME" /> não vai aparecer de novo</translation>
 <translation id="4335835283689002019">A Navegação Segura está desativada</translation>
@@ -6356,7 +6356,7 @@ Use Ctrl + Alt + Diminuir brilho para diminuir o zoom.</translation>
 <translation id="5333896723098573627">Para remover apps, acesse "Configurações" &gt; "Apps" &gt; "Google Play Store" &gt; "Gerenciar preferências do Android" &gt; "Apps" ou "Gerenciador de aplicativos". Depois, toque no app que você quer desinstalar (talvez seja necessário deslizar para a direita ou esquerda a fim de encontrar o app). Em seguida, toque em "Desinstalar" ou "Desativar".</translation>
 <translation id="5334113802138581043">Acesso ao microfone</translation>
 <translation id="5334142896108694079">Cache de script</translation>
-<translation id="5335370353987155592">Use o Gemini com cuidado e <ph name="BEGIN_LINK1" />segurança<ph name="LINK_END1" />. Você é responsável pelas ações do Gemini durante uma tarefa, incluindo erros e <ph name="BEGIN_LINK2" />resultados inesperados<ph name="LINK_END2" />, como compras.</translation>
+<translation id="5335370353987155592">Use o Gemini com cuidado e <ph name="BEGIN_LINK1" />segurança<ph name="LINK_END1" />. Você é responsável pelas ações do Gemini durante uma atividade, incluindo erros e <ph name="BEGIN_LINK2" />resultados inesperados<ph name="LINK_END2" />, como compras.</translation>
 <translation id="5336688142483283574">Esta página também será removida do seu histórico e da atividade do <ph name="SEARCH_ENGINE" />.</translation>
 <translation id="5336689872433667741">Cursor e touchpad</translation>
 <translation id="5337207153202941678">Desativar destaque</translation>
@@ -8416,8 +8416,8 @@ Há # outras senhas comprometidas. O Gerenciador de senhas do Google recomenda q
 <translation id="677965093459947883">Muito pequeno</translation>
 <translation id="6781005693196527806">&amp;Gerenciar mecanismos de pesquisa…</translation>
 <translation id="6781284683813954823">Link do doodle</translation>
-<translation id="6781658011335120230"><ph name="BEGIN_PARAGRAPH1" />Os dados de apps podem ser quaisquer dados que um app tenha salvo (com base nas configurações do desenvolvedor), incluindo dados como contatos, mensagens e fotos. Os dados de backup não são contabilizados na cota de armazenamento no Google Drive da criança.<ph name="END_PARAGRAPH1" />
-    <ph name="BEGIN_PARAGRAPH2" />Você pode desativar esse serviço nas configurações.<ph name="END_PARAGRAPH2" /></translation>
+<translation id="6781658011335120230"><ph name="BEGIN_PARAGRAPH1" />Dados do app são as informações salvas pelo app (com base nas configurações do desenvolvedor), incluindo contatos, mensagens e fotos. Os dados de backup não são contabilizados na cota de armazenamento no Google Drive da criança.<ph name="END_PARAGRAPH1" />
+    <ph name="BEGIN_PARAGRAPH2" />Você pode desativar esse serviço nas Configurações.<ph name="END_PARAGRAPH2" /></translation>
 <translation id="6781978626986383437">Backup do Linux cancelado</translation>
 <translation id="6782067259631821405">PIN inválido</translation>
 <translation id="6783036716881942511">Esquecer este dispositivo?</translation>
@@ -10066,7 +10066,7 @@ Pressione um interruptor ou tecla atribuídos para remover a atribuição.</tran
 <translation id="791247712619243506">Cancelar configuração</translation>
 <translation id="7912974581251770345">Tradução</translation>
 <translation id="7914399737746719723">App instalado</translation>
-<translation id="7915457674565721553">Conecte-se à Internet para configurar o controle dos pais</translation>
+<translation id="7915457674565721553">Conecte-se à Internet para configurar os controles da família</translation>
 <translation id="7916364730877325865">Sua organização não permite ativar a sincronização com esta conta</translation>
 <translation id="791698251820376781">Sua organização não permite que você faça login</translation>
 <translation id="7918257978052780342">Inscrever-se</translation>

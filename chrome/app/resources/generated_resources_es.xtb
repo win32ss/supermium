@@ -200,7 +200,7 @@ Comprueba tus contraseñas en cualquier momento en el <ph name="GOOGLE_PASSWORD_
 <translation id="1128591060186966949">Editar motor de búsqueda</translation>
 <translation id="1129348283834595293">Cyberpunk</translation>
 <translation id="1129420403709586868">Consulta las fotos y el contenido multimedia de tu teléfono</translation>
-<translation id="1129850422003387628">Gestionar apps</translation>
+<translation id="1129850422003387628">Gestionar aplicaciones</translation>
 <translation id="1130116586186908674">Crear vista dividida</translation>
 <translation id="1130430615924359526">{0,plural, =1{Cerrar ventana de Incógnito}other{Cerrar ventanas de Incógnito (# ventanas)}}</translation>
 <translation id="113050636487300043">Elige un nombre y un tema de color para diferenciar entre perfiles</translation>
@@ -1038,7 +1038,7 @@ Los permisos que hayas dado a aplicaciones se pueden aplicar a esta cuenta. Pued
 <translation id="1686785653877010442">Los sitios suelen enviar notificaciones para informarte sobre las últimas noticias o mensajes de chat.</translation>
 <translation id="168715261339224929">Activa la sincronización para ver tus marcadores en todos tus dispositivos.</translation>
 <translation id="1688935057616748272">Escribe una letra</translation>
-<translation id="1689333818294560261">Sobrenombre</translation>
+<translation id="1689333818294560261">Nombre</translation>
 <translation id="168991973552362966">Añadir una impresora cercana</translation>
 <translation id="1689945336726856614">Copiar &amp;URL</translation>
 <translation id="1690068335127678634">Configuración de pantalla dividida</translation>
@@ -4067,7 +4067,7 @@ Puedes gestionar la configuración de esta cuenta instalando la aplicación Fami
 <translation id="3757645900890881944">Herramientas de búsqueda</translation>
 <translation id="3757733214359997190">No se ha encontrado ningún sitio web</translation>
 <translation id="3757825964096339958">Enfocar grupo</translation>
-<translation id="375841316537350618">Descargando secuencia de comandos proxy...</translation>
+<translation id="375841316537350618">Descargando script proxy...</translation>
 <translation id="3758887577462995665">Nota:</translation>
 <translation id="375962596908891207">Mes de <ph name="DROPDOWN_NAME" /></translation>
 <translation id="3759805539887442413">Para eliminar los datos de navegación de todos tus dispositivos sincronizados y de tu cuenta de Google, <ph name="BEGIN_LINK" />introduce tu frase de contraseña<ph name="END_LINK" />.</translation>
@@ -4870,7 +4870,7 @@ Puedes gestionar la configuración de esta cuenta instalando la aplicación Fami
 <translation id="4295072614469448764">La aplicación está disponible en tu terminal. Es posible que también haya un icono en el menú de aplicaciones.</translation>
 <translation id="4295979599050707005">Vuelve a iniciar sesión para confirmar que tu cuenta <ph name="USER_EMAIL" /> se puede usar con sitios web, aplicaciones y extensiones tanto en Chrome como en Google Play. También puedes quitar esta cuenta. <ph name="LINK_BEGIN" />Más información<ph name="LINK_END" /></translation>
 <translation id="4296424230850377304">Aplicaciones instaladas y emitidas desde <ph name="APP_NAME" /></translation>
-<translation id="4296632172536745000">Tu contraseña original de este sitio se ha encontrado en una brecha de seguridad de datos públicos. El <ph name="DATE" /> pediste a <ph name="BRAND" /> que cambiara automáticamente tu contraseña.</translation>
+<translation id="4296632172536745000">Tu contraseña original de este sitio se ha encontrado en una brecha pública de seguridad de datos. El <ph name="DATE" /> pediste a <ph name="BRAND" /> que cambiara automáticamente tu contraseña.</translation>
 <translation id="4297219207642690536">Reiniciar y restablecer</translation>
 <translation id="4297813521149011456">Rotación de pantalla</translation>
 <translation id="4298660926525614540">Nombres de almacenamiento extraíble</translation>
@@ -5504,7 +5504,7 @@ Usa Ctrl + Alt + Reducir el brillo para reducir la pantalla.</translation>
 <translation id="4744268813103118742">Ir al sitio</translation>
 <translation id="4744571849207727284">Excel</translation>
 <translation id="4744981231093950366">{NUM_TABS,plural, =1{Activar sonido del sitio}other{Activar sonido de los sitios}}</translation>
-<translation id="4745096442457817087">Tu contraseña se ha encontrado en una brecha de seguridad de datos públicos</translation>
+<translation id="4745096442457817087">Tu contraseña se ha encontrado en una brecha pública de seguridad de datos</translation>
 <translation id="4745500401920035244">El administrador ha hecho un cambio que afecta a todo el sistema e inhabilita algunos perfiles antiguos. Ya no puedes acceder a este perfil, pero puedes quitarlo.</translation>
 <translation id="4746757725581505837">Estás a punto de eliminar tus datos de <ph name="BRAND" /> guardados en este dispositivo</translation>
 <translation id="4748783296226936791">Los sitios se suelen conectar a dispositivos HID para usarlos en funciones que utilizan teclados poco habituales, mandos de juegos y otros dispositivos</translation>
@@ -7995,7 +7995,7 @@ Exponente público (<ph name="PUBLIC_EXPONENT_NUM_BITS" /> bits):
 <translation id="6497784818439587832">Cambia el tamaño de la pantalla para ampliar o reducir el tamaño de los elementos que aparecen</translation>
 <translation id="6497789971060331894">Desplazamiento inverso del ratón</translation>
 <translation id="6498249116389603658">&amp;Todos tus idiomas</translation>
-<translation id="6499143127267478107">Resolviendo host de la secuencia de comandos de proxy...</translation>
+<translation id="6499143127267478107">Resolviendo host del script de proxy...</translation>
 <translation id="650185290742160385">Reducir umbral</translation>
 <translation id="6501957628055559556">Todos los contenedores</translation>
 <translation id="6503077044568424649">Más visitado</translation>
@@ -8175,7 +8175,7 @@ Tienes # contraseñas vulneradas más. El Gestor de contraseñas de Google te re
 <translation id="6619990499523117484">Confirma el número PIN</translation>
 <translation id="6620000730890558421">Mantén tus pestañas ordenadas con la IA</translation>
 <translation id="6620254580880484313">Nombre del contenedor</translation>
-<translation id="6621282332208609777">Pregunta a Google o escribe una URL</translation>
+<translation id="6621282332208609777">Preguntar a Google o escribir una URL</translation>
 <translation id="6621391692573306628">Para enviar esta pestaña a otro dispositivo, inicia sesión en Chrome en ambos dispositivos</translation>
 <translation id="6622980291894852883">Seguir bloqueando imágenes</translation>
 <translation id="6624036901798307345">En modo tablet, toca el botón del contador de pestañas situado en la barra de herramientas para abrir la nueva barra de pestañas donde se muestran miniaturas de cada pestaña.</translation>

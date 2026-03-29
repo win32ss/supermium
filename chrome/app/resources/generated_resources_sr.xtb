@@ -5115,7 +5115,7 @@
 <translation id="4471354919263203780">Преузимају се датотеке за препознавање говора... <ph name="PERCENT" />%</translation>
 <translation id="4472194221638903160">Групишите картице помоћу вештачке интелигенције</translation>
 <translation id="4472298120638043495">Можете да користите жељени језик Google налога (<ph name="NEW_LOCALE_FROM_GAIA" />)</translation>
-<translation id="447252321002412580">Помозите нам да побољшамо Chrome-ове функције и учинак</translation>
+<translation id="447252321002412580">Помозите нам да побољшамо Chrome-ове функције и перформансе</translation>
 <translation id="4472533928615930332">Генерисана је <ph name="INDEX" />. слика од <ph name="SUBJECT" />, у стилу <ph name="STYLE" /></translation>
 <translation id="4472575034687746823">Започнимо</translation>
 <translation id="4473559657152613417">Кликните десним тастером на картицу и изаберите Додај картицу у нову групу</translation>
@@ -8301,7 +8301,7 @@
 <translation id="6709002550153567782">{NUM_PAGES,plural, =0{<ph name="PAGE_TITLE" />}=1{<ph name="PAGE_TITLE" /> и још 1 картица}one{<ph name="PAGE_TITLE" /> и још # картица}few{<ph name="PAGE_TITLE" /> и још # картице}other{<ph name="PAGE_TITLE" /> и још # картица}}</translation>
 <translation id="6709357832553498500">Повежи се помоћу <ph name="EXTENSIONNAME" /></translation>
 <translation id="6710172959248731469">Подешавања Google услуга</translation>
-<translation id="6710213216561001401">Претходно</translation>
+<translation id="6710213216561001401">Назад</translation>
 <translation id="6710394144992407503">Проверите да ли има правописних грешака када уносите текст на веб-страницама</translation>
 <translation id="6712943853047024245">Већ сте сачували лозинку са овим корисничким именом за <ph name="WEBSITE" /></translation>
 <translation id="6713233729292711163">Додај пословни профил</translation>

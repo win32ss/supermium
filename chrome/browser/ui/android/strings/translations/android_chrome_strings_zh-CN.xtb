@@ -172,7 +172,7 @@
 <translation id="1747593111377567311">{NUM_SITES,plural, =1{1 个网站近期发送了大量通知}other{# 个网站近期发送了大量通知}}</translation>
 <translation id="1749561566933687563">同步您的书签</translation>
 <translation id="1750238553597293878">请继续使用您的 Google 账号的密码</translation>
-<translation id="17513872634828108">目前打开的标签页</translation>
+<translation id="17513872634828108">打开的标签页</translation>
 <translation id="1753744496844366747">Aa</translation>
 <translation id="1755203724116202818">为衡量广告效果，网站之间会分享特定类型的数据，例如您在访问某个网站后是否进行了购买交易。</translation>
 <translation id="1760873718737761808">{FILE_COUNT,plural, =1{页面，列表中有 1 个页面}other{页面，列表中有 # 个页面}}</translation>
@@ -247,7 +247,7 @@
 <translation id="2065944887543506430">{FILE_COUNT,plural, =1{1 项下载失败}other{# 项下载失败}}</translation>
 <translation id="2067805253194386918">文本</translation>
 <translation id="2072027001582274150">未使用或重复的标签页</translation>
-<translation id="2079545284768500474">撤消</translation>
+<translation id="2079545284768500474">撤销</translation>
 <translation id="2082238445998314030">第 <ph name="RESULT_NUMBER" /> 条结果，共 <ph name="TOTAL_RESULTS" /> 条</translation>
 <translation id="2088833076121753253">如需完成自动填充设置，请立即重启 Chrome。您的标签页将会自动重新打开。</translation>
 <translation id="2091863218454846791">当前显示的是精简视图</translation>
@@ -735,7 +735,7 @@
 <translation id="4225895483398857530">工具栏中的快捷方式</translation>
 <translation id="4232376164796433044">密码和自动填充</translation>
 <translation id="4242533952199664413">打开“设置”</translation>
-<translation id="424864128008805179">退出 Chrome？</translation>
+<translation id="424864128008805179">要在 Chrome 中退出账号吗？</translation>
 <translation id="4249955472157341256">按新近度排序</translation>
 <translation id="4255841059940367080">根据系统向 Google 发送的浏览数据，实时提供 AI 赋能的保护，防范危险的网站、下载内容和扩展程序</translation>
 <translation id="4256782883801055595">开源许可</translation>
@@ -1083,7 +1083,7 @@
 <translation id="5696597120588531049">Chrome 有助于保护您免受数据泄露、不安全网站等问题的影响</translation>
 <translation id="5698878456427040674">检查所选账号是否受支持。</translation>
 <translation id="5709213329446699338"><ph name="SITE" /> 想连接到串行端口</translation>
-<translation id="5715150588940290235">删除已保存的安全码？</translation>
+<translation id="5715150588940290235">要删除已保存的安全码吗？</translation>
 <translation id="571930967925877633">您的书签、历史记录和其他 Chrome 数据将不再同步到您的 Google 账号中</translation>
 <translation id="572328651809341494">最近打开的标签页</translation>
 <translation id="5728072125198221967">关联的 Google 服务</translation>
@@ -1531,7 +1531,7 @@
 <translation id="7419565702166471774">一律使用安全连接</translation>
 <translation id="7421293530411019405">要退出标签页分组吗？</translation>
 <translation id="7435356471928173109">已被您的管理员关闭</translation>
-<translation id="7437998757836447326">退出 Chrome</translation>
+<translation id="7437998757836447326">在 Chrome 中退出账号</translation>
 <translation id="7439467816829380878">将标签页移至分组</translation>
 <translation id="7439749340204407129">打开书签管理器</translation>
 <translation id="7453810262525006706">合拢为侧边视图</translation>
@@ -1610,7 +1610,7 @@
 <translation id="7740287852186792672">搜索结果</translation>
 <translation id="774403695779169686"><ph name="TAB_TITLE" />，已选择的无痕式标签页，正在共享内容</translation>
 <translation id="774876555279732384">您也可以在 <ph name="BEGIN_LINK" />Android 设置<ph name="END_LINK" />中管理自动填充服务。</translation>
-<translation id="7759809451544302770">可选</translation>
+<translation id="7759809451544302770">选填</translation>
 <translation id="7762668264895820836">SD 卡 <ph name="SD_CARD_NUMBER" /></translation>
 <translation id="7764225426217299476">添加地址</translation>
 <translation id="7772032839648071052">确认密码</translation>
@@ -1622,7 +1622,7 @@
 <translation id="7791543448312431591">添加</translation>
 <translation id="7792388396321542707">停止分享</translation>
 <translation id="780287761701992588">在所有设备上获取保存的书签、密码等信息</translation>
-<translation id="780301667611848630">不用了，谢谢</translation>
+<translation id="780301667611848630">不用了</translation>
 <translation id="7810647596859435254">打开方式…</translation>
 <translation id="7814066895362068701">{FILE_COUNT,plural, =1{所有文件，列表中有 1 个文件}other{所有文件，列表中有 # 个文件}}</translation>
 <translation id="7815484226266492798">长屏幕截图</translation>
