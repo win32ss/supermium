@@ -36,11 +36,11 @@ inline constexpr auto kInstallModes = std::to_array<InstallConstants>({
             L"",  // Empty app_guid since no integration with Google Update.
         .base_app_name = L"Supemium",              // A distinct base_app_name.
         .base_app_id = L"Supemium",                // A distinct base_app_id.
-        .browser_prog_id_prefix = L"SupermiumHTM",  // Browser ProgID prefix.
+        .browser_prog_id_prefix = L"SupemiumHTM",  // Browser ProgID prefix.
         .browser_prog_id_description =
             L"Supermium HTML Document",  // Browser ProgID description.
         .direct_launch_url_scheme = "chromium",
-        .pdf_prog_id_prefix = L"SupermiumPDF",  // PDF ProgID prefix.
+        .pdf_prog_id_prefix = L"SupemiumPDF",  // PDF ProgID prefix.
         .pdf_prog_id_description =
             L"Supermium PDF Document",  // PDF ProgID description.
         .active_setup_guid =

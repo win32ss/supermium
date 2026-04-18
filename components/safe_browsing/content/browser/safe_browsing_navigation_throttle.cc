@@ -4,6 +4,7 @@
 
 #include "components/safe_browsing/content/browser/safe_browsing_navigation_throttle.h"
 
+#include "base/command_line.h"
 #include "base/memory/ptr_util.h"
 #include "base/metrics/histogram_functions.h"
 #include "components/safe_browsing/content/browser/safe_browsing_blocking_page.h"
@@ -48,7 +49,10 @@ const char* SafeBrowsingNavigationThrottle::GetNameForLogging() {
 content::NavigationThrottle::ThrottleCheckResult
 SafeBrowsingNavigationThrottle::WillFailRequest() {
   DCHECK(manager_);
-
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch(
+          "disable-safe-browsing-throttle")) {
+      return content::NavigationThrottle::PROCEED;
+  }
   // Goes over |RedirectChain| to get the severest threat information
   security_interstitials::UnsafeResource resource;
   content::NavigationHandle* handle = navigation_handle();
