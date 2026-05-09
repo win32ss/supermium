@@ -54,7 +54,9 @@ std::pair<int, int> GetAvailablePointerAndHoverTypesImpl() {
   //
   // In this case we don't bother to call `GetSystemMetrics(SM_MOUSEPRESENT)`,
   // since it will rarely return 0 even if no external mouse is connected.
-  if (base::win::IsDeviceUsedAsATablet(nullptr)) {
+  // Also, some Windows 7 systems report SM_MAXIMUMTOUCHES > 0 but not
+  // the same for SM_DIGITIZER. Such systems are not considered to be tablets.
+  if (GetSystemMetrics(SM_DIGITIZER) && base::win::IsDeviceUsedAsATablet(nullptr)) {
     return {POINTER_TYPE_COARSE, HOVER_TYPE_NONE};
   }
 
