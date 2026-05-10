@@ -226,8 +226,18 @@ void TtsPlatformImplBackgroundWorker::Initialize() {
   bool success = false;
   std::vector<VoiceData> voices;
 
-  ::CoCreateInstance(CLSID_SpVoice, nullptr, CLSCTX_ALL,
+  if (speech_synthesizer_.Get()) {
+    return;
+  }
+
+  HRESULT Result = ::CoCreateInstance(CLSID_SpVoice, nullptr, CLSCTX_ALL,
                      IID_PPV_ARGS(&speech_synthesizer_));
+  if (Result == CO_E_NOTINITIALIZED) {
+    // Sometimes, COM isn't initialized on XP/2003 x64
+    ::CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+    ::CoCreateInstance(CLSID_SpVoice, nullptr, CLSCTX_ALL,
+                       IID_PPV_ARGS(&speech_synthesizer_));
+  }
   if (speech_synthesizer_.Get()) {
     ULONGLONG event_mask =
         SPFEI(SPEI_START_INPUT_STREAM) | SPFEI(SPEI_TTS_BOOKMARK) |
@@ -256,7 +266,10 @@ void TtsPlatformImplBackgroundWorker::ProcessSpeech(
     base::OnceCallback<void(bool)> on_speak_finished,
     const std::string& parsed_utterance) {
   DCHECK(speech_synthesizer_.Get());
-
+  // Initialization is not done right away in some cases on XP/2003 x64.
+  if (!speech_synthesizer_) {
+    Initialize();
+  }
   SetVoiceFromName(voice.name);
 
   if (params.rate >= 0.0) {
