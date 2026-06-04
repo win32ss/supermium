@@ -75,6 +75,19 @@ base::span<const int16_t> AudioChunk::SamplesData16AsSpan() const {
       data_string_.size() / sizeof(int16_t)));
 }
 
+base::span<int16_t> AudioChunk::SamplesData16AsWriteableSpan() {
+  // SAFETY: `SamplesData16AsSpan()` returns a pointer to `data_`. Make sure
+  // this is safe by ensuring the byte size is a multiple of sizeof(int16_t) and
+  // the data is properly aligned (which the constructor should already
+  // guarantee).
+  CHECK_EQ(static_cast<size_t>(bytes_per_sample_), sizeof(int16_t));
+  CHECK(base::IsAligned(data_.data(), alignof(int16_t)));
+  return UNSAFE_BUFFERS(
+      base::span<int16_t>(reinterpret_cast<int16_t*>(data_.data()),
+                          data_.size() / sizeof(int16_t)));
+}
+
+
 AudioBuffer::AudioBuffer(int bytes_per_sample)
     : bytes_per_sample_(bytes_per_sample) {
   DCHECK(bytes_per_sample == 1 || bytes_per_sample == 2 ||

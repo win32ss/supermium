@@ -11,6 +11,7 @@
 #include <string>
 
 #include "base/containers/circular_deque.h"
+#include "base/memory/aligned_memory.h"
 #include "base/memory/ref_counted.h"
 
 // Models a chunk derived from an AudioBuffer.
@@ -31,6 +32,8 @@ class AudioChunk : public base::RefCountedThreadSafe<AudioChunk> {
   const std::string& AsString() const;
   int16_t GetSample16(size_t index) const;
   base::span<const int16_t> SamplesData16AsSpan() const;
+  base::span<int16_t> SamplesData16AsWriteableSpan();
+
   uint8_t* writable_data() {
     return reinterpret_cast<uint8_t*>(&data_string_[0]);
   }
@@ -39,6 +42,7 @@ class AudioChunk : public base::RefCountedThreadSafe<AudioChunk> {
   friend class base::RefCountedThreadSafe<AudioChunk>;
   ~AudioChunk();
 
+  base::AlignedHeapArray<uint8_t> data_;
   std::string data_string_;
   const int bytes_per_sample_;
 };
