@@ -51,7 +51,6 @@ BASE_FEATURE_PARAM(int,
                    "ad-auction-signals-max-size-bytes",
                    10000);
 
-
 #if BUILDFLAG(IS_ANDROID)
 // If enabled, then use desktop page webprefs for Android devices that have
 // large displays, specifically tablets and desktops.
