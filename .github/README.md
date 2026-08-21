@@ -21,7 +21,7 @@
 </div>
 
 **Official Links:**
-- [Public directory only with ftp at](https://download.win32.ro) *compatible with Internet Explorer and Windows Explorer starting from XP and greater*
+- Public directory only with ftp at[win32.ro](https://download.win32.ro) *compatible with Internet Explorer and Windows Explorer starting from XP and greater*
 - [supermium.net](https://supermium.net)
 - [win32subsystem.live](https://win32subsystem.live)
 
