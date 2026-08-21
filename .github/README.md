@@ -21,9 +21,9 @@
 </div>
 
 **Official Links:**
-- Public directory only with ftp at [win32.ro](https://download.win32.ro) *compatible with Internet Explorer and Windows Explorer starting from XP and greater*
 - [supermium.net](https://supermium.net)
 - [win32subsystem.live](https://win32subsystem.live)
+- Public directory only with ftp at [win32.ro](https://download.win32.ro) *compatible with Internet Explorer and Windows Explorer starting from XP and greater*
 
 ## The Supermium web browser also provides the following features:
 > -  Aero Glass and Aero Glass-style titlebars instead of Windows 10-style ones (#force-xp-theme in chrome://flags for the latter)  
