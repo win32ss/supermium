@@ -3,7 +3,7 @@
     <h1><a href="https://www.supermium.net">Supermium Browser</a></h1>
 </div>
 
-An up-to-date Chromium-based web browser for Windows XP, 2003, Vista, 7, and 8.x.
+An up-to-date Chromium-based web browser compatible with Windows XP, 2003, Vista, 7, 8.x, and newer.
 
 ## The Supermium web browser provides the following features:
 -  Aero Glass and Aero Glass-style titlebars instead of Windows 10-style ones (#force-xp-theme in chrome://flags for the latter)  
