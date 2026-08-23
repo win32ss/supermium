@@ -47,6 +47,12 @@ BASE_DECLARE_FEATURE(kLimitScrollDeltaToScrollerSize);
 COMPONENT_EXPORT(UI_BASE_FEATURES)
 BASE_DECLARE_FEATURE(kCalculateNativeWinOcclusion);
 
+COMPONENT_EXPORT(UI_BASE_FEATURES) BASE_DECLARE_FEATURE(kPointerEventsForTouch);
+
+// Returns true if the system should use WM_POINTER events for touch events.
+COMPONENT_EXPORT(UI_BASE_FEATURES) bool IsUsingWMPointerForTouch();
+
+
 COMPONENT_EXPORT(UI_BASE_FEATURES)
 BASE_DECLARE_FEATURE(kTSFImeSupport);
 

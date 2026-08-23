@@ -611,6 +611,17 @@ class VIEWS_EXPORT HWNDMessageHandler : public gfx::WindowImpl,
   // Updates DWM frame to extend into client area if needed.
   void UpdateDwmFrame();
 
+  // WIN7 TOUCH
+  // Generates a touch event and adds it to the |touch_events| parameter.
+  // |point| is the point where the touch was initiated.
+  // |id| is the event id associated with the touch event.
+  // |time_stamp| is the time stamp associated with the message.
+  void GenerateTouchEvent(ui::EventType event_type,
+                          const gfx::Point& point,
+                          ui::PointerId id,
+                          base::TimeTicks time_stamp,
+                          TouchEvents* touch_events);
+
   // Handles WM_NCLBUTTONDOWN and WM_NCMOUSEMOVE messages on the caption.
   // Returns true if the message was handled.
   bool HandleMouseInputForCaption(unsigned int message,
@@ -690,6 +701,9 @@ class VIEWS_EXPORT HWNDMessageHandler : public gfx::WindowImpl,
   // Set to true when the user presses the right mouse button on the caption
   // area. We need this so we can correctly show the context menu on mouse-up.
   bool is_right_mouse_pressed_on_caption_;
+
+  // WIN7 TOUCH The set of touch devices currently down.
+  TouchIDs touch_ids_;
 
   // ScopedRedrawLock ----------------------------------------------------------
 
@@ -818,6 +832,10 @@ class VIEWS_EXPORT HWNDMessageHandler : public gfx::WindowImpl,
   // True if the window should have no border and its contents should be
   // partially or fully transparent.
   bool is_translucent_ = false;
+
+  // WIN7 TOUCH True if the window should process WM_POINTER for touch events and
+  // not WM_TOUCH events.
+  bool pointer_events_for_touch_;
 
   // True if the window uses rounded corners. This uses DWMWCP_ROUND style on
   // Windows 11. Not effective on Windows 10.

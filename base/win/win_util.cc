@@ -894,6 +894,12 @@ void SetAbortBehaviorForCrashReporting() {
 // input configuration of the device and can be manually triggered by the user
 // independently from the hardware state.
 bool IsDeviceUsedAsATablet(std::string* reason) {
+ 
+   if (GetVersion() < Version::WIN8) {
+     if (reason)
+       *reason = "Tablet device detection not supported below Windows 8\n";
+     return false;
+   }
   // Once this is set, it shouldn't be overridden, and it should be the ultimate
   // return value, so that this method returns the same result whether or not
   // reason is NULL.
@@ -1131,12 +1137,23 @@ std::wstring GetWindowObjectName(HANDLE handle) {
 }
 
 bool GetPointerDevice(HANDLE device, POINTER_DEVICE_INFO& result) {
+   static const auto get_pointer_devices =
+       reinterpret_cast<decltype(&::GetPointerDevices)>(
+           base::win::GetUser32FunctionPointer("GetPointerDevices"));
+   if (!get_pointer_devices || GetVersion() < Version::WIN8) {
+     return false;
+   }
+
   return ::GetPointerDevice(device, &result);
 }
 
 std::optional<std::vector<POINTER_DEVICE_INFO>> GetPointerDevices() {
-  uint32_t device_count;
-  if (!::GetPointerDevices(&device_count, nullptr)) {
+  static const auto get_pointer_devices =
+      reinterpret_cast<decltype(&::GetPointerDevices)>(
+          base::win::GetUser32FunctionPointer("GetPointerDevices"));
+   uint32_t device_count;
+   if (!get_pointer_devices ||
+       !get_pointer_devices(&device_count, nullptr) || GetVersion() < Version::WIN8) {
     return std::nullopt;
   }
 
@@ -1149,6 +1166,9 @@ std::optional<std::vector<POINTER_DEVICE_INFO>> GetPointerDevices() {
 
 bool RegisterPointerDeviceNotifications(HWND hwnd,
                                         bool notify_proximity_changes) {
+   if (!base::win::GetUser32FunctionPointer("RegisterPointerDeviceNotifications") || GetVersion() < Version::WIN8) {
+     return true;
+   }
   return ::RegisterPointerDeviceNotifications(hwnd, notify_proximity_changes);
 }
 

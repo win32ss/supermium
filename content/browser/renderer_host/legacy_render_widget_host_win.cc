@@ -218,6 +218,11 @@ bool LegacyRenderWidgetHostHWND::InitOrDeleteSelf(HWND parent) {
     delete this;
     return false;
   }
+ 
+   // Only register a touch window if we are using WM_TOUCH.
+   if (!features::IsUsingWMPointerForTouch())
+     RegisterTouchWindow(hwnd(), TWF_WANTPALM);
+ 
 
   // Ignore failure from this call. Some SKUs of Windows such as Hololens do not
   // support MSAA, and this call failing should not stop us from initializing

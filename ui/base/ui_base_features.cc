@@ -10,6 +10,7 @@
 #include "base/feature_list.h"
 #include "base/metrics/field_trial_params.h"
 #include "build/build_config.h"
+#include "base/win/windows_version.h"
 
 #if BUILDFLAG(IS_ANDROID)
 #include "base/android/android_info.h"
@@ -207,6 +208,17 @@ BASE_FEATURE(kLimitScrollDeltaToScrollerSize, base::FEATURE_ENABLED_BY_DEFAULT);
 
 // Enables focus follow follow cursor (sloppyfocus).
 BASE_FEATURE(kFocusFollowsCursor, base::FEATURE_DISABLED_BY_DEFAULT);
+
+#if BUILDFLAG(IS_WIN)
+// Enables using WM_POINTER instead of WM_TOUCH for touch events.
+BASE_FEATURE(kPointerEventsForTouch,
+             base::FEATURE_ENABLED_BY_DEFAULT);
+bool IsUsingWMPointerForTouch() {
+  // WIN7 TOUCH
+  return base::FeatureList::IsEnabled(kPointerEventsForTouch) && base::win::GetVersion() >= base::win::Version::WIN8;
+}
+
+#endif  // BUILDFLAG(IS_WIN)
 
 BASE_FEATURE(kDragDropOnlySynthesizeHttpOrHttpsUrlsFromText,
              base::FEATURE_ENABLED_BY_DEFAULT);

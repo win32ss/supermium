@@ -456,7 +456,8 @@ HWNDMessageHandler::HWNDMessageHandler(HWNDMessageHandlerDelegate* delegate,
       dwm_transition_desired_(false),
       sent_window_size_changing_(false),
       left_button_down_on_caption_(false),
-      background_fullscreen_hack_(false) {}
+      background_fullscreen_hack_(false),
+      pointer_events_for_touch_(::features::IsUsingWMPointerForTouch()) {}
 
 HWNDMessageHandler::~HWNDMessageHandler() {
   // Unhook MoveLoopMouseWatcher, to prevent call backs to this after deletion.
@@ -1873,6 +1874,11 @@ LRESULT HWNDMessageHandler::OnCreate(CREATESTRUCT* create_struct) {
   // Get access to a modifiable copy of the system menu.
   GetSystemMenu(hwnd(), false);
 
+  if (!pointer_events_for_touch_ &&
+      base::win::GetVersion() >= base::win::Version::WIN7)
+    RegisterTouchWindow(hwnd(), TWF_WANTPALM);
+
+
   // We need to allow the delegate to size its contents since the window may not
   // receive a size notification when its initial bounds are specified at window
   // creation time.
@@ -2318,7 +2324,11 @@ LRESULT HWNDMessageHandler::OnPointerEvent(UINT message,
     case PT_PEN:
       return HandlePointerEventTypePenClient(message, w_param, l_param);
     case PT_TOUCH:
-      return HandlePointerEventTypeTouchOrNonClient(message, w_param, l_param);
+      if (pointer_events_for_touch_) {
+        return HandlePointerEventTypeTouchOrNonClient(
+            message, w_param, l_param);
+      }
+      break;
     default:
       break;
   }
@@ -3011,10 +3021,101 @@ LRESULT HWNDMessageHandler::OnTouchEvent(UINT message,
                                          WPARAM w_param,
                                          LPARAM l_param) {
   // Release any associated memory with this event.
-  CloseTouchInputHandle(reinterpret_cast<HTOUCHINPUT>(l_param));
+  //CloseTouchInputHandle(reinterpret_cast<HTOUCHINPUT>(l_param));
+
+  // FIX FOR WIN7 TOUCH
+  if (pointer_events_for_touch_) {
+    // Release any associated memory with this event.
+    CloseTouchInputHandle(reinterpret_cast<HTOUCHINPUT>(l_param));
+
+    // Claim the event is handled. This shouldn't ever happen
+    // because we don't register touch windows when we are using
+    // pointer events.
+    return 0;
+  }
+
+  // Handle touch events only on Aura for now.
+  WORD num_points = LOWORD(w_param);
+  base::HeapArray<TOUCHINPUT> input =
+      base::HeapArray<TOUCHINPUT>::WithSize(num_points);
+  if (ui::GetTouchInputInfoWrapper(reinterpret_cast<HTOUCHINPUT>(l_param),
+                                   num_points, input.data(),
+                                   sizeof(TOUCHINPUT))) {
+    // input[i].dwTime doesn't necessarily relate to the system time at all,
+    // so use base::TimeTicks::Now().
+    const base::TimeTicks event_time = base::TimeTicks::Now();
+    TouchEvents touch_events;
+    TouchIDs stale_touches(touch_ids_);
+
+    for (size_t i = 0; i < num_points; ++i) {
+      stale_touches.erase(input[i].dwID);
+      POINT point;
+      point.x = TOUCH_COORD_TO_PIXEL(input[i].x);
+      point.y = TOUCH_COORD_TO_PIXEL(input[i].y);
+      ScreenToClient(hwnd(), &point);
+
+      last_touch_or_pen_message_time_ = ::GetMessageTime();
+
+      gfx::Point touch_point(point.x, point.y);
+      auto touch_id = static_cast<ui::PointerId>(
+          id_generator_.GetGeneratedID(input[i].dwID));
+
+      if (input[i].dwFlags & TOUCHEVENTF_DOWN) {
+        touch_ids_.insert(input[i].dwID);
+        GenerateTouchEvent(ui::EventType::kTouchPressed, touch_point, touch_id,
+                           event_time, &touch_events);
+        ui::ComputeEventLatencyOSFromTOUCHINPUT(ui::EventType::kTouchPressed,
+                                                input[i], event_time);
+        touch_down_contexts_++;
+        base::SingleThreadTaskRunner::GetCurrentDefault()->PostDelayedTask(
+            FROM_HERE,
+            base::BindOnce(&HWNDMessageHandler::ResetTouchDownContext,
+                           msg_handler_weak_factory_.GetWeakPtr()),
+            kTouchDownContextResetTimeout);
+      } else {
+        if (input[i].dwFlags & TOUCHEVENTF_MOVE) {
+          GenerateTouchEvent(ui::EventType::kTouchMoved, touch_point, touch_id,
+                             event_time, &touch_events);
+          ui::ComputeEventLatencyOSFromTOUCHINPUT(ui::EventType::kTouchMoved,
+                                                  input[i], event_time);
+        }
 
   // Claim the event is handled. This shouldn't ever happen because we don't
   // register touch windows when we are using pointer events.
+        if (input[i].dwFlags & TOUCHEVENTF_UP) {
+          touch_ids_.erase(input[i].dwID);
+          GenerateTouchEvent(ui::EventType::kTouchReleased, touch_point,
+                             touch_id, event_time, &touch_events);
+          ui::ComputeEventLatencyOSFromTOUCHINPUT(ui::EventType::kTouchReleased,
+                                                  input[i], event_time);
+          id_generator_.ReleaseNumber(input[i].dwID);
+        }
+      }
+    }
+    // If a touch has been dropped from the list (without a TOUCH_EVENTF_UP)
+    // we generate a simulated TOUCHEVENTF_UP event.
+    for (auto touch_number : stale_touches) {
+      // Log that we've hit this code. When usage drops off, we can remove
+      // this "workaround". See https://crbug.com/811273
+      UMA_HISTOGRAM_BOOLEAN("TouchScreen.MissedTOUCHEVENTF_UP", true);
+      auto touch_id = static_cast<ui::PointerId>(
+          id_generator_.GetGeneratedID(touch_number));
+      touch_ids_.erase(touch_number);
+      GenerateTouchEvent(ui::EventType::kTouchReleased, gfx::Point(0, 0),
+                         touch_id, event_time, &touch_events);
+      id_generator_.ReleaseNumber(touch_number);
+    }
+
+    // Handle the touch events asynchronously. We need this because touch
+    // events on windows don't fire if we enter a modal loop in the context of
+    // a touch event.
+    base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(
+        FROM_HERE,
+        base::BindOnce(&HWNDMessageHandler::HandleTouchEvents,
+                       msg_handler_weak_factory_.GetWeakPtr(), touch_events));
+  }
+  CloseTouchInputHandle(reinterpret_cast<HTOUCHINPUT>(l_param));
+  SetMsgHandled(FALSE);
   return 0;
 }
 
@@ -3706,6 +3807,23 @@ void HWNDMessageHandler::UpdateDwmFrame() {
     DwmExtendFrameIntoClientArea(hwnd(), &margins);
   }
 }
+
+void HWNDMessageHandler::GenerateTouchEvent(ui::EventType event_type,
+                                            const gfx::Point& point,
+                                            ui::PointerId id,
+                                            base::TimeTicks time_stamp,
+                                            TouchEvents* touch_events) {
+  ui::TouchEvent event(event_type, point, time_stamp,
+                       ui::PointerDetails(ui::EventPointerType::kTouch, id));
+
+  event.SetFlags(ui::GetModifiersFromKeyState());
+
+  event.latency()->AddLatencyNumberWithTimestamp(
+      ui::INPUT_EVENT_LATENCY_ORIGINAL_COMPONENT, time_stamp);
+
+  touch_events->push_back(event);
+}
+
 
 bool HWNDMessageHandler::HandleMouseInputForCaption(unsigned int message,
                                                     WPARAM w_param,
