@@ -392,7 +392,7 @@ index b2c1709b4c2ac..9f6702af095c6 100644
 +      // In scs, each layout "constant" is identified by its index in the LayoutConstant enum.
 +      // This may mean that the index corresponding to a constant may change from version to version, 
 +      // but it does simplify the parsing process.
-+	  std::string layout_name = std::string("int_layout_constant_") + std::string("{");
++	  std::string layout_name = std::string("int_layout_constant_") + std::to_string(i) + std::string("{");
 +      std::string::size_type layout_setting_pos = bufstr.find(layout_name, 0);
 +      if (layout_setting_pos == std::string::npos) {
 +          continue;
