@@ -1,0 +1,180 @@
+diff --git a/base/time/time_win.cc b/base/time/time_win.cc
+index fcdcb8191ab73..7590c8c5dbcad 100644
+--- a/base/time/time_win.cc
++++ b/base/time/time_win.cc
+@@ -756,11 +756,30 @@ TimeTicks::Clock TimeTicks::GetClock() {
+ 
+ namespace subtle {
+ LiveTicks LiveTicksNowIgnoringOverride() {
+-  ULONGLONG unbiased_interrupt_time;
+-  QueryUnbiasedInterruptTimePrecise(&unbiased_interrupt_time);
+-  // QueryUnbiasedInterruptTimePrecise gets the interrupt time in system time
+-  // units of 100 nanoseconds.
+-  return LiveTicks() + Nanoseconds(unbiased_interrupt_time * 100);
++  // Ensure that the assignment to |g_qpc_ticks_per_second|, made in
++  // InitializeNowFunctionPointer(), has happened by this point.
++  LARGE_INTEGER perf_counter_now = {};
++  // According to the MSDN documentation for QueryPerformanceCounter(), this
++  // will never fail on systems that run XP or later.
++  // https://msdn.microsoft.com/library/windows/desktop/ms644904.aspx
++  ::QueryPerformanceCounter(&perf_counter_now);
++  std::atomic_thread_fence(std::memory_order_acquire);
++
++  DCHECK_GT(g_qpc_ticks_per_second, 0);
++
++  // If the QPC Value is below the overflow threshold, we proceed with
++  // simple multiply and divide.
++  if (perf_counter_now.QuadPart < Time::kQPCOverflowThreshold) {
++    return LiveTicks() + Microseconds(perf_counter_now.QuadPart * Time::kMicrosecondsPerSecond /
++                        g_qpc_ticks_per_second);
++  }
++  // Otherwise, calculate microseconds in a round about manner to avoid
++  // overflow and precision issues.
++  int64_t whole_seconds = perf_counter_now.QuadPart / g_qpc_ticks_per_second;
++  int64_t leftover_ticks = perf_counter_now.QuadPart - (whole_seconds * g_qpc_ticks_per_second);
++  return LiveTicks() + Microseconds((whole_seconds * Time::kMicrosecondsPerSecond) +
++                      ((leftover_ticks * Time::kMicrosecondsPerSecond) /
++                       g_qpc_ticks_per_second));
+ }
+ }  // namespace subtle
+ 
+diff --git a/chrome/app/theme/default_100_percent/chromium/product_logo_16.png b/chrome/app/theme/default_100_percent/chromium/product_logo_16.png
+index fdcae2bed3c3f..9892be19e7c6a 100644
+Binary files a/chrome/app/theme/default_100_percent/chromium/product_logo_16.png and b/chrome/app/theme/default_100_percent/chromium/product_logo_16.png differ
+diff --git a/chrome/app/theme/default_100_percent/chromium/product_logo_32.png b/chrome/app/theme/default_100_percent/chromium/product_logo_32.png
+index 54e0bc281cfc0..fdcae2bed3c3f 100644
+Binary files a/chrome/app/theme/default_100_percent/chromium/product_logo_32.png and b/chrome/app/theme/default_100_percent/chromium/product_logo_32.png differ
+diff --git a/chrome/browser/ui/layout_constants.cc b/chrome/browser/ui/layout_constants.cc
+index 4cc1a267a1812..db9f745d176a5 100644
+--- a/chrome/browser/ui/layout_constants.cc
++++ b/chrome/browser/ui/layout_constants.cc
+@@ -49,8 +49,6 @@ void SetLayoutConstantsFallback() {
+     if (base::CommandLine::ForCurrentProcess()->HasSwitch("compact-ui"))
+        layout_constant_values[(int)LayoutConstant::kBookmarkBarHeight] = 30;
+     layout_constant_values[(int)LayoutConstant::kBookmarkBarButtonPadding] = touch_ui ? 0 : 4;
+-    if (base::CommandLine::ForCurrentProcess()->HasSwitch("compact-ui"))
+-       layout_constant_values[(int)LayoutConstant::kBookmarkBarHeight] = 0;
+     layout_constant_values[(int)LayoutConstant::kBookmarkBarButtonImageLabelPadding] = 6;
+     layout_constant_values[(int)LayoutConstant::kWebAppMenuButtonSize] = 24;
+       // We must limit the size of icons in the title bar to avoid vertically
+diff --git a/chrome/browser/ui/views/tabs/tab_style_views.cc b/chrome/browser/ui/views/tabs/tab_style_views.cc
+index 3dd5d740914d5..02d528d28b8b4 100644
+--- a/chrome/browser/ui/views/tabs/tab_style_views.cc
++++ b/chrome/browser/ui/views/tabs/tab_style_views.cc
+@@ -1176,8 +1176,7 @@ void TabStyleViewsImpl::PaintTabBackgroundFill(
+     int y_inset) const {
+   const SkPath fill_path =
+       GetPath(TabStyle::PathType::kFill, canvas->image_scale(),
+-              {.force_active =
+-                   selection_state == TabStyle::TabSelectionState::kActive});
++              {.force_active = true});
+   gfx::ScopedCanvas scoped_canvas(canvas);
+   const float scale = canvas->UndoDeviceScaleFactor();
+ 
+diff --git a/chrome/install_static/chromium_install_modes.h b/chrome/install_static/chromium_install_modes.h
+index a625ee9b6c213..b0408f5535fc5 100644
+--- a/chrome/install_static/chromium_install_modes.h
++++ b/chrome/install_static/chromium_install_modes.h
+@@ -45,13 +45,13 @@ inline constexpr auto kInstallModes = std::to_array<InstallConstants>({
+         .logo_suffix = L"",  // No logo suffix for the primary install mode.
+         .app_guid =
+             L"",  // Empty app_guid since no integration with Google Update.
+-        .base_app_name = L"Supermium",              // A distinct base_app_name.
+-        .base_app_id = L"Supermium",                // A distinct base_app_id.
+-        .browser_prog_id_prefix = L"SupemiumHTM",  // Browser ProgID prefix.
++        .base_app_name = L"Supemium",              // A distinct base_app_name.
++        .base_app_id = L"Supemium",                // A distinct base_app_id.
++        .browser_prog_id_prefix = L"SupermiumHTM",  // Browser ProgID prefix.
+         .browser_prog_id_description =
+             L"Supermium HTML Document",  // Browser ProgID description.
+         .direct_launch_url_scheme = "supermium",
+-        .pdf_prog_id_prefix = L"SupemiumPDF",  // PDF ProgID prefix.
++        .pdf_prog_id_prefix = L"SupermiumPDF",  // PDF ProgID prefix.
+         .pdf_prog_id_description =
+             L"Supermium PDF Document",  // PDF ProgID description.
+         .active_setup_guid =
+diff --git a/gpu/config/gpu_info_collector_win.cc b/gpu/config/gpu_info_collector_win.cc
+index e0f68da335dd1..35e06af543861 100644
+--- a/gpu/config/gpu_info_collector_win.cc
++++ b/gpu/config/gpu_info_collector_win.cc
+@@ -334,6 +334,9 @@ void CollectNPUInformation(GPUInfo* gpu_info) {
+ bool CollectDriverInfoD3D(GPUInfo* gpu_info) {
+   TRACE_EVENT0("gpu", "CollectDriverInfoD3D");
+ 
++  if (!::GetProcAddress(::GetModuleHandleW(L"dxgi.dll"), "CreateDXGIFactory1"))
++    return false;
++
+   CollectNPUInformation(gpu_info);
+ 
+   Microsoft::WRL::ComPtr<IDXGIFactory1> dxgi_factory;
+diff --git a/sandbox/win/src/process_mitigations.cc b/sandbox/win/src/process_mitigations.cc
+index 8b588867b1101..e73be8b453121 100644
+--- a/sandbox/win/src/process_mitigations.cc
++++ b/sandbox/win/src/process_mitigations.cc
+@@ -112,7 +112,7 @@ bool ApplyProcessMitigationsToCurrentProcess(MitigationFlags starting_flags,
+     const DWORD directory_flags =
+         LOAD_LIBRARY_SEARCH_SYSTEM32 | LOAD_LIBRARY_SEARCH_USER_DIRS;
+ #endif
+-    if (base::win::GetVersion() >= base::win::Version::WIN7 &&
++    if (base::win::GetVersion() > base::win::Version::WIN7 &&
+         !::SetDefaultDllDirectories(directory_flags)) {
+       return false;
+     }
+diff --git a/third_party/blink/renderer/platform/fonts/win/font_cache_skia_win.cc b/third_party/blink/renderer/platform/fonts/win/font_cache_skia_win.cc
+index 94e3c855f3034..7c509dd99d5ca 100644
+--- a/third_party/blink/renderer/platform/fonts/win/font_cache_skia_win.cc
++++ b/third_party/blink/renderer/platform/fonts/win/font_cache_skia_win.cc
+@@ -41,6 +41,7 @@
+ #include "base/feature_list.h"
+ #include "base/metrics/histogram_functions.h"
+ #include "base/trace_event/trace_event.h"
++#include "base/win/windows_version.h"
+ #include "skia/ext/font_utils.h"
+ #include "third_party/blink/public/platform/web_font_prewarmer.h"
+ #include "third_party/blink/renderer/platform/fonts/bitmap_glyphs_block_list.h"
+@@ -511,7 +512,8 @@ const FontPlatformData* FontCache::CreateFontPlatformData(
+ 
+   FontPlatformData* result = MakeGarbageCollected<FontPlatformData>(
+       typeface, name.data(), font_size,
+-      synthetic_bold_requested && font_description.SyntheticBoldAllowed(),
++      synthetic_bold_requested && font_description.SyntheticBoldAllowed()
++      && base::win::GetVersion() >= base::win::Version::VISTA,
+       synthetic_italic_requested && font_description.SyntheticItalicAllowed(),
+       font_description.TextRendering(), ResolvedFontFeatures(),
+       font_description.Orientation());
+diff --git a/third_party/pdfium b/third_party/pdfium
+index c052afb72a08d..9d9f3b28216b9 160000
+--- a/third_party/pdfium
++++ b/third_party/pdfium
+@@ -1 +1 @@
+-Subproject commit c052afb72a08d79a26bcf3103d11f344981b09f1
++Subproject commit 9d9f3b28216b922c9bb55d60269fd207e7e57440
+diff --git a/ui/base/clipboard/clipboard_win.cc b/ui/base/clipboard/clipboard_win.cc
+index f81b87378267c..6a7f2f63afb64 100644
+--- a/ui/base/clipboard/clipboard_win.cc
++++ b/ui/base/clipboard/clipboard_win.cc
+@@ -44,6 +44,7 @@
+ #include "base/win/scoped_gdi_object.h"
+ #include "base/win/scoped_hdc.h"
+ #include "base/win/scoped_hglobal.h"
++#include "base/win/windows_version.h"
+ #include "clipboard_util.h"
+ #include "net/base/filename_util.h"
+ #include "skia/ext/skia_utils_base.h"
+@@ -1350,12 +1351,14 @@ void ClipboardWin::WriteToClipboard(ClipboardFormatType format, HANDLE handle) {
+ }
+ 
+ void ClipboardWin::StartNotifying() {
+-  ::AddClipboardFormatListener(GetClipboardWindow());
++  if (base::win::GetVersion() >= base::win::Version::VISTA)
++    ::AddClipboardFormatListener(GetClipboardWindow());
+   monitoring_clipboard_changes_ = true;
+ }
+ 
+ void ClipboardWin::StopNotifying() {
+-  ::RemoveClipboardFormatListener(GetClipboardWindow());
++  if (base::win::GetVersion() >= base::win::Version::VISTA)
++    ::RemoveClipboardFormatListener(GetClipboardWindow());
+   monitoring_clipboard_changes_ = false;
+ }
+ 
